@@ -1,7 +1,6 @@
 ### /home/jnes/.gitignore-boilerplates/Global/Eclipse.gitignore
 
 *.pydevproject
-.project
 .metadata
 bin/**
 tmp/**
@@ -11,7 +10,6 @@ tmp/**/*
 *.swp
 *~.nib
 local.properties
-.classpath
 .settings/
 .loadpath
 
@@ -33,7 +31,6 @@ local.properties
 *.class
 
 # Package Files #
-*.jar
 *.war
 *.ear
 
