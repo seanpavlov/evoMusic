@@ -2,5 +2,10 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="/home/oted/Downloads/jMusic1.6.4.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/home/oted/Downloads/jMusic_doc_1.6.4.zip!/doc"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
