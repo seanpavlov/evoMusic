@@ -10,10 +10,10 @@ public class Main implements JMC{
             
     public static void main(String[] args) {
 		Score sweden = new Score("sweden");
-		Read.midi(sweden, "/home/oted/workspace/evoMusic/midifiles/Sweden.mid");
+		Read.midi(sweden, "midifiles/Sweden.mid");
 		
 		Score norway = new Score("norway");
-        Read.midi(norway, "/home/oted/workspace/evoMusic/midifiles/Norway.mid");
+        Read.midi(norway, "midifiles/Norway.mid");
         
 		
         Part[] s = sweden.getPartArray();
