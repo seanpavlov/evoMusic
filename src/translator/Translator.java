@@ -4,23 +4,11 @@ import jm.music.data.Score;
 import jm.util.Read;
 import structure.Song;
 
-public class Translator implements ITranslator {
-    private static Translator instance = null;
-    
-    /**
-     * Private constructor for singleton pattern
-     */
-    private Translator() {}
-    
-
-    public static Translator getInstance() {
-       if(instance == null) {
-          instance = new Translator();
-       }
-       return instance;
-    }
+public enum Translator implements ITranslator {
+    INSTANCE;
     
     
+    @Override
     public Song loadMidiToSong(String path){
         Score score = new Score("score");
         Read.midi(score, path);
@@ -28,7 +16,8 @@ public class Translator implements ITranslator {
         return new Song(score);
     }
     
-
+    
+    @Override
     public void saveSongToMidi(String path, String name, Song song){
         //must know more about object
         
@@ -53,4 +42,5 @@ public class Translator implements ITranslator {
     public void showSong(Song song){
         //Play.midi(song.getScore());
     }
+    
 }
