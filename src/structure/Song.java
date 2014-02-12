@@ -26,6 +26,7 @@ public class Song extends Score {
 		this.setTempo(getTempo());
 	}
 	
+	// temporary function
 	public Score getDaScore() {
 		return this.score;
 	}
