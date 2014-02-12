@@ -18,6 +18,7 @@ public class Song extends Score {
 	 * @param score, where all musical notation will be copied from.
 	 */
 	public Song(Score score) {
+		super();
 		this.addPartList(score.copy().getPartArray());
 	}
 	
