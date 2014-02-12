@@ -1,6 +1,7 @@
 package translator;
 
 import jm.music.data.Score;
+import jm.util.Play;
 import jm.util.Read;
 import structure.Song;
 
@@ -30,7 +31,7 @@ public enum Translator implements ITranslator {
      * @param song to be played
      */
     public void playSong(Song song){
-        //Play.midi(song.getScore());
+        Play.midi(song.getDaScore());
     }
 
     
