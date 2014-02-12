@@ -6,8 +6,7 @@ import jm.music.data.Score;
  *
  */
 public class Song extends Score {
-	
-	Score score;
+
 	
 	/**
 	 * Don't know about this one >_>
@@ -21,14 +20,11 @@ public class Song extends Score {
 	 */
 	public Song(Score score) {
 		super();
-		this.score = score;
-		this.addPartList(score.copy().getPartArray());
-		this.setTempo(getTempo());
-	}
-	
-	// temporary function
-	public Score getDaScore() {
-		return this.score;
+		Score scoreCopy = score.copy();
+		this.setTitle(scoreCopy.getTitle());
+		this.addPartList(scoreCopy.getPartArray());
+		this.setTempo(scoreCopy.getTempo());
+		this.setTimeSignature(scoreCopy.getNumerator(), scoreCopy.getDenominator());
 	}
 	
 }

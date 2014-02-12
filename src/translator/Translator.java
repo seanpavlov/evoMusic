@@ -31,7 +31,7 @@ public enum Translator implements ITranslator {
      * @param song to be played
      */
     public void playSong(Song song){
-        Play.midi(song.getDaScore());
+        Play.midi(song);
     }
 
     
