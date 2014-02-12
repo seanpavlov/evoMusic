@@ -1,11 +1,8 @@
 package translator;
 
-import structure.Song;
-import jm.music.*;
-import jm.music.data.Part;
 import jm.music.data.Score;
-import jm.util.Play;
 import jm.util.Read;
+import structure.Song;
 
 public class Translator implements ITranslator {
     
