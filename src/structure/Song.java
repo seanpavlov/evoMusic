@@ -18,10 +18,10 @@ public class Song extends Score {
 	 * 
 	 * @param score, where all musical notation will be copied from.
 	 */
-	public Song(Score score) {
+	public Song(Score score, String title) {
 		super();
 		Score scoreCopy = score.copy();
-		this.setTitle(scoreCopy.getTitle());
+		this.setTitle(title);
 		this.addPartList(scoreCopy.getPartArray());
 		this.setTempo(scoreCopy.getTempo());
 		this.setTimeSignature(scoreCopy.getNumerator(), scoreCopy.getDenominator());

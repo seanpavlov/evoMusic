@@ -11,10 +11,10 @@ public enum Translator implements ITranslator {
     
     @Override
     public Song loadMidiToSong(String path){
-        Score score = new Score("score");
+        Score score = new Score();
         Read.midi(score, path);
         
-        return new Song(score);
+        return new Song(score, path);
     }
     
     
