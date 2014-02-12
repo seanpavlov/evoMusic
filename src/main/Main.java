@@ -9,25 +9,7 @@ import jm.util.View;
 public class Main implements JMC{
             
     public static void main(String[] args) {
-		Score sweden = new Score("sweden");
-		Read.midi(sweden, "midifiles/Sweden.mid");
-		
-		Score norway = new Score("norway");
-        Read.midi(norway, "midifiles/Norway.mid");
-        
-		
-        Part[] s = sweden.getPartArray();
-        Part[] n = norway.getPartArray();
 
-        Score comb = new Score("nosw");
-        
-        n[1].setTempo(s[1].getTempo());
-        
-        comb.addPartList(n);
-        comb.addPartList(s);
-        
-        Play.midi(comb);
-     
     }
 
 }
