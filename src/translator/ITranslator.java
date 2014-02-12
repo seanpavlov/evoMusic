@@ -5,12 +5,20 @@ import structure.Song;
 public interface ITranslator {
 	
     /**
+     * Use getInstance() to access Translator
+     * 
+     * @return static Translator
+     */
+	public Translator getInstance();
+	 
+	
+    /**
      * Loads a MIDI file and call the constructor of song object
      * on load success
      * 
      * @param path, relative path to MIDI file
      */
-	public Song loadMidi(String path);
+	public Song loadMidiToSong(String path);
 	
 	
     /**
@@ -18,7 +26,9 @@ public interface ITranslator {
      * to save and saves it.
      * 
      * @param path, where to save
+     * @param name, name of the file
      * @param song, song object to unload
+     * 
      */
-    public void saveMidi(String path, Song song);
+    public void saveSongToMidi(String path, String name, Song song);
 }

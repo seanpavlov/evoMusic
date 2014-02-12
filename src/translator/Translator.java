@@ -4,11 +4,7 @@ import jm.music.data.Score;
 import jm.util.Read;
 import structure.Song;
 
-import jm.music.data.Score;
-import jm.util.Play;
-import jm.util.Read;
-
-public class Translator {
+public class Translator implements ITranslator {
     private static Translator instance = null;
     
     /**
@@ -16,11 +12,7 @@ public class Translator {
      */
     private Translator() {}
     
-    /**
-     * Use getInstance() to access Translator
-     * 
-     * @return static Translator
-     */
+
     public static Translator getInstance() {
        if(instance == null) {
           instance = new Translator();
@@ -28,32 +20,21 @@ public class Translator {
        return instance;
     }
     
-    /**
-     * Loads a MIDI file and call the constructor of song object
-     * on load success
-     * 
-     * @param path, relative path to MIDI file
-     */
-    public void loadMIDIToSong(String path){
-        Score sc = new Score("sc");
-        Read.midi(sc, path);
+    
+    public Song loadMidiToSong(String path){
+        Score score = new Score("score");
+        Read.midi(score, path);
         
-        //calls constructor here
+        return new Song(score);
     }
     
-    /**
-     * Function takes a path to save the MIDI file to, and the object which 
-     * to save and saves it.
-     * 
-     * @param path, where to save
-     * @param name, name of the file
-     * @param song, song object to unload
-     * 
-     */
-    public void saveSongToMIDI(String path, String name, Song song){
+
+    public void saveSongToMidi(String path, String name, Song song){
         //must know more about object
         
     }
+
+
     /**
      * Play a song object in JMusics built in player
      * 
@@ -63,6 +44,7 @@ public class Translator {
         //Play.midi(song.getScore());
     }
 
+    
     /**
      * Show the structure of the song in JMusics built in MIDI display
      * 
