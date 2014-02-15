@@ -1,4 +1,4 @@
-package structure;
+package model;
 import java.util.ArrayList;
 
 import jm.music.data.Part;

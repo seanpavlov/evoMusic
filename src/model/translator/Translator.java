@@ -1,9 +1,9 @@
-package translator;
+package model.translator;
 
+import model.Song;
 import jm.music.data.Score;
 import jm.util.Play;
 import jm.util.Read;
-import structure.Song;
 
 public enum Translator implements ITranslator {
     INSTANCE;
