@@ -7,5 +7,10 @@
 			<attribute name="javadoc_location" value="jar:platform:/resource/evoMusic/lib/jMusic_doc_1.6.4.zip!/doc"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="lib/mongo-java-driver-2.11.4.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/EvoMusic/lib/mongo-java-driver-javadoc-2.11.4.jar!/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
