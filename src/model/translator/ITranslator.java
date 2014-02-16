@@ -1,6 +1,6 @@
-package translator;
+package model.translator;
 
-import structure.Song;
+import model.Song;
 
 public interface ITranslator {
 	

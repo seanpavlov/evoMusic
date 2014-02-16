@@ -1,8 +1,8 @@
 package main;
 
+import model.Song;
+import model.translator.Translator;
 import jm.JMC;
-import structure.Song;
-import translator.Translator;
 
 public class Main implements JMC {
             

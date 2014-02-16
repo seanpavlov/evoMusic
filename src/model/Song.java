@@ -1,4 +1,4 @@
-package structure;
+package model;
 import java.util.ArrayList;
 
 import jm.music.data.Part;
@@ -13,7 +13,8 @@ public class Song extends Score {
 
 	
 	/**
-	 * Don't know about this one >_>
+	 * Specifies the version of the class so that version mismatch
+	 * won't occur during deserialization.
 	 */
 	private static final long serialVersionUID = 1L;
 
