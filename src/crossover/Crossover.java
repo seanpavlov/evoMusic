@@ -67,7 +67,7 @@ public class Crossover {
         for (int i = 0; i < parents.length; i++) {
             averageTempo += parents[i].getTempo();
         }
-        averageTempo += averageTempo / parents.length;
+        averageTempo = averageTempo / parents.length;
 
         Score finalScore = new Score(new Part(sumPhrase),
                 "Generated from crossover", averageTempo);
