@@ -1,6 +1,7 @@
 package model.translator;
 
 import model.Song;
+import jm.music.data.Part;
 import jm.music.data.Score;
 import jm.util.Play;
 import jm.util.Read;
@@ -32,6 +33,11 @@ public enum Translator implements ITranslator {
      */
     public void playSong(Song song){
         Play.midi(song);
+    }
+    
+    
+    public void playPart(Song song, int partIndex) {
+        Play.midi(new Score(song.getPart(partIndex), "part " + partIndex, song.getTempo()));
     }
 
     
