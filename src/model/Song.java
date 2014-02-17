@@ -1,6 +1,7 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import jm.music.data.Part;
 import jm.music.data.Score;
@@ -17,15 +18,20 @@ public class Song extends Score {
      * during deserialization.
      */
     private static final long serialVersionUID = 1L;
+    
+    private final String path ;
 
+    private final List<String> userTags = new ArrayList<String>();
+    
     /**
      * Creates a new Song object by copying all content from the given score.
      * 
      * @param score
      *            , where all musical notation will be copied from.
      */
-    public Song(Score score, String title) {
+    public Song(Score score, String title, String path) {
         super();
+        this.path = path;
         Score scoreCopy = score.copy();
         this.setTitle(title);
         this.addPartList(scoreCopy.getPartArray());
@@ -33,6 +39,23 @@ public class Song extends Score {
         this.setTimeSignature(scoreCopy.getNumerator(),
                 scoreCopy.getDenominator());
     }
+    
+    /**
+     * 
+     * @return MIDI file path that was used to create the song
+     */
+    public String getPath() {
+        return path;
+    }
+    
+    /**
+     * 
+     * @return the tags describing the song, created by the user
+     */
+    public List<String> getUserTags() {
+        return userTags;
+    }
+    
 
     /**
      * Adds a TrackTag to the specified track.
