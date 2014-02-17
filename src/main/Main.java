@@ -2,9 +2,9 @@ package main;
 
 import model.Song;
 import model.translator.Translator;
-import jm.JMC;
 
-public class Main implements JMC {
+
+public class Main {
             
     public static void main(String[] args) {
     	String megamanPath = "midifiles/mm2wily1.mid";
