@@ -1,3 +1,6 @@
+### midifiles used by the program are used here
+res/
+
 ### /home/jnes/.gitignore-boilerplates/Global/Eclipse.gitignore
 
 *.pydevproject
