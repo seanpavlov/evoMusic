@@ -1,25 +1,48 @@
 package model.translator;
 
+import java.io.File;
+import java.io.IOException;
+
+import org.apache.commons.io.FileUtils;
+
 import model.Song;
 import jm.music.data.Part;
 import jm.music.data.Score;
 import jm.util.Play;
 import jm.util.Read;
 
-public enum Translator implements ITranslator {
+public enum Translator  {
     INSTANCE;
     
     
-    @Override
-    public Song loadMidiToSong(String path){
+    
+    /**
+     * Loads a MIDI file and call the constructor of song object
+     * on load success. The MIDI file is copied to the program so that it
+     * can be accessible again
+     * 
+     * @param path, relative path to MIDI file
+     */
+    public Song loadMidiToSong(String path) throws IOException {
         Score score = new Score();
-        Read.midi(score, path);
+        final String destPath = "res/"+score.hashCode()+".midi";
+        FileUtils.copyFile(new File(path), new File(destPath));
+        Read.midi(score, destPath);
         
-        return new Song(score, path);
+        // using path as title for the time being. 
+        return new Song(score, path, destPath);
     }
     
-    
-    @Override
+
+    /**
+     * Function takes a path to save the MIDI file to, and the object which 
+     * to save and saves it.
+     * 
+     * @param path, where to save
+     * @param name, name of the file
+     * @param song, song object to unload
+     * 
+     */    
     public void saveSongToMidi(String path, String name, Song song){
         //must know more about object
         
