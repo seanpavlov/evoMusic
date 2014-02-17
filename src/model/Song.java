@@ -5,23 +5,20 @@ import java.util.List;
 
 import jm.music.data.Part;
 import jm.music.data.Score;
+import jm.util.Write;
 import enumerators.TrackTag;
 
 /**
- * A class that inherits most of its properties from the Score class.
+ * A class that uses the properties from the Score class.
  * 
  */
-public class Song extends Score {
+public class Song {
 
-    /**
-     * Specifies the version of the class so that version mismatch won't occur
-     * during deserialization.
-     */
-    private static final long serialVersionUID = 1L;
-    
-    private final String path ;
+    private String path;
 
     private final List<String> userTags = new ArrayList<String>();
+    
+    private final Score score;
     
     /**
      * Creates a new Song object by copying all content from the given score.
@@ -29,22 +26,61 @@ public class Song extends Score {
      * @param score
      *            , where all musical notation will be copied from.
      */
-    public Song(Score score, String title, String path) {
-        super();
-        this.path = path;
-        Score scoreCopy = score.copy();
-        this.setTitle(title);
-        this.addPartList(scoreCopy.getPartArray());
-        this.setTempo(scoreCopy.getTempo());
-        this.setTimeSignature(scoreCopy.getNumerator(),
-                scoreCopy.getDenominator());
+    public Song(Score score) {
+        this.score = score.copy();
     }
     
     /**
      * 
-     * @return MIDI file path that was used to create the song
+     * @return the title of the score
+     */
+    public String getTitle() {
+        return score.getTitle();
+    }
+    
+    /**
+     * 
+     * @param index the index of the track in the score
+     * @return the track as a Part object with the specified index.
+     */
+    public Part getTrack(int index) {
+        return score.getPart(index);
+    }
+    
+    /**
+     * 
+     * @return the number of tracks in this song's score.
+     */
+    public int getNbrOfTracks() {
+        return score.getPartArray().length;
+    }
+    
+    /**
+     * 
+     * @return the tempo for this song's score
+     */
+    public double getTempo(){
+        return score.getTempo();
+    }
+    
+    /**
+     * 
+     * @return the score for this song
+     */
+    public Score getScore() {
+        return score;
+    }
+    
+    /**
+     * 
+     * @return MIDI file path that was used to create the song create a file
+     * path if none exists
      */
     public String getPath() {
+        if(path == null) {
+            path = "./res/"+hashCode()+".midi";
+            Write.midi(score, path);
+        }
         return path;
     }
     
