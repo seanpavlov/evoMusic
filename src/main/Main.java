@@ -1,9 +1,7 @@
 package main;
 
-import java.io.Console;
 import java.io.IOException;
 
-import db.MongoAdapter;
 import model.Song;
 import model.translator.Translator;
 import crossover.Crossover;
