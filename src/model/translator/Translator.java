@@ -1,15 +1,12 @@
 package model.translator;
-
 import java.io.File;
 import java.io.IOException;
 
-import org.apache.commons.io.FileUtils;
-
 import model.Song;
-import jm.music.data.Part;
 import jm.music.data.Score;
 import jm.util.Play;
 import jm.util.Read;
+import jm.util.View;
 import jm.util.Write;
 
 public enum Translator  {
@@ -27,20 +24,6 @@ public enum Translator  {
         
         return new Song(score);
     }
-    
-
-    /**
-     * Function takes a path to save the MIDI file to, and the object which 
-     * to save and saves it.
-     * 
-     * @param path, where to save the file
-     * @param song, song object to unload
-     * 
-     */    
-    public void saveSongToMidi(String path, Song song){
-        Write.midi(song.getScore(), path);
-     }
-
 
     /**
      * Saves a song the default location. 
@@ -48,9 +31,20 @@ public enum Translator  {
      * @param song, song object to save
      * @return the path to the saved MIDI file
      */  
-    public String saveSongToMidi(Song song) {
-        final String path = "./res/"+hashCode()+".midi";
-        saveSongToMidi(path, song);
+    public String saveSongToMidi(Song song, String name) {
+        String path = "./res/" + name + ".midi";
+        File f = new File(path);
+        if(f.exists() && !f.isDirectory()){
+            int i = 1;
+            while (f.exists()){
+                System.out.println(f.toString());
+                path = "./res/" + name + "(" + i + ")" + ".midi";                       
+                f = new File(path);
+                i++;
+            }
+        }
+        
+        Write.midi(song.getScore(), path);
         return path;
     }
 
@@ -80,7 +74,6 @@ public enum Translator  {
      * @param song to be played
      */
     public void showSong(Song song){
-        //Play.midi(song.getScore());
+        View.show(song.getScore());
     }
-    
 }

@@ -22,7 +22,8 @@ public class Main {
         Song crossedSong = crossover.makeCrossover();
         Mutation m = new Mutation(0.2);
         Song mutatedSong = m.mutate(crossedSong);
-        Translator.INSTANCE.playPart(mutatedSong, 0);
+        Translator.INSTANCE.saveSongToMidi(mutatedSong, "hej");
+        Translator.INSTANCE.showSong(mutatedSong);
     }
 
 }
