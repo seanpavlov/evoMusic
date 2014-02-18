@@ -3,8 +3,8 @@ package main;
 import java.io.IOException;
 
 import model.Song;
-import model.translator.Translator;
 import mutation.Mutation;
+import translator.Translator;
 import crossover.Crossover;
 
 public class Main {
