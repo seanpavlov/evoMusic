@@ -18,7 +18,7 @@ public class Main {
                 .loadMidiToSong("midifiles/Norway.mid");
         Crossover crossover = new Crossover(new Song[] { sweden, norway });
         crossover.setNumberOfIntersections(8);
-        Translator.INSTANCE.playPart(crossover.crossMutate(), 0);
+        Translator.INSTANCE.playPart(crossover.makeCrossover(), 0);
     }
 
 }

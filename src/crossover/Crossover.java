@@ -47,7 +47,7 @@ public class Crossover {
      * 
      * @return The resulting Song object of the cross mutation.
      */
-    public Song crossMutate() {
+    public Song makeCrossover() {
 
         Map<Song, Phrase[]> phraseSections = new HashMap<Song, Phrase[]>();
         for (int i = 0; i < parents.length; i++) {
