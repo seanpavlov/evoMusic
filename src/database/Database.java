@@ -99,7 +99,7 @@ public class Database implements IDatabase{
         
         DBObject songData = new BasicDBObject(TITLE_KEY, song.getTitle())
                     .append(TRACK_REF_KEY, tracks)
-                    .append(MIDI_PATH_KEY, Translator.INSTANCE.saveSongToMidi(song))
+                    .append(MIDI_PATH_KEY, Translator.INSTANCE.saveSongToMidi(song, song.getTitle()))
                     .append(USER_TAGS_KEY, song.getUserTags());
         return songs.insert(songData);
     }
