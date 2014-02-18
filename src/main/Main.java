@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import model.Song;
 import model.translator.Translator;
+import mutation.Mutation;
 import crossover.Crossover;
 
 public class Main {
@@ -12,13 +13,16 @@ public class Main {
         // String megamanPath = "midifiles/mm2wily1.mid";
         // Song testSong = Translator.INSTANCE.loadMidiToSong(megamanPath);
         // Translator.INSTANCE.playSong(testSong);
-        Song sweden = Translator.INSTANCE
-                .loadMidiToSong("midifiles/Sweden.mid");
-        Song norway = Translator.INSTANCE
-                .loadMidiToSong("midifiles/Norway.mid");
-        Crossover crossover = new Crossover(new Song[] { sweden, norway });
+        Song super_mario_bros_theme = Translator.INSTANCE
+                .loadMidiToSong("midifiles/super_mario_bros_theme.mid");
+        Song super_mario_world_overview  = Translator.INSTANCE
+                .loadMidiToSong("midifiles/super_mario_world_overworld.mid");
+        Crossover crossover = new Crossover(new Song[] { super_mario_bros_theme, super_mario_world_overview});
         crossover.setNumberOfIntersections(8);
-        Translator.INSTANCE.playPart(crossover.makeCrossover(), 0);
+        Song crossedSong = crossover.makeCrossover();
+        Mutation m = new Mutation(0.2);
+        Song mutatedSong = m.mutate(crossedSong);
+        Translator.INSTANCE.playPart(mutatedSong, 0);
     }
 
 }
