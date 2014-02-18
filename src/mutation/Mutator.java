@@ -6,7 +6,7 @@ import jm.music.data.Note;
 import jm.music.data.Phrase;
 import model.Song;
 
-public class Mutation {
+public class Mutator {
     private double mutationProbability;
     private static double JUST_AND_EQUAL_TEMPERAMENT_SCALE = Math.pow(2,
             (1 / 12));
@@ -22,7 +22,7 @@ public class Mutation {
      * @param mutationProbability
      *            is the probability of the note to mutate.
      */
-    public Mutation(double mutationProbability) {
+    public Mutator(double mutationProbability) {
         this.mutationProbability = mutationProbability;
     }
 

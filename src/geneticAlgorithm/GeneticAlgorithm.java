@@ -5,7 +5,7 @@ import java.util.List;
 
 import rating.Rater;
 import model.Song;
-import mutation.Mutation;
+import mutation.Mutator;
 import crossover.Crossover;
 
 /**
@@ -16,7 +16,7 @@ import crossover.Crossover;
 public class GeneticAlgorithm {
 
     private Song[]     parents;
-    private Mutation   mutation;
+    private Mutator    mutator;
     private Crossover  crossover;
     private Rater      rater;
     private int        numberOfParents;
@@ -36,7 +36,7 @@ public class GeneticAlgorithm {
      * 
      * @param parents
      *            The individuals to use for generating the first generation.
-     * @param mutation
+     * @param mutator
      *            The mutator that will mutate all children in each generation.
      * @param crossover
      *            The crossover that will create each generation from a set of
@@ -44,10 +44,10 @@ public class GeneticAlgorithm {
      * @param rater
      *            The rater that will rate all individuals for each generation.
      */
-    public GeneticAlgorithm(Song[] parents, Mutation mutation,
+    public GeneticAlgorithm(Song[] parents, Mutator mutator,
             Crossover crossover, Rater rater) {
         this.parents = parents;
-        setMutator(mutation);
+        setMutator(mutator);
         setCrossover(crossover);
         setRater(rater);
         setNumberOfParents(this.parents.length);
@@ -69,8 +69,8 @@ public class GeneticAlgorithm {
      *            The mutator that will execute all the mutations on the
      *            individuals during the iterations.
      */
-    public void setMutator(Mutation mutator) {
-        this.mutation = mutator;
+    public void setMutator(Mutator mutator) {
+        this.mutator = mutator;
     }
 
     /**
