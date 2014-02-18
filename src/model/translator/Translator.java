@@ -10,6 +10,7 @@ import jm.music.data.Part;
 import jm.music.data.Score;
 import jm.util.Play;
 import jm.util.Read;
+import jm.util.Write;
 
 public enum Translator  {
     INSTANCE;
@@ -32,16 +33,26 @@ public enum Translator  {
      * Function takes a path to save the MIDI file to, and the object which 
      * to save and saves it.
      * 
-     * @param path, where to save
-     * @param name, name of the file
+     * @param path, where to save the file
      * @param song, song object to unload
      * 
      */    
-    public void saveSongToMidi(String path, String name, Song song){
-        //must know more about object
-        
-    }
+    public void saveSongToMidi(String path, Song song){
+        Write.midi(song.getScore(), path);
+     }
 
+
+    /**
+     * Saves a song the default location. 
+     * 
+     * @param song, song object to save
+     * @return the path to the saved MIDI file
+     */  
+    public String saveSongToMidi(Song song) {
+        final String path = "./res/"+hashCode()+".midi";
+        saveSongToMidi(path, song);
+        return path;
+    }
 
     /**
      * Play a song object in JMusics built in player

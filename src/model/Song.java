@@ -14,8 +14,6 @@ import enumerators.TrackTag;
  */
 public class Song {
 
-    private String path;
-
     private final List<String> userTags = new ArrayList<String>();
     
     private final Score score;
@@ -69,19 +67,6 @@ public class Song {
      */
     public Score getScore() {
         return score;
-    }
-    
-    /**
-     * 
-     * @return MIDI file path that was used to create the song create a file
-     * path if none exists
-     */
-    public String getPath() {
-        if(path == null) {
-            path = "./res/"+hashCode()+".midi";
-            Write.midi(score, path);
-        }
-        return path;
     }
     
     /**
