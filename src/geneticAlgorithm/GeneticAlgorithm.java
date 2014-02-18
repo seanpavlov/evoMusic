@@ -3,6 +3,7 @@ package geneticAlgorithm;
 import java.util.ArrayList;
 import java.util.List;
 
+import rating.Rater;
 import model.Song;
 import mutation.Mutation;
 import crossover.Crossover;
@@ -17,7 +18,7 @@ public class GeneticAlgorithm {
     private Song[]     parents;
     private Mutation   mutation;
     private Crossover  crossover;
-    // private Rater rater;
+    private Rater rater;
     private int        numberOfParents;
     private int        generationSize;
     private boolean    throwAwayFirstParents;
@@ -37,11 +38,11 @@ public class GeneticAlgorithm {
      * @param rater
      */
     public GeneticAlgorithm(Song[] parents, Mutation mutation,
-            Crossover crossover) {// , Rater rater) {
+            Crossover crossover, Rater rater) {
         this.parents = parents;
         setMutation(mutation);
         setCrossover(crossover);
-        // this.rater = rater;
+        setRater(rater);
         setNumberOfParents(this.parents.length);
         setGenerationSize(3);
         setThrowAwayFirstParents(true);
@@ -62,8 +63,8 @@ public class GeneticAlgorithm {
         this.crossover.setParents(parents);
     }
 
-    public void setRater() {
-        // this.rater = rater;
+    public void setRater(Rater rater) {
+        this.rater = rater;
     }
 
     /**
