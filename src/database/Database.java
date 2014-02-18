@@ -3,6 +3,7 @@ package database;
 import java.net.UnknownHostException;
 
 import model.Song;
+import model.translator.Translator;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
@@ -83,14 +84,17 @@ public class Database implements IDatabase{
      */
     public WriteResult insertSong(Song song) {
         final int nbrOfTracks = song.getNbrOfTracks();
-        TrackTag[] tracks = new TrackTag[nbrOfTracks];
+        
+        // array index is the same as track index
+        // the tracks that are not used are stores as well
+        String[] tracks = new String[nbrOfTracks];
         for (int i = 0; i < nbrOfTracks; i++) {
-            tracks[i] = song.getTrackTag(i);
+            tracks[i] = song.getTrackTag(i).dbName;
         }
         
         DBObject songData = new BasicDBObject(TITLE_KEY, song.getTitle())
-//                    .append(TRACK_REF_KEY, tracks) TODO: SERIALIZE ENUMS
-                    .append(MIDI_PATH_KEY, song.getPath())
+                    .append(TRACK_REF_KEY, tracks)
+                    .append(MIDI_PATH_KEY, Translator.INSTANCE.saveSongToMidi(song))
                     .append(USER_TAGS_KEY, song.getUserTags());
         return songs.insert(songData);
     }
