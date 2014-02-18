@@ -35,6 +35,7 @@ public class Mutation {
      * @return the mutated song.
      */
     public Song mutate(Song individual) {
+        // TODO Make it so that this method mutates without returning the song.
         Phrase currentTrack = individual.getScore().getPart(0).getPhrase(0);
         int nbrOfNotes = currentTrack.getNoteArray().length;
         for (int i = 0; i < nbrOfNotes; i++) {
