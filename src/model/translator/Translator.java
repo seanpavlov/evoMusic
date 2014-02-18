@@ -10,6 +10,7 @@ import jm.music.data.Part;
 import jm.music.data.Score;
 import jm.util.Play;
 import jm.util.Read;
+import jm.util.Write;
 
 public enum Translator  {
     INSTANCE;
@@ -38,8 +39,7 @@ public enum Translator  {
      * 
      */    
     public void saveSongToMidi(String path, String name, Song song){
-        //must know more about object
-        
+        Write.midi(song.getScore(), path + "/" + name + ".MIDI");
     }
 
     /**
