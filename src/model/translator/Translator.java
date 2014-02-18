@@ -63,7 +63,12 @@ public enum Translator  {
         Play.midi(song.getScore());
     }
     
-    
+    /**
+     * Play a single track of a song
+     * 
+     * @param song
+     * @param trackIndex
+     */
     public void playPart(Song song, int trackIndex) {
         Play.midi(new Score(song.getTrack(trackIndex), "part " + trackIndex, song.getTempo()));
     }
