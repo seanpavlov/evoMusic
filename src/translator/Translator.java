@@ -32,12 +32,12 @@ public enum Translator  {
      * @return the path to the saved MIDI file
      */  
     public String saveSongToMidi(Song song, String name) {
-        String path = "./res/" + name + ".midi";
+        String path = "./output/" + name + ".midi";
         File f = new File(path);
         if(f.exists() && !f.isDirectory()){
             int i = 1;
             while (f.exists()){
-                path = "./res/" + name + "(" + i + ")" + ".midi";                       
+                path = "./output/" + name + "(" + i + ")" + ".midi";                       
                 f = new File(path);
                 i++;
             }
