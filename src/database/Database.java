@@ -6,7 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import model.Song;
-import model.translator.Translator;
+import translator.Translator;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
@@ -15,8 +15,6 @@ import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.WriteResult;
-
-import enumerators.TrackTag;
 
 public class Database implements IDatabase{
     
