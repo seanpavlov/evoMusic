@@ -17,13 +17,16 @@ public class Main {
                 .loadMidiToSong("midifiles/super_mario_bros_theme.mid");
         Song super_mario_world_overview  = Translator.INSTANCE
                 .loadMidiToSong("midifiles/super_mario_world_overworld.mid");
-        Crossover crossover = new Crossover(new Song[] { super_mario_bros_theme, super_mario_world_overview});
-        crossover.setNumberOfIntersections(8);
-        Song crossedSong = crossover.makeCrossover();
-        Mutation m = new Mutation(0.2);
-        Song mutatedSong = m.mutate(crossedSong);
-        Translator.INSTANCE.saveSongToMidi(mutatedSong, "hej");
-        Translator.INSTANCE.showSong(mutatedSong);
+        Song avicii_levels  = Translator.INSTANCE
+                .loadMidiToSong("midifiles/avicii_levels.mid");
+        //Crossover crossover = new Crossover(new Song[] { super_mario_bros_theme, super_mario_world_overview});
+        //crossover.setNumberOfIntersections(8);
+        //Song crossedSong = crossover.makeCrossover();
+        Mutation m = new Mutation(0.5);
+        Song mutatedSong = m.mutate(super_mario_bros_theme);
+        Translator.INSTANCE.playSong(mutatedSong);
+        //Translator.INSTANCE.saveSongToMidi(mutatedSong, "hej");
+        //Translator.INSTANCE.showSong(mutatedSong);
     }
 
 }
