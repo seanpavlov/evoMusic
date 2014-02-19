@@ -6,10 +6,10 @@ import jm.music.data.Note;
 import jm.music.data.Phrase;
 import model.Song;
 
-public class Mutation {
+public class Mutator {
     private double mutationProbability;
     private static double JUST_AND_EQUAL_TEMPERAMENT_SCALE = Math.pow(2,
-            (1 / 12));
+            (1.0 / 12.0));
     private static int STEP_RANGE = 3;
     private static double LOWER_NOTE_PROBABILITY = 0.5;
     private static double MINIMUM_FREQUENCY = 27.500;
@@ -22,7 +22,7 @@ public class Mutation {
      * @param mutationProbability
      *            is the probability of the note to mutate.
      */
-    public Mutation(double mutationProbability) {
+    public Mutator(double mutationProbability) {
         this.mutationProbability = mutationProbability;
     }
 
@@ -35,26 +35,29 @@ public class Mutation {
      * @return the mutated song.
      */
     public Song mutate(Song individual) {
+        // TODO Make it so that this method mutates without returning the song.
         Phrase currentTrack = individual.getScore().getPart(0).getPhrase(0);
         int nbrOfNotes = currentTrack.getNoteArray().length;
         for (int i = 0; i < nbrOfNotes; i++) {
             if (Math.random() < mutationProbability) {
-                // Random step between 1 and 2 and then random if +/-
-                int nbrOfSteps = ((int) (Math.random() * STEP_RANGE)) + 1;
-                System.out.println(nbrOfSteps);
-                if (Math.random() < LOWER_NOTE_PROBABILITY) {
-                    nbrOfSteps = -nbrOfSteps;
-                }
                 double currentFrequency = currentTrack.getNoteArray()[i]
                         .getFrequency();
                 if (currentFrequency > MINIMUM_FREQUENCY
                         && currentFrequency < MAXIMUM_FREQUENCY) {
-                    double newFrequency = changeInFifthNote(currentFrequency,
-                            nbrOfSteps);
-                    System.out.println(currentTrack.getNoteArray()[i].getNote());
-                    Note newNote = new Note(newFrequency,
-                            currentTrack.getNoteArray()[i].getRhythmValue());
-                    currentTrack.setNote(newNote, i);
+                    
+//                    double newFrequency = changeEven(currentFrequency);
+//                    double newFrequency = changeInFifthNote(currentFrequency);
+                    
+                    // Testing swap notes
+                    Note temp = currentTrack.getNoteArray()[i];
+                    if(i-1 >= 0 && currentTrack.getNoteArray()[i-1].getFrequency() > MINIMUM_FREQUENCY){
+                        Note prevNote = currentTrack.getNoteArray()[i-1];
+                        currentTrack.setNote(new Note(prevNote.getFrequency(), temp.getRhythmValue()), i);
+                        currentTrack.setNote(new Note(temp.getFrequency(), prevNote.getRhythmValue()), i-1);
+                    }
+//                    Note newNote = new Note(newFrequency,
+//                            currentTrack.getNoteArray()[i].getRhythmValue());
+//                    currentTrack.setNote(newNote, i);
                 }
             }
         }
@@ -80,8 +83,14 @@ public class Mutation {
         return newFrequency;
     }
     
+    private double changeEven(double frequency) {
+        int steps = generateSteps();
+        frequency = changeNote(frequency, (3+(2*(steps-1))));
+        return frequency;
+    }
 
-    private double changeInFifthNote(double frequency, int steps) {
+    private double changeInFifthNote(double frequency) {
+        int steps = generateSteps();
         System.out.print("Orig: " + frequency);
         double newFrequency = frequency;
         for (int i = 0; i < Math.abs(steps); i++) {
@@ -102,4 +111,13 @@ public class Mutation {
             return newFrequency;
         }
     }
+    
+    private int generateSteps(){
+        int nbrOfSteps = ((int) (Math.random() * STEP_RANGE)) + 1;
+        if (Math.random() < LOWER_NOTE_PROBABILITY) {
+            nbrOfSteps = -nbrOfSteps;
+        }
+        return nbrOfSteps;
+    }
+    
 }
