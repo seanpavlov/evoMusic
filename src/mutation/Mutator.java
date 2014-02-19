@@ -14,6 +14,7 @@ public class Mutator {
     private static double LOWER_NOTE_PROBABILITY = 0.5;
     private static double MINIMUM_FREQUENCY = 27.500;
     private static double MAXIMUM_FREQUENCY = 4186.0;
+    private Phrase newTrack; 
 
     /**
      * Handling the mutation. Each instance will use their own parameters, then
@@ -22,8 +23,9 @@ public class Mutator {
      * @param mutationProbability
      *            is the probability of the note to mutate.
      */
-    public Mutator(double mutationProbability) {
+    public Mutator(double mutationProbability, Song individual) {
         this.mutationProbability = mutationProbability;
+        newTrack = individual.getScore().getPart(0).getPhrase(0);
     }
 
     /**
@@ -35,12 +37,10 @@ public class Mutator {
      * @return the mutated song.
      */
     public Song mutate(Song individual) {
-        // TODO Make it so that this method mutates without returning the song.
-        Phrase currentTrack = individual.getScore().getPart(0).getPhrase(0);
-        int nbrOfNotes = currentTrack.getNoteArray().length;
+        int nbrOfNotes = newTrack.getNoteArray().length;
         for (int i = 0; i < nbrOfNotes; i++) {
             if (Math.random() < mutationProbability) {
-                double currentFrequency = currentTrack.getNoteArray()[i]
+                double currentFrequency = newTrack.getNoteArray()[i]
                         .getFrequency();
                 if (currentFrequency > MINIMUM_FREQUENCY
                         && currentFrequency < MAXIMUM_FREQUENCY) {
@@ -49,11 +49,11 @@ public class Mutator {
 //                    double newFrequency = changeInFifthNote(currentFrequency);
                     
                     // Testing swap notes
-                    Note temp = currentTrack.getNoteArray()[i];
-                    if(i-1 >= 0 && currentTrack.getNoteArray()[i-1].getFrequency() > MINIMUM_FREQUENCY){
-                        Note prevNote = currentTrack.getNoteArray()[i-1];
-                        currentTrack.setNote(new Note(prevNote.getFrequency(), temp.getRhythmValue()), i);
-                        currentTrack.setNote(new Note(temp.getFrequency(), prevNote.getRhythmValue()), i-1);
+                    Note temp = newTrack.getNoteArray()[i];
+                    if(i-1 >= 0 && newTrack.getNoteArray()[i-1].getFrequency() > MINIMUM_FREQUENCY){
+                        Note prevNote = newTrack.getNoteArray()[i-1];
+                        newTrack.setNote(new Note(prevNote.getFrequency(), temp.getRhythmValue()), i);
+                        newTrack.setNote(new Note(temp.getFrequency(), prevNote.getRhythmValue()), i-1);
                     }
 //                    Note newNote = new Note(newFrequency,
 //                            currentTrack.getNoteArray()[i].getRhythmValue());
@@ -62,7 +62,7 @@ public class Mutator {
             }
         }
         Vector newPhraseList = new Vector();
-        newPhraseList.add(currentTrack);
+        newPhraseList.add(newTrack);
         individual.getScore().getPart(0).setPhraseList(newPhraseList);
         return individual;
     }
@@ -83,12 +83,22 @@ public class Mutator {
         return newFrequency;
     }
     
+    /**
+     * Change a tone with 3, 5, 7... half-tones 
+     * @param frequency is the frequency that should be changed.
+     * @return the new frequency
+     */
     private double changeEven(double frequency) {
         int steps = generateSteps();
         frequency = changeNote(frequency, (3+(2*(steps-1))));
         return frequency;
     }
 
+    /**
+     * Change the note in fifths.
+     * @param frequency
+     * @return
+     */
     private double changeInFifthNote(double frequency) {
         int steps = generateSteps();
         System.out.print("Orig: " + frequency);
@@ -110,6 +120,10 @@ public class Mutator {
         } else {
             return newFrequency;
         }
+    }
+    
+    private void swapNotes(int x1, int x2){
+        
     }
     
     private int generateSteps(){
