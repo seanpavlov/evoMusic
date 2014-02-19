@@ -2,6 +2,8 @@ package database;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -58,14 +60,28 @@ public class Database implements IDatabase{
 
     @Override
     public DBObject createDBObject(Song song) {
-        //TODO implement method
-        return null;
+        final int nbrOfTracks = song.getNbrOfTracks();
+        
+        // array index is the same as track index
+        // the tracks that are not used are stores as well
+        final String[] tracks = new String[nbrOfTracks];
+        for (int i = 0; i < nbrOfTracks; i++) {
+            tracks[i] = song.getTrackTag(i).dbName;
+        }
+        
+        return new BasicDBObject(TITLE_KEY, song.getTitle())
+                    .append(TRACK_REF_KEY, tracks)
+                    .append(MIDI_PATH_KEY, Translator.INSTANCE.saveSongToMidi(song, song.getTitle()))
+                    .append(USER_TAGS_KEY, song.getUserTags());
     }
 
     @Override
     public Song createSongObject(BasicDBObject dbDoc) throws IOException {
-        String songPath = (String)dbDoc.get(MIDI_PATH_KEY);
-        Song song = Translator.INSTANCE.loadMidiToSong(songPath);
+        final String songPath = dbDoc.getString(MIDI_PATH_KEY);
+        final Song song = Translator.INSTANCE.loadMidiToSong(songPath);
+//        song.setTitle(dbDoc.getString(TITLE_KEY)); we use same title as in score
+        song.setTrackTags(new ArrayList<String>(Arrays.asList((String[]) dbDoc.get(TRACK_REF_KEY))));
+        song.setUserTags(new ArrayList<String>(Arrays.asList((String[]) dbDoc.get(USER_TAGS_KEY))));
         return song;
     }
 
@@ -86,20 +102,7 @@ public class Database implements IDatabase{
      * @return WriteResult returned by mongo on insertion
      */
     public WriteResult insertSong(Song song) {
-        final int nbrOfTracks = song.getNbrOfTracks();
-        
-        // array index is the same as track index
-        // the tracks that are not used are stores as well
-        String[] tracks = new String[nbrOfTracks];
-        for (int i = 0; i < nbrOfTracks; i++) {
-            tracks[i] = song.getTrackTag(i).dbName;
-        }
-        
-        DBObject songData = new BasicDBObject(TITLE_KEY, song.getTitle())
-                    .append(TRACK_REF_KEY, tracks)
-                    .append(MIDI_PATH_KEY, Translator.INSTANCE.saveSongToMidi(song, song.getTitle()))
-                    .append(USER_TAGS_KEY, song.getUserTags());
-        return songs.insert(songData);
+        return songs.insert(createDBObject(song));
     }
 
     @Override

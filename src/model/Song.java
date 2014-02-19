@@ -117,4 +117,16 @@ public class Song {
         return null;
         // TODO implement actual code.
     }
+
+    public void setTrackTags(List<String> trackTags) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    public void setUserTags(List<String> userTags) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    
 }
