@@ -57,20 +57,21 @@ public class Database implements IDatabase{
     }
 
     @Override
-    public DBObject createDBObject(Song song) {
-        //TODO implement method
+    public Object createDBObject(Song song) {
+        
         return null;
     }
 
     @Override
-    public Song createSongObject(BasicDBObject dbDoc) throws IOException {
-        String songPath = (String)dbDoc.get(MIDI_PATH_KEY);
+    public Song createSongObject(Object dbDoc) throws IOException {
+        BasicDBObject dbObject = (BasicDBObject)dbDoc;
+        String songPath = (String)dbObject.get(MIDI_PATH_KEY);
         Song song = Translator.INSTANCE.loadMidiToSong(songPath);
         return song;
     }
 
     @Override
-    public void saveDbObject(DBObject dbDoc) { 
+    public void saveDbObject(Object dbDoc) { 
         //TODO implement method
     }
 

@@ -2,10 +2,6 @@ package database;
 
 import java.io.IOException;
 import java.util.List;
-
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBObject;
-
 import model.Song;
 
 public interface IDatabase {
@@ -16,14 +12,14 @@ public interface IDatabase {
      * 
      * @param song, Song object to be saved to the database
      * */
-    public DBObject createDBObject(Song song);
+    public Object createDBObject(Song song);
     
     /*
      * Creates Song object from database representation
      * 
      * @param dbDoc, Database representation of a Song Object
      * */
-    public Song createSongObject(BasicDBObject dbDoc) throws IOException;
+    public Song createSongObject(Object dbDoc) throws IOException;
     
     /*
      * Saves database object to database
@@ -31,7 +27,7 @@ public interface IDatabase {
      * @param dbDoc, Database object to be save to database
      * */
     
-    public void saveDbObject(DBObject dbDoc);
+    public void saveDbObject(Object dbDoc);
     
     
     /*
@@ -39,7 +35,7 @@ public interface IDatabase {
      * 
      * @param TODO
      * */
-    public DBObject retreiveDBObject();
+    public Object retreiveDBObject();
     
     /*
      * Retrieves every document from collection and creates list of Song objects
