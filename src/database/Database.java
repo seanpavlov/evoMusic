@@ -16,7 +16,7 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
-import com.mongodb.WriteResult;
+import com.mongodb.MongoException;
 
 public class Database implements IDatabase{
     
@@ -58,7 +58,11 @@ public class Database implements IDatabase{
         return instance;
     }
 
-    @Override
+    /**
+     * Creates database representation from given Song object
+     * 
+     * @param song, Song object to be saved to the database
+     * */
     public DBObject createDBObject(Song song) {
         final int nbrOfTracks = song.getNbrOfTracks();
         
@@ -75,7 +79,11 @@ public class Database implements IDatabase{
                     .append(USER_TAGS_KEY, song.getUserTags());
     }
 
-    @Override
+    /**
+     * Creates Song object from database representation
+     * 
+     * @param dbDoc, Database representation of a Song Object
+     * */
     public Song createSongObject(BasicDBObject dbDoc) throws IOException {
         final String songPath = dbDoc.getString(MIDI_PATH_KEY);
         final Song song = Translator.INSTANCE.loadMidiToSong(songPath);
@@ -86,23 +94,13 @@ public class Database implements IDatabase{
     }
 
     @Override
-    public void saveDbObject(Object dbDoc) { 
-        //TODO implement method
-    }
-
-    @Override
-    public DBObject retreiveDBObject() {
-        //TODO implement method
-        return null;
-    }
-
-    /**
-     * Inserts song into db... just to define db structure
-     * @param song
-     * @return WriteResult returned by mongo on insertion
-     */
-    public WriteResult insertSong(Song song) {
-        return songs.insert(createDBObject(song));
+    public boolean insertSong(Song song) {
+        try{
+            songs.insert(createDBObject(song));
+        }catch(MongoException me){
+            return false;
+        }
+        return true;
     }
 
     @Override
