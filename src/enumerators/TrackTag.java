@@ -14,15 +14,19 @@ public enum TrackTag implements Serializable {
 	 * This is because enums are not yet supported by the driver
 	 */
     public final String dbName;
-	public final Map<String, TrackTag> tagMap = new HashMap<String, TrackTag>();
+	private final static Map<String, TrackTag> tagMap = new HashMap<String, TrackTag>();
     
 	private TrackTag(String dbName){
 	    this.dbName = dbName;
-	    tagMap.put(dbName, this);
+	    getTagmap().put(dbName, this);
 	}
 	
-	public TrackTag getTag(String dbName) {
-	    return tagMap.get(dbName);
+	public static TrackTag getTag(String dbName) {
+	    return getTagmap().get(dbName);
 	}
+
+    private static Map<String, TrackTag> getTagmap() {
+        return tagMap;
+    }
 	
 }
