@@ -2,6 +2,9 @@ package database;
 
 import java.io.IOException;
 import java.util.List;
+
+import com.mongodb.BasicDBObject;
+
 import model.Song;
 
 public interface IDatabase {
@@ -19,7 +22,7 @@ public interface IDatabase {
      * 
      * @param dbDoc, Database representation of a Song Object
      * */
-    public Song createSongObject(Object dbDoc) throws IOException;
+    public Song createSongObject(BasicDBObject dbDoc) throws IOException;
     
     /*
      * Saves database object to database
