@@ -9,13 +9,7 @@ public interface ISubMutator {
      * @param origPhrase is the phrase to be mutated
      * @return the mutated phrase
      */
-    public Phrase mutate(Phrase origPhrase);
-
-    /**
-     * Set the probability of using this sub-mutator.
-     * @param probability
-     */
-    public void setProbability(double probability);
+    public void mutate(Phrase origPhrase, double probability);
 
     /**
      * Get the probability of using the sub-mutator.

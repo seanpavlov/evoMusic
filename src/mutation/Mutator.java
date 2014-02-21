@@ -23,9 +23,8 @@ public class Mutator {
      * @param mutationProbability
      *            is the probability of the note to mutate.
      */
-    public Mutator(double mutationProbability, Song individual) {
+    public Mutator(double mutationProbability) {
         this.mutationProbability = mutationProbability;
-        newTrack = individual.getScore().getPart(0).getPhrase(0);
     }
 
     /**
@@ -36,7 +35,7 @@ public class Mutator {
      *            is the song to be mutated.
      * @return the mutated song.
      */
-    public Song mutate(Song individual) {
+    public mutate(Song individual) {
         int nbrOfNotes = newTrack.getNoteArray().length;
         for (int i = 0; i < nbrOfNotes; i++) {
             if (Math.random() < mutationProbability) {
