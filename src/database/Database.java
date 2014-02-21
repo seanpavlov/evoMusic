@@ -153,7 +153,7 @@ public class Database implements IDatabase{
             songs.update(createDBObject(oldSong), createDBObject(newSong));
         }catch(MongoException me){
             dbLogger.log(Level.WARNING, "Update Song", me);
-            return true;
+            return false;
         }
         return true;
     }  
