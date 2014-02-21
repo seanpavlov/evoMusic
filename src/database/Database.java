@@ -6,6 +6,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 import model.Song;
 import translator.Translator;
@@ -20,6 +24,7 @@ import com.mongodb.MongoException;
 
 public class Database implements IDatabase{
     
+    private Logger dbLogger = null;
     private static Database instance = null;
     private MongoClient mongoClient;
     private DB db;
@@ -42,11 +47,23 @@ public class Database implements IDatabase{
     
     protected Database(){
         try {
+            dbLogger = Logger.getLogger("dbLogger");
+            FileHandler dbFileHandler = new FileHandler("DBLogFile.log", true);
+            SimpleFormatter dbFormatter = new SimpleFormatter();
+            dbFileHandler.setFormatter(dbFormatter);
+            dbLogger.addHandler(dbFileHandler);
+            dbLogger.setLevel(Level.WARNING);
             mongoClient = new MongoClient();
             db = this.mongoClient.getDB(DB_NAME);
             songs = db.getCollection(SONG_COLLECTION);
         } catch (UnknownHostException e) {
-            //Take care of Exception TODO
+            //TODO Take care of Exception 
+            e.printStackTrace();
+        } catch (SecurityException e) {
+            // TODO Take care of Exception
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Take care of Exception
             e.printStackTrace();
         }
     }
@@ -63,7 +80,7 @@ public class Database implements IDatabase{
      * 
      * @param song, Song object to be saved to the database
      * */
-    public DBObject createDBObject(Song song) {
+    private DBObject createDBObject(Song song) {
         final int nbrOfTracks = song.getNbrOfTracks();
         
         // array index is the same as track index
@@ -84,10 +101,9 @@ public class Database implements IDatabase{
      * 
      * @param dbDoc, Database representation of a Song Object
      * */
-    public Song createSongObject(BasicDBObject dbDoc) throws IOException {
+    private Song createSongObject(BasicDBObject dbDoc) throws IOException {
         final String songPath = dbDoc.getString(MIDI_PATH_KEY);
         final Song song = Translator.INSTANCE.loadMidiToSong(songPath);
-//        song.setTitle(dbDoc.getString(TITLE_KEY)); we use same title as in score
         song.setTrackTags(new ArrayList<String>(Arrays.asList((String[]) dbDoc.get(TRACK_REF_KEY))));
         song.setUserTags(new ArrayList<String>(Arrays.asList((String[]) dbDoc.get(USER_TAGS_KEY))));
         return song;
@@ -98,6 +114,7 @@ public class Database implements IDatabase{
         try{
             songs.insert(createDBObject(song));
         }catch(MongoException me){
+            dbLogger.log(Level.WARNING, "Insert Song", me);
             return false;
         }
         return true;
@@ -118,5 +135,26 @@ public class Database implements IDatabase{
         
         return listOfSongs;
     }
-    
+
+    @Override
+    public boolean removeSong(Song song) {
+        try{
+            songs.remove(createDBObject(song));
+        }catch(MongoException me){
+            dbLogger.log(Level.WARNING, "Remove Song", me);
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public boolean updateSong(Song oldSong, Song newSong) {
+        try{
+            songs.update(createDBObject(oldSong), createDBObject(newSong));
+        }catch(MongoException me){
+            dbLogger.log(Level.WARNING, "Update Song", me);
+            return true;
+        }
+        return true;
+    }  
 }
