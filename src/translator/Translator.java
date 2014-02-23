@@ -2,12 +2,12 @@ package translator;
 import java.io.File;
 import java.io.IOException;
 
-import model.Song;
 import jm.music.data.Score;
 import jm.util.Play;
 import jm.util.Read;
 import jm.util.View;
 import jm.util.Write;
+import model.Song;
 
 public enum Translator  {
     INSTANCE;
@@ -37,18 +37,15 @@ public enum Translator  {
             theDir.mkdir();
         }
         
-        String path = "./output/" + name + ".midi";
-        File f = new File(path);
-        
-        if(f.exists() && !f.isDirectory()){
-            int i = 1;
-            while (f.exists()){
-                path = "./output/" + name + "(" + i + ")" + ".midi";                       
-                f = new File(path);
-                i++;
-            }
-        }
-        
+        int copy = 0;
+        File outputFile = null;
+        String path = "";
+        do {
+            path = "./output/" + name + (copy != 0 ? "-"+copy : "")+ ".midi";
+            outputFile = new File(path); 
+                // if dupe, filename is appended "-1"
+            copy++;
+        } while (outputFile.exists());
         Write.midi(song.getScore(), path);
         return path;
     }

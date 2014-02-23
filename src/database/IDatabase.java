@@ -36,4 +36,12 @@ public interface IDatabase {
      * @return Boolean value depending on if update is successful 
      * */
     public boolean updateSong(Song oldSong, Song newSong);
+    
+    /**
+     * Drop database if exists
+     * @param dbName 
+     *          name of the database to drop
+     */
+    public void dropDb(String dbName);
+    
 }

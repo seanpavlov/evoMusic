@@ -99,6 +99,7 @@ public class Song {
      *         NONE
      */
     public TrackTag getTrackTag(int trackIndex) {
+        TrackTag t = TrackTag.NONE;
         return TrackTag.NONE;
         // TODO implement actual code.
         // What happens if trackIndex is out of bounds? throw
@@ -118,7 +119,7 @@ public class Song {
         // TODO implement actual code.
     }
 
-    public void setTrackTags(List<String> trackTags) {
+    public void setTrackTags(List<TrackTag> trackTags) {
         // TODO Auto-generated method stub
         
     }
