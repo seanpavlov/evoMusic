@@ -31,6 +31,7 @@ public class GeneticAlgorithm {
     private double minimumRating;
     private int minimumIterations;
     private int numberOfIterations;
+    private int iterationsDone;
 
     /**
      * Creates a new instance of this class. Defaults elitism to true, to throw
@@ -67,6 +68,10 @@ public class GeneticAlgorithm {
         setMinimumIterations(0);
         this.numberOfIterations = 0;
 
+    }
+    
+    public int getIterationsDone() {
+        return iterationsDone;
     }
 
     private void addIndividuals(List<Song> songList,
