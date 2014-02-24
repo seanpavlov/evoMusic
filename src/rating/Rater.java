@@ -50,8 +50,9 @@
          for (ISubRater is : subraters){
              rating = 0;
              for (Song s : songs){
-                 rating += is.rate(s) / songs.length;
+                 rating += is.rate(s);
              }
+             rating = rating / songs.length;
              is.setWeight(rating);
          }
      }
