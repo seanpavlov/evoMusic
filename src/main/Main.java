@@ -1,18 +1,16 @@
 package main;
 
-import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
-
-import model.Song;
-import mutation.Mutator;
-import rating.UserRater;
-import translator.Translator;
+import controller.GAHandler;
+import controller.InputController;
 
 public class Main {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         
+        GAHandler gaHandler = new GAHandler();
+        Thread gaHandlerThread = new Thread(gaHandler);
+        Thread inputControllerThread = new Thread(new InputController(gaHandler));
+        gaHandlerThread.start();
+        inputControllerThread.start();
     }
-
 }
