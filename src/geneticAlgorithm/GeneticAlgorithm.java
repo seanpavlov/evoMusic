@@ -53,12 +53,13 @@ public class GeneticAlgorithm {
             Crossover crossover, Rater rater) {
 
         setMutator(mutator);
-        setCrossover(crossover);
         setRater(rater);
 
         this.parents = new ArrayList<Individual>();
         this.currentGeneration = new ArrayList<Individual>();
         addIndividuals(parents, this.parents);
+
+        setCrossover(crossover);
 
         setNumberOfParents(this.parents.size());
         setGenerationSize(3);
