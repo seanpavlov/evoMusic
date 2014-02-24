@@ -9,10 +9,19 @@ public class Rater {
     List<ISubRater> subraters = new ArrayList<ISubRater>();
 
     /**
-     * Initialize all raters with 0 weights
+     * Creates a new Rater with no subraters.
      */
     public Rater() {
+    }
 
+    /**
+     * Creates a new Rater with a given list of ISubRater.
+     * 
+     * @param subraters
+     *            The given list of ISubRater.
+     */
+    public Rater(List<ISubRater> subraters) {
+        this.addSubRater(subraters);
     }
 
     /**
@@ -39,10 +48,23 @@ public class Rater {
     }
 
     /**
-     * Add a Subrater to the list of raters
+     * Adds a subrater to this rater's list of raters.
+     * 
+     * @param subRater
+     *            The ISubRater to be added.
      */
     public void addSubRater(ISubRater subRater) {
         this.subraters.add(subRater);
+    }
+
+    /**
+     * Adds a list of subraters to this rater's list of subraters.
+     * 
+     * @param subraters
+     *            The list of ISubRater to be added.
+     */
+    public void addSubRater(List<ISubRater> subraters) {
+        this.subraters.addAll(subraters);
     }
 
     /**
