@@ -208,6 +208,7 @@ public class GeneticAlgorithm {
             
             setNewParents();
             createMutateRateGeneration();
+            iterationsDone++;
         }
     }
 
@@ -226,6 +227,7 @@ public class GeneticAlgorithm {
         while (numberOfIterations < n) {
             setNewParents();
             createMutateRateGeneration();
+            iterationsDone++;
         }
     }
 
