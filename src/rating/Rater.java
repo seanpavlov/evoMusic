@@ -34,16 +34,14 @@ public class Rater {
     public double rate(Song song) {
 
         double rating = 0.0;
-        double weightAvg = 0.0;
+        double sumOfweights = 0.0;
         for (ISubRater subRater : subraters) {
-            weightAvg += subRater.getWeight();
+            sumOfweights += subRater.getWeight();
             if (subRater.shouldRate()) {
                 rating += subRater.rate(song) * subRater.getWeight();
             }
         }
-        rating = rating / subraters.size();
-        weightAvg = weightAvg / subraters.size();
-        rating = rating / weightAvg;
+        rating = rating / sumOfweights;
         return rating;
     }
 
