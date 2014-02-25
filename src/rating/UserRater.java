@@ -24,7 +24,7 @@ public class UserRater implements ISubRater {
         Scanner sc = new Scanner(System.in);
         System.out.println("Waiting for user rating input : ");
         rating = sc.nextDouble();
-        return rating * weight;
+        return rating;
     }
 
     @Override
