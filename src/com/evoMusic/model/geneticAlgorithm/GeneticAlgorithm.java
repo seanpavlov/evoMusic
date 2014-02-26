@@ -110,7 +110,6 @@ public class GeneticAlgorithm {
      */
     public void setCrossover(Crossover crossover) {
         this.crossover = crossover;
-        this.crossover.setParents(getSongfromIndividuals(parents));
     }
 
     /**
@@ -253,7 +252,7 @@ public class GeneticAlgorithm {
         currentGeneration.clear();
         Song newChild;
         for (int i = 0; i < generationSize; i++) {
-            newChild = crossover.makeCrossover();
+            newChild = crossover.makeCrossover(parents);
             currentGeneration.add(new Individual(newChild, rater.rate(newChild)));
             // mutator.mutate(newChild);
         }
