@@ -89,7 +89,8 @@ public class MongoDatabase implements IDatabase {
         final LinkedList<DBEnum<TrackTag>> tracks = new LinkedList<DBEnum<TrackTag>>();
 
         for (int i = 0; i < nbrOfTracks; i++) {
-            tracks.add(DBEnum.of(song.getTrackTag(i)));
+            //tracks.add(DBEnum.of(song.getTrackTag(i)));
+            // TODO Fix so that it can take multiple track tags.
         }
 
         return new BasicDBObject(TITLE_KEY, song.getTitle())
