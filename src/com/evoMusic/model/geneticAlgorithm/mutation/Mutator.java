@@ -1,10 +1,11 @@
-package mutation;
+package com.evoMusic.model.geneticAlgorithm.mutation;
 
 import java.util.Vector;
 
+import com.evoMusic.model.Song;
+
 import jm.music.data.Note;
 import jm.music.data.Phrase;
-import model.Song;
 
 public class Mutator {
     private double mutationProbability;

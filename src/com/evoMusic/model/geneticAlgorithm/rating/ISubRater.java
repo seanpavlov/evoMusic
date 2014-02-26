@@ -1,6 +1,6 @@
-package rating;
+package com.evoMusic.model.geneticAlgorithm.rating;
 
-import model.Song;
+import com.evoMusic.model.Song;
 
 public interface ISubRater {
     

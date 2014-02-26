@@ -1,13 +1,14 @@
-package model;
+package com.evoMusic.model;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.evoMusic.model.enumerators.TrackTag;
+
 import jm.music.data.Part;
 import jm.music.data.Score;
-import enumerators.TrackTag;
 
 /**
  * A class that uses the properties from the Score class.

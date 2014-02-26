@@ -1,4 +1,4 @@
-package geneticAlgorithm;
+package com.evoMusic.model.geneticAlgorithm;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -7,10 +7,9 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
-import model.Song;
-import mutation.Mutator;
-import rating.Rater;
-import crossover.Crossover;
+import com.evoMusic.model.Song;
+import com.evoMusic.model.geneticAlgorithm.mutation.Mutator;
+import com.evoMusic.model.geneticAlgorithm.rating.Rater;
 
 /**
  * 

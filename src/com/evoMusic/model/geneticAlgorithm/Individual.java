@@ -1,6 +1,6 @@
-package geneticAlgorithm;
+package com.evoMusic.model.geneticAlgorithm;
 
-import model.Song;
+import com.evoMusic.model.Song;
 
 public class Individual implements Comparable<Individual> {
 

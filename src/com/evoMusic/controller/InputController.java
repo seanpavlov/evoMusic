@@ -1,4 +1,5 @@
-package controller;
+package com.evoMusic.controller;
+
 
 
 public class InputController implements Runnable {

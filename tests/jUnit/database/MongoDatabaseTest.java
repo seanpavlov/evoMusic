@@ -7,14 +7,14 @@ import jUnit.TestSuite;
 import java.io.IOException;
 import java.util.List;
 
-import model.Song;
-
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import translator.Translator;
-import database.MongoDatabase;
+import com.evoMusic.database.MongoDatabase;
+import com.evoMusic.model.Song;
+import com.evoMusic.model.Translator;
+
 
 public class MongoDatabaseTest {
 

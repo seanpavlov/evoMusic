@@ -1,6 +1,6 @@
-package controller;
+package com.evoMusic.controller;
 
-import geneticAlgorithm.GeneticAlgorithm;
+import com.evoMusic.model.geneticAlgorithm.GeneticAlgorithm;
 
 public class GAHandler implements Runnable {
 

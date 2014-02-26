@@ -1,13 +1,14 @@
-package crossover;
+package com.evoMusic.model.geneticAlgorithm;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
+import com.evoMusic.model.Song;
+
 import jm.music.data.Part;
 import jm.music.data.Phrase;
 import jm.music.data.Score;
-import model.Song;
 
 public class Crossover {
 

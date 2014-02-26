@@ -1,4 +1,4 @@
-package translator;
+package com.evoMusic.model;
 import java.io.File;
 import java.io.IOException;
 
@@ -7,7 +7,6 @@ import jm.util.Play;
 import jm.util.Read;
 import jm.util.View;
 import jm.util.Write;
-import model.Song;
 
 public enum Translator  {
     INSTANCE;

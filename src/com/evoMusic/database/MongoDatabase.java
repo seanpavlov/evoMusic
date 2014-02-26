@@ -1,4 +1,4 @@
-package database;
+package com.evoMusic.database;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -11,9 +11,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
-import model.Song;
-import translator.Translator;
-
+import com.evoMusic.model.Song;
+import com.evoMusic.model.Translator;
+import com.evoMusic.model.enumerators.TrackTag;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
@@ -22,8 +22,6 @@ import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoException;
-
-import enumerators.TrackTag;
 
 public class MongoDatabase implements IDatabase {
 

@@ -1,9 +1,9 @@
-package database;
+package com.evoMusic.database;
 
 import java.io.IOException;
 import java.util.List;
 
-import model.Song;
+import com.evoMusic.model.Song;
 
 public interface IDatabase {
     

@@ -1,7 +1,7 @@
-package main;
+package com.evoMusic;
 
-import controller.GAHandler;
-import controller.InputController;
+import com.evoMusic.controller.GAHandler;
+import com.evoMusic.controller.InputController;
 
 public class Main {
 

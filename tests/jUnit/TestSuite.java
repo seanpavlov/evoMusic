@@ -7,7 +7,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
-import database.MongoDatabase;
+import com.evoMusic.database.MongoDatabase;
+
 
 @RunWith(Suite.class)
 @SuiteClasses({ MongoDatabaseTest.class })

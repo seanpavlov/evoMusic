@@ -1,9 +1,9 @@
-package rating;
+package com.evoMusic.model.geneticAlgorithm.rating;
 
 import java.util.Scanner;
 
-import translator.Translator;
-import model.Song;
+import com.evoMusic.model.Song;
+import com.evoMusic.model.Translator;
 
 public class UserRater implements ISubRater {
     private double weight;

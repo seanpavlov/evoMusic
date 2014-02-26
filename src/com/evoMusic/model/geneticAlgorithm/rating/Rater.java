@@ -1,9 +1,9 @@
-package rating;
+package com.evoMusic.model.geneticAlgorithm.rating;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import model.Song;
+import com.evoMusic.model.Song;
 
 public class Rater {
     List<ISubRater> subraters = new ArrayList<ISubRater>();
