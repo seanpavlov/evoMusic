@@ -1,11 +1,13 @@
 package com.evoMusic.model.geneticAlgorithm;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
 import com.evoMusic.model.Song;
+import com.evoMusic.model.enumerators.TrackTag;
 
 import jm.music.data.Part;
 import jm.music.data.Phrase;
@@ -48,7 +50,9 @@ public class Crossover {
      * @return The resulting Song object of the cross mutation.
      */
     public Song makeCrossover(List<Individual> parents) {
-
+        for (TrackTag t: getCommonTracks(parents)){
+            System.out.println(t.toString());
+        }
         Map<Individual, Phrase[]> phraseSections = new HashMap<Individual, Phrase[]>();
         for (int i = 0; i < parents.size(); i++) {
             phraseSections.put(parents.get(i), getPhraseIntersections(parents
@@ -74,6 +78,27 @@ public class Crossover {
                 "Generated from crossover", averageTempo);
 
         return new Song(finalScore);
+    }
+    
+    /**
+     * Returns a list of all common tags that all individuals have
+     * 
+     * @param parents
+     * @return
+     */
+    private List<TrackTag> getCommonTracks(List<Individual> parents){
+        List<TrackTag> commonTrackTags = new ArrayList<TrackTag>();
+        TrackTag[] tracks = TrackTag.values();
+        
+        for (TrackTag tag : tracks){
+            commonTrackTags.add(tag);
+            for (Individual i : parents){
+               if (i.getSong().getTaggedTracks(tag).isEmpty()){
+                   commonTrackTags.remove(tag);
+               }
+            }
+        }
+        return commonTrackTags;
     }
 
     /**
