@@ -5,8 +5,10 @@ import static org.junit.Assert.assertTrue;
 import jUnit.TestSuite;
 
 import java.io.IOException;
+import java.util.LinkedList;
 import java.util.List;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -19,6 +21,7 @@ import com.evoMusic.model.Translator;
 public class MongoDatabaseTest {
 
     private Song testSong;
+    private static List<Song> testSongs;
     private static MongoDatabase mDb;
 
     @BeforeClass
@@ -27,6 +30,7 @@ public class MongoDatabaseTest {
         // get to know about this before any tests are run. Also save instance
         // to mDb to save some keystrokes for the tests.
         mDb = MongoDatabase.getInstance();
+        testSongs = new LinkedList<Song>();
     }
     
     /**
@@ -55,10 +59,10 @@ public class MongoDatabaseTest {
         List<Song> songs = mDb.retrieveSongs();
         assertTrue("The number of songs should have increased ",
                 nbrOfSongs < songs.size());
-        mDb.removeSong(testSong);
+        boolean removeResult = mDb.removeSong(testSong);
+        assertTrue(removeResult);
         songs = mDb.retrieveSongs();
-        assertTrue("The number of songs should be the same as before",
-                nbrOfSongs == songs.size());
+        assertTrue("The number of songs should be the same as before", nbrOfSongs == songs.size());
     }
 
 
@@ -68,10 +72,23 @@ public class MongoDatabaseTest {
         
         mDb.insertSong(testSong);
         Song newSong = Translator.INSTANCE.loadMidiToSong("midifiles/mm2wily1.mid");
-        newSong.getUserTags().add("GOOD");
-        mDb.updateSong(testSong, newSong);
+        testSongs.add(newSong);
+        newSong.addUserTag("GOOD");
+        boolean result = mDb.updateSong(testSong, newSong);
+        assertTrue(result);
         assertEquals("GOOD", mDb.retrieveSongs().get(0).getUserTags().get(0));
-
+    }
+    
+    
+    /**
+     * Clean up after the test class so we don't leave test songs in folders
+     * 
+     * */
+    @After
+    public void cleanUpSongs(){
+        for(Song song : testSongs){
+            mDb.removeFile(song.getTitle());
+        }
     }
 
 }

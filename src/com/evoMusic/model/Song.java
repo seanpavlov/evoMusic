@@ -28,7 +28,7 @@ public class Song {
      *            , where all musical notation will be copied from.
      */
     public Song(Score score) {
-        this.score = score.copy();
+        this.score = score;
     }
 
     /**
