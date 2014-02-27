@@ -5,8 +5,7 @@ import java.util.Scanner;
 import com.evoMusic.model.Song;
 import com.evoMusic.model.Translator;
 
-public class UserRater implements ISubRater {
-    private double weight;
+public class UserRater extends ISubRater {
     
     /**
      * Constructor, creates a user rater
@@ -14,7 +13,7 @@ public class UserRater implements ISubRater {
      * @param weight
      */
     public UserRater(double weight){
-        setWeight(weight);
+        super.setWeight(weight);
     }
     
     @Override
@@ -25,24 +24,5 @@ public class UserRater implements ISubRater {
         System.out.println("Waiting for user rating input : ");
         rating = sc.nextDouble();
         return rating;
-    }
-
-    @Override
-    public double getWeight() {
-        return weight;
-    }
-
-    @Override
-    public void setWeight(double weight) {
-        if (weight >= 0 && weight <= 1){
-            this.weight = weight;
-        } else {
-            System.err.println("Weight must be between 0 and 1");
-        }
-    }
-
-    @Override
-    public boolean shouldRate() {
-        return (weight!=0.0);
     }
 }
