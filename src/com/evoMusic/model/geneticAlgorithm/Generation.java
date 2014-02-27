@@ -20,7 +20,7 @@ public class Generation {
      *            The individuals that will create this generation.
      */
     public Generation(List<Individual> parents) {
-        this.parents = parents;
+        this.parents = new ArrayList<Individual>(parents);
     }
 
     public List<Individual> getParents() {

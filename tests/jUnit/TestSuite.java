@@ -11,7 +11,8 @@ import com.evoMusic.database.MongoDatabase;
 
 
 @RunWith(Suite.class)
-@SuiteClasses({ MongoDatabaseTest.class })
+//@SuiteClasses({ MongoDatabaseTest.class, GenerationTest.class })
+@SuiteClasses({ GenerationTest.class })
 /**
  * This is our test suite class. This class runs all our test classes. 
  * To get started with jUnit 4.x, here's a good article: 
@@ -28,7 +29,7 @@ public class TestSuite {
      * If a mongo db has not been installed or set up properly, we get to
      * know about this before any tests are run. 
      */
-    @BeforeClass
+    //@BeforeClass
     public static void setUpDb() {
         MongoDatabase.getInstance().dropDb(TEST_DB);
         MongoDatabase.getInstance().useDbName(TEST_DB);
