@@ -12,6 +12,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
+import jm.music.data.Part;
+
 import com.evoMusic.model.Song;
 import com.evoMusic.model.Translator;
 import com.evoMusic.model.enumerators.TrackTag;
@@ -86,11 +88,14 @@ public class MongoDatabase implements IDatabase {
         // array index is the same as track index
         // the tracks that are not used are stores as well
 
-        final LinkedList<DBEnum<TrackTag>> tracks = new LinkedList<DBEnum<TrackTag>>();
+        final LinkedList<List<DBEnum<TrackTag>>> tracks = new LinkedList<List<DBEnum<TrackTag>>>();
 
         for (int i = 0; i < nbrOfTracks; i++) {
-            //tracks.add(DBEnum.of(song.getTrackTag(i)));
-            // TODO Fix so that it can take multiple track tags.
+            LinkedList<DBEnum<TrackTag>> tagtracks = new LinkedList<DBEnum<TrackTag>>();
+            for(TrackTag tag : song.getTrackTags(i)){
+                tagtracks.add(DBEnum.of(tag));
+            }
+            tracks.add(tagtracks);
         }
         String path = "";
         if(write){
@@ -117,13 +122,19 @@ public class MongoDatabase implements IDatabase {
         final Song song = Translator.INSTANCE.loadMidiToSong(songPath);
 
         // set all track tags
-        final List<TrackTag> trackTags = new ArrayList<TrackTag>();
+        Part[] tracks = song.getScore().getPartArray();
+        //final List<TrackTag> trackTags = new ArrayList<TrackTag>();
         final BasicDBList mongoTrackTags = ((BasicDBList) dbDoc
                 .get(TRACK_REF_KEY));
-
+        int i = 0;
         for (Iterator<Object> trackTagIt = mongoTrackTags.iterator(); trackTagIt
-                .hasNext();) {
-            trackTags.add(DBEnum.to(TrackTag.class, trackTagIt.next()));
+                .hasNext();i++) {
+            List<TrackTag> trackTags = new ArrayList<TrackTag>();
+            List<DBEnum<TrackTag>> tagtrack = (List<DBEnum<TrackTag>>) trackTagIt.next();
+            for(DBEnum<TrackTag> dbenum : tagtrack){
+                trackTags.add(DBEnum.to(TrackTag.class, dbenum));
+            }
+            song.setTrackTags(trackTags);
         }
 
         // set all user tags
@@ -131,7 +142,7 @@ public class MongoDatabase implements IDatabase {
         userTags.addAll(Arrays.asList(((BasicDBList) dbDoc.get(USER_TAGS_KEY))
                 .toArray(new String[0])));
 
-        song.setTrackTags(trackTags);
+        //song.setTrackTags(trackTags);
         song.setUserTags(userTags);
         return song;
     }
