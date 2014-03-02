@@ -31,8 +31,8 @@ public class SimplifyMutator extends ISubMutator {
      */
     @Override
     public void mutate(Song song, int noteIndex) {
-        Note note = song.getScore().getPart(0).getPhrase(0).getNote(noteIndex);
         if (Math.random() < this.getProbability()) {
+            Note note = song.getScore().getPart(0).getPhrase(0).getNote(noteIndex);
             MidiUtil mu = new MidiUtil();
             int currentNoteIndex = noteIndex - 1;
             if(currentNoteIndex >= 0){
