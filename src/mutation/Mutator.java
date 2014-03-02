@@ -11,6 +11,7 @@ import model.Song;
 public class Mutator {
     private List<ISubMutator> subMutators = new ArrayList<ISubMutator>();
     private double overallMutationProbability;
+    private MidiUtil mu = new MidiUtil();
     
     /**
      * 
@@ -30,11 +31,12 @@ public class Mutator {
         int nbrOfNotes = individual.getScore().getPart(0).getPhrase(0).getNoteArray().length;
         
         for (int i = 0; i < nbrOfNotes; i++) {
-            if (Math.random() < overallMutationProbability) {
-                Note currentNote = individual.getScore().getPart(0).getPhrase(0).getNote(i);
-                for(ISubMutator subMutator : subMutators){
-                    if(Math.random() < subMutator.getProbability()){
-                        subMutator.mutate(individual, i);
+            if (!mu.isBlank(individual.getScore().getPart(0).getPhrase(0).getNote(i).getPitch())){
+                if (Math.random() < overallMutationProbability) {
+                    for(ISubMutator subMutator : subMutators){
+                        if(Math.random() < subMutator.getProbability()){
+                            subMutator.mutate(individual, i);
+                        }
                     }
                 }
             }
