@@ -41,40 +41,43 @@ public class ReverseMutator extends ISubMutator {
      */
     @Override
     public void mutate(Song song, int noteIndex) {
-        if (noteIndex > 0) {
-            MidiUtil mu = new MidiUtil();
-            int nbrOfTotalReversing = nbrOfAdditionalReversing + 1
-                    + ((int) Math.random() * nbrRange);
-            ArrayList<Integer> noteIndexes = new ArrayList<Integer>();
-            ArrayList<Note> notes = new ArrayList<Note>();
-            noteIndexes.add(noteIndex);
-            notes.add(song.getScore().getPart(0).getPhrase(0)
-                    .getNote(noteIndex));
-            int currentIndex = noteIndex - 1;
-            noteIteration: for (int i = 1; i < nbrOfTotalReversing; i++) {
-                while (mu.isBlank(currentIndex) && currentIndex >= 0) {
-                    currentIndex--;
+        if (Math.random() < this.getProbability()) {
+            if (noteIndex > 0) {
+                MidiUtil mu = new MidiUtil();
+                int nbrOfTotalReversing = nbrOfAdditionalReversing + 1
+                        + ((int) Math.random() * nbrRange);
+                ArrayList<Integer> noteIndexes = new ArrayList<Integer>();
+                ArrayList<Note> notes = new ArrayList<Note>();
+                noteIndexes.add(noteIndex);
+                notes.add(song.getScore().getPart(0).getPhrase(0)
+                        .getNote(noteIndex));
+                int currentIndex = noteIndex - 1;
+                noteIteration: for (int i = 1; i < nbrOfTotalReversing; i++) {
+                    while (mu.isBlank(currentIndex) && currentIndex >= 0) {
+                        currentIndex--;
+                    }
+                    if (currentIndex < 0) {
+                        break noteIteration;
+                    } else {
+                        noteIndexes.add(currentIndex);
+                        notes.add(song.getScore().getPart(0).getPhrase(0)
+                                .getNote(currentIndex));
+                    }
                 }
-                if (currentIndex < 0) {
-                    break noteIteration;
-                } else {
-                    noteIndexes.add(currentIndex);
-                    notes.add(song.getScore().getPart(0).getPhrase(0)
-                            .getNote(currentIndex));
-                }
-            }
-            int totalReverses = noteIndexes.size();
-            for (int j = 0; j < noteIndexes.size(); j++) {
-                if (withRhythmLength) {
-                    song.getScore()
-                            .getPart(0)
-                            .getPhrase(0)
-                            .setNote(notes.get(totalReverses - 1 - j),
-                                    noteIndexes.get(j));
-                } else {
-                    int newPitch = notes.get(totalReverses - 1 - j).getPitch();
-                    song.getScore().getPart(0).getPhrase(0)
-                            .getNote(noteIndexes.get(j)).setPitch(newPitch);
+                int totalReverses = noteIndexes.size();
+                for (int j = 0; j < noteIndexes.size(); j++) {
+                    if (withRhythmLength) {
+                        song.getScore()
+                                .getPart(0)
+                                .getPhrase(0)
+                                .setNote(notes.get(totalReverses - 1 - j),
+                                        noteIndexes.get(j));
+                    } else {
+                        int newPitch = notes.get(totalReverses - 1 - j)
+                                .getPitch();
+                        song.getScore().getPart(0).getPhrase(0)
+                                .getNote(noteIndexes.get(j)).setPitch(newPitch);
+                    }
                 }
             }
         }
