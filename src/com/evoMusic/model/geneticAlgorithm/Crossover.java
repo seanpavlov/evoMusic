@@ -1,17 +1,18 @@
-package crossover;
+package com.evoMusic.model.geneticAlgorithm;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
+
+import com.evoMusic.model.Song;
 
 import jm.music.data.Part;
 import jm.music.data.Phrase;
 import jm.music.data.Score;
-import model.Song;
 
 public class Crossover {
 
-    private Song[] parents;
     private int numberOfIntersections;
     Random randomGen;
 
@@ -22,9 +23,8 @@ public class Crossover {
      * @param parents
      *            The Song objects that will be used during crossover.
      */
-    public Crossover(Song[] parents) {
-        this.parents = parents;
-        this.numberOfIntersections = parents.length;
+    public Crossover(int numberOfIntersections) {
+        setNumberOfIntersections(numberOfIntersections);
         randomGen = new Random();
     }
 
@@ -47,43 +47,33 @@ public class Crossover {
      * 
      * @return The resulting Song object of the cross mutation.
      */
-    public Song makeCrossover() {
+    public Song makeCrossover(List<Individual> parents) {
 
-        Map<Song, Phrase[]> phraseSections = new HashMap<Song, Phrase[]>();
-        for (int i = 0; i < parents.length; i++) {
-            phraseSections.put(parents[i], getPhraseIntersections(parents[i]
-                    .getTrack(0).getPhrase(0)));
+        Map<Individual, Phrase[]> phraseSections = new HashMap<Individual, Phrase[]>();
+        for (int i = 0; i < parents.size(); i++) {
+            phraseSections.put(parents.get(i), getPhraseIntersections(parents
+                    .get(i).getSong().getTrack(0).getPhrase(0)));
         }
 
         Phrase sumPhrase = new Phrase();
         int nextRandom;
         for (int i = 0; i < numberOfIntersections; i++) {
-            nextRandom = (int) (randomGen.nextDouble() * parents.length);
-            sumPhrase.addNoteList(phraseSections.get(parents[nextRandom])[i]
-                    .getNoteArray());
+            nextRandom = (int) (randomGen.nextDouble() * parents.size());
+            sumPhrase
+                    .addNoteList(phraseSections.get(parents.get(nextRandom))[i]
+                            .getNoteArray());
         }
 
         double averageTempo = 0;
-        for (int i = 0; i < parents.length; i++) {
-            averageTempo += parents[i].getTempo();
+        for (int i = 0; i < parents.size(); i++) {
+            averageTempo += parents.get(i).getSong().getTempo();
         }
-        averageTempo = averageTempo / parents.length;
+        averageTempo = averageTempo / parents.size();
 
         Score finalScore = new Score(new Part(sumPhrase),
                 "Generated from crossover", averageTempo);
 
         return new Song(finalScore);
-    }
-
-    /**
-     * Sets the active parents that will be used during crossover. The old
-     * parents will no longer be used by this class.
-     * 
-     * @param parents
-     *            The Song parents that are to be used in the cross mutation.
-     */
-    public void setParents(Song[] parents) {
-        this.parents = parents;
     }
 
     /**

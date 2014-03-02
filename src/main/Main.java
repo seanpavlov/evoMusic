@@ -4,13 +4,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import model.Song;
-import mutation.ISubMutator;
-import mutation.Mutator;
-import mutation.ScaleOfFifthMutator;
-import mutation.SimplifyMutator;
-import translator.Translator;
-import crossover.Crossover;
+import com.evoMusic.model.geneticAlgorithm.mutation.*;
+import com.evoMusic.model.*;
 
 public class Main {
 

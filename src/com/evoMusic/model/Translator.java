@@ -1,8 +1,7 @@
-package translator;
+package com.evoMusic.model;
 import java.io.File;
 import java.io.IOException;
 
-import model.Song;
 import jm.music.data.Score;
 import jm.util.Play;
 import jm.util.Read;
@@ -19,7 +18,13 @@ public enum Translator  {
      * @param path, relative path to MIDI file
      */
     public Song loadMidiToSong(String path) throws IOException {
-        Score score = new Score();
+        //Remove appendix
+        String name = path.split("\\.")[0];
+        int pathStructure = name.lastIndexOf("/");
+        //If '/' does exist in filename, meaning its a path, substring from last appearance
+        if(pathStructure != -1)
+             name = name.substring(++pathStructure);
+        Score score = new Score(name);
         Read.midi(score, path);
         
         return new Song(score);
@@ -37,18 +42,15 @@ public enum Translator  {
             theDir.mkdir();
         }
         
-        String path = "./output/" + name + ".midi";
-        File f = new File(path);
-        
-        if(f.exists() && !f.isDirectory()){
-            int i = 1;
-            while (f.exists()){
-                path = "./output/" + name + "(" + i + ")" + ".midi";                       
-                f = new File(path);
-                i++;
-            }
-        }
-        
+        int copy = 0;
+        File outputFile = null;
+        String path = "";
+        do {
+            path = "./output/" + name + (copy != 0 ? "-"+copy : "")+ ".midi";
+            outputFile = new File(path); 
+                // if dupe, filename is appended "-1"
+            copy++;
+        } while (outputFile.exists());
         Write.midi(song.getScore(), path);
         return path;
     }
