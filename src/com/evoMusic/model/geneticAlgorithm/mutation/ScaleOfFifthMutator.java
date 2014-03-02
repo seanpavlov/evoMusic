@@ -33,8 +33,8 @@ public class ScaleOfFifthMutator extends ISubMutator {
                     .getNote(noteIndex);
             int nbrOfSteps = (int) ((Math.random() * stepRange) + 1);
             int pitchNbr = note.getPitch();
-            if (mu.canRaiseNote(pitchNbr, nbrOfSteps)) {
-                if (mu.canLowerNote(pitchNbr, nbrOfSteps)) {
+            if (mu.canRaiseNote(pitchNbr, (5 * nbrOfSteps))) {
+                if (mu.canLowerNote(pitchNbr, (5 * nbrOfSteps))) {
                     if (Math.random() < 0.5) {
                         note.setPitch(pitchNbr - (5 * nbrOfSteps));
                     } else {
@@ -43,7 +43,7 @@ public class ScaleOfFifthMutator extends ISubMutator {
                 } else {
                     note.setPitch(pitchNbr + (5 * nbrOfSteps));
                 }
-            } else if (mu.canLowerNote(pitchNbr, nbrOfSteps)) {
+            } else if (mu.canLowerNote(pitchNbr, (5 * nbrOfSteps))) {
                 note.setPitch(pitchNbr - (5 * nbrOfSteps));
             }
             song.getScore().getPart(0).getPhrase(0).setNote(note, noteIndex);
