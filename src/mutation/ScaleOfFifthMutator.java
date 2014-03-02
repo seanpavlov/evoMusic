@@ -23,7 +23,7 @@ public class ScaleOfFifthMutator extends ISubMutator {
             int nbrOfSteps = (int) ((Math.random() * stepRange) + 1);
             int pitchNbr = note.getPitch();
             System.out.print("Old pitch: " + note.getPitch());
-            if (!mu.isCorrupt(pitchNbr)) {
+            if (!mu.isBlank(pitchNbr)) {
                 if (mu.canRaiseNote(pitchNbr, nbrOfSteps)) {
                     if (mu.canLowerNote(pitchNbr, nbrOfSteps)) {
                         if (Math.random() < 0.5) {
