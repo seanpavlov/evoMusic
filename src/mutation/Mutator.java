@@ -1,5 +1,7 @@
 package mutation;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 import jm.music.data.Note;
@@ -7,63 +9,43 @@ import jm.music.data.Phrase;
 import model.Song;
 
 public class Mutator {
-    private double mutationProbability;
+    private List<ISubMutator> subMutators = new ArrayList<ISubMutator>();
+    
+    private double overallMutationProbability;
     private static double JUST_AND_EQUAL_TEMPERAMENT_SCALE = Math.pow(2,
             (1.0 / 12.0));
     private static int STEP_RANGE = 3;
     private static double LOWER_NOTE_PROBABILITY = 0.5;
     private static double MINIMUM_FREQUENCY = 27.500;
     private static double MAXIMUM_FREQUENCY = 4186.0;
-    private Phrase newTrack; 
 
     /**
-     * Handling the mutation. Each instance will use their own parameters, then
-     * it can be used for many songs if the user want to.
      * 
-     * @param mutationProbability
-     *            is the probability of the note to mutate.
+     * @param subMutators
+     * @param overallMutationProbability
      */
-    public Mutator(double mutationProbability) {
-        this.mutationProbability = mutationProbability;
+    public Mutator(List<ISubMutator> subMutators, double overallMutationProbability) {
+        this.subMutators = subMutators;
+        this.overallMutationProbability = overallMutationProbability;
     }
 
     /**
-     * Mutates the song with the probability mutationProbability. The new note
-     * is within the interval 50-100 right now.
      * 
      * @param individual
-     *            is the song to be mutated.
-     * @return the mutated song.
      */
-    public mutate(Song individual) {
-        int nbrOfNotes = newTrack.getNoteArray().length;
+    public void mutate(Song individual) {
+        int nbrOfNotes = individual.getScore().getPart(0).getPhrase(0).getNoteArray().length;
+        
         for (int i = 0; i < nbrOfNotes; i++) {
-            if (Math.random() < mutationProbability) {
-                double currentFrequency = newTrack.getNoteArray()[i]
-                        .getFrequency();
-                if (currentFrequency > MINIMUM_FREQUENCY
-                        && currentFrequency < MAXIMUM_FREQUENCY) {
-                    
-//                    double newFrequency = changeEven(currentFrequency);
-//                    double newFrequency = changeInFifthNote(currentFrequency);
-                    
-                    // Testing swap notes
-                    Note temp = newTrack.getNoteArray()[i];
-                    if(i-1 >= 0 && newTrack.getNoteArray()[i-1].getFrequency() > MINIMUM_FREQUENCY){
-                        Note prevNote = newTrack.getNoteArray()[i-1];
-                        newTrack.setNote(new Note(prevNote.getFrequency(), temp.getRhythmValue()), i);
-                        newTrack.setNote(new Note(temp.getFrequency(), prevNote.getRhythmValue()), i-1);
+            if (Math.random() < overallMutationProbability) {
+                Note currentNote = individual.getScore().getPart(0).getPhrase(0).getNote(i);
+                for(ISubMutator subMutator : subMutators){
+                    if(Math.random() < subMutator.getProbability()){
+                        subMutator.mutate(individual, currentNote);
                     }
-//                    Note newNote = new Note(newFrequency,
-//                            currentTrack.getNoteArray()[i].getRhythmValue());
-//                    currentTrack.setNote(newNote, i);
                 }
             }
         }
-        Vector newPhraseList = new Vector();
-        newPhraseList.add(newTrack);
-        individual.getScore().getPart(0).setPhraseList(newPhraseList);
-        return individual;
     }
 
     /**

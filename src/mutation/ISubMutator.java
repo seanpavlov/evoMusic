@@ -1,20 +1,29 @@
 package mutation;
 
-import jm.music.data.Phrase;
+import jm.music.data.Note;
+import model.Song;
 
-public interface ISubMutator {
+public abstract class ISubMutator {
+    
+    private double mutationProbability;
+    
+    public ISubMutator(double mutationProbability) {
+        this.mutationProbability = mutationProbability;
+    }
     
     /**
      * Mutates a phrase and send it back.
      * @param origPhrase is the phrase to be mutated
      * @return the mutated phrase
      */
-    public void mutate(Phrase origPhrase, double probability);
+    abstract public void mutate(Song song, Note note);
 
     /**
      * Get the probability of using the sub-mutator.
      * @return
      */
-    public double getProbability();
+    public double getProbability(){
+        return mutationProbability;
+    }
 
 }
