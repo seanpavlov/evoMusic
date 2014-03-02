@@ -69,15 +69,14 @@ public class MidiUtil {
     }
 
     /**
-     * Since MIDI-files or jMusic can show corrupt data, for example -2147483648
-     * on getPitch(), this check if it is corrupt. TODO: See what causes corrupt
-     * data when doing getPitch() in Note. MIDI-files or jMusic.
+     * When iterating throughout the notes, some of them can be blank. These
+     * notes are showing as -2147483648 and therefore need to be handled.
      * 
      * @param midiNbr
      *            is the MIDI number in range of 0-127.
-     * @return true if it is corrupted and false otherwise.
+     * @return true if it is blank and false otherwise.
      */
-    public boolean isCorrupt(int midiNbr) {
+    public boolean isBlank(int midiNbr) {
         return (midiNbr > 127 || midiNbr < 0);
     }
 }
