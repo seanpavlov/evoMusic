@@ -2,6 +2,10 @@ package com.evoMusic.model;
 import java.io.File;
 import java.io.IOException;
 
+import org.apache.commons.io.FileUtils;
+
+import jm.midi.MidiParser;
+import jm.midi.SMF;
 import jm.music.data.Score;
 import jm.util.Play;
 import jm.util.Read;
@@ -16,17 +20,28 @@ public enum Translator  {
      * on load success. 
      * 
      * @param path, relative path to MIDI file
+     * @throws IOException 
      */
     public Song loadMidiToSong(String path) throws IOException {
-        //Remove appendix
-        String name = path.split("\\.")[0];
-        int pathStructure = name.lastIndexOf("/");
-        //If '/' does exist in filename, meaning its a path, substring from last appearance
-        if(pathStructure != -1)
-             name = name.substring(++pathStructure);
-        Score score = new Score(name);
-        Read.midi(score, path);
+
+        // split "./something/etc/file.midi"
+        final String[] splitPath = path.split("/");
+        // last item is "file.midi" and then "file"
+        final String name = splitPath[splitPath.length-1].split("\\.")[0];
+        final Score score = new Score(name);
         
+        final File midiFile = new File(path);
+        if(!midiFile.exists()) {
+            IOException up = new IOException("ERROR: " +path+ " does not exists");
+            throw up; 
+        }
+        
+        // Using this method to avoid some annoying printing by jMusic.
+        // It still prints "Convert SMF to JM". It appears to be hardcoded
+        SMF midi = new SMF();
+        System.out.println("hello.");
+        MidiParser.SMFToScore(score, midi);
+        System.out.println("hello.");
         return new Song(score);
     }
 

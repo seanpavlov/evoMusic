@@ -76,9 +76,11 @@ public class MongoDatabase implements IDatabase {
     /**
      * Creates database representation from given Song object
      * 
-     * @param song Song object to be saved to the database
-     * @param write bool value to determine if it should write midi file
-     * @return DBObject mongo database object representing the song 
+     * @param song
+     *            Song object to be saved to the database
+     * @param write
+     *            bool value to determine if it should write midi file
+     * @return DBObject mongo database object representing the song
      * */
     private DBObject createDBObject(Song song, boolean write) {
         final int nbrOfTracks = song.getNbrOfTracks();
@@ -89,32 +91,38 @@ public class MongoDatabase implements IDatabase {
         final LinkedList<DBEnum<TrackTag>> tracks = new LinkedList<DBEnum<TrackTag>>();
 
         for (int i = 0; i < nbrOfTracks; i++) {
-            //tracks.add(DBEnum.of(song.getTrackTag(i)));
+            // tracks.add(DBEnum.of(song.getTrackTag(i)));
             // TODO Fix so that it can take multiple track tags.
         }
         String path = "";
-        if(write){
-            path = Translator.INSTANCE.saveSongToMidi(song,
-                song.getTitle());
-        }else{
+        if (write) {
+            path = Translator.INSTANCE.saveSongToMidi(song, song.getTitle());
+        } else {
             path = this.removeFile(song.getTitle());
         }
 
         return new BasicDBObject(TITLE_KEY, song.getTitle())
-                .append(TRACK_REF_KEY, tracks)
-                .append(MIDI_PATH_KEY, path)
+                .append(TRACK_REF_KEY, tracks).append(MIDI_PATH_KEY, path)
                 .append(USER_TAGS_KEY, song.getUserTags());
     }
 
     /**
      * Creates Song object from database representation
      * 
-     * @param dbDoc Database representation of a Song Object
+     * @param dbDoc
+     *            Database representation of a Song Object
      * @return Song song object from database
      * */
-    private Song createSongObject(BasicDBObject dbDoc) throws IOException {
+    private Song createSongObject(BasicDBObject dbDoc) {
         final String songPath = dbDoc.getString(MIDI_PATH_KEY);
-        final Song song = Translator.INSTANCE.loadMidiToSong(songPath);
+        Song song;
+        try {
+            song = Translator.INSTANCE.loadMidiToSong(songPath);
+        } catch (IOException e) {
+            System.out.println("WARN: an error occured when loading file"
+                    + songPath);
+            return null;
+        }
 
         // set all track tags
         final List<TrackTag> trackTags = new ArrayList<TrackTag>();
@@ -141,7 +149,8 @@ public class MongoDatabase implements IDatabase {
      * {@link MongoDatabase#DB_NAME} but may be manually set for i.e. testing
      * purposes
      * 
-     * @param dbName The new name to use.
+     * @param dbName
+     *            The new name to use.
      */
     public void useDbName(String dbName) {
         db = mongoClient.getDB(dbName);
@@ -163,17 +172,14 @@ public class MongoDatabase implements IDatabase {
     public List<Song> retrieveSongs() {
         List<Song> listOfSongs = new LinkedList<Song>();
         DBCursor cursor = songs.find();
-        try {
-            while (cursor.hasNext()) {
-                listOfSongs.add(this.createSongObject((BasicDBObject) cursor
-                        .next()));
+        Song song = null;
+        while (cursor.hasNext()) {
+            song = createSongObject((BasicDBObject) cursor.next());
+            if (song != null) {
+                listOfSongs.add(song);
             }
-        } catch (IOException e) {
-            System.err.println("WARN: unable to recreate instance from db: "
-                    + e.getMessage());
-        } finally {
-            cursor.close();
         }
+        cursor.close();
 
         return listOfSongs;
     }
@@ -192,7 +198,8 @@ public class MongoDatabase implements IDatabase {
     @Override
     public boolean updateSong(Song oldSong, Song newSong) {
         try {
-            songs.update(createDBObject(oldSong, false), createDBObject(newSong, true));
+            songs.update(createDBObject(oldSong, false),
+                    createDBObject(newSong, true));
         } catch (MongoException me) {
             dbLogger.log(Level.WARNING, "Update Song", me);
             return false;
@@ -204,17 +211,18 @@ public class MongoDatabase implements IDatabase {
     public void dropDb(String dbName) {
         mongoClient.dropDatabase(dbName);
     }
-    
+
     /**
      * Removes a file in output folder if it exists
      * 
-     * @param fileName name of the file to remove
+     * @param fileName
+     *            name of the file to remove
      * @return path path to the removed file
      */
-    public String removeFile(String fileName){       
+    public String removeFile(String fileName) {
         String path = "./output/" + fileName + ".midi";
-        File outputFile = new File(path); 
-        if(outputFile.exists()){
+        File outputFile = new File(path);
+        if (outputFile.exists()) {
             outputFile.delete();
         }
         return path;

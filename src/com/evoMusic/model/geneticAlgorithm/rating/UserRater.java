@@ -19,10 +19,11 @@ public class UserRater extends SubRater {
     @Override
     public double rate(Song song) {
         double rating = 0.0;
-        Translator.INSTANCE.playSong(song);
-        Scanner sc = new Scanner(System.in);
-        System.out.println("Waiting for user rating input : ");
-        rating = sc.nextDouble();
-        return rating;
+        return Math.random();
+//        Translator.INSTANCE.playSong(song);
+//        Scanner sc = new Scanner(System.in);
+//        System.out.println("Waiting for user rating input : ");
+//        rating = sc.nextDouble();
+//        return rating;
     }
 }

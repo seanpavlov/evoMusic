@@ -6,6 +6,7 @@ public class GAHandler implements Runnable {
 
     private GeneticAlgorithm geneticAlgorithm;
 
+    private boolean isRunning = false;
     public GAHandler() {
     }
 
@@ -18,7 +19,7 @@ public class GAHandler implements Runnable {
         // Temporary run method.
 
         // geneticAlgorithm.iterate(numberOfIterations);
-        while (true) {
+        while (isRunning) {
             System.out.println("Running GAHandler");
         }
 
