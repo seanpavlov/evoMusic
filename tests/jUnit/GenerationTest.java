@@ -1,6 +1,8 @@
 package jUnit;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,8 +17,8 @@ import com.evoMusic.model.geneticAlgorithm.Crossover;
 import com.evoMusic.model.geneticAlgorithm.Generation;
 import com.evoMusic.model.geneticAlgorithm.Individual;
 import com.evoMusic.model.geneticAlgorithm.mutation.Mutator;
-import com.evoMusic.model.geneticAlgorithm.rating.ISubRater;
 import com.evoMusic.model.geneticAlgorithm.rating.Rater;
+import com.evoMusic.model.geneticAlgorithm.rating.SubRater;
 
 public class GenerationTest {
     
@@ -27,7 +29,7 @@ public class GenerationTest {
     private Mutator mutator;
     private List<Individual> parents;
 
-    private class TestSubRater implements ISubRater {
+    private class TestSubRater extends SubRater {
         
         private double weight = 1;
         
@@ -55,7 +57,7 @@ public class GenerationTest {
     
     @Before
     public void setUp() throws Exception {
-        List<ISubRater> subRaterList = new ArrayList<ISubRater>();
+        List<SubRater> subRaterList = new ArrayList<SubRater>();
         subRaterList.add(new TestSubRater());
         rater = new Rater(subRaterList);
         rand = new Random();
