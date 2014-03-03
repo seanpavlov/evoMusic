@@ -6,17 +6,13 @@ import jm.music.data.Phrase;
 
 import com.evoMusic.model.Song;
 
-public class BeatRater extends SubRater{
+public class BeatRater extends SubRater{  
+ 
     
-    
-    /*
-     * TODO Implement
-     * 
-     * **/
-    @Override
     public double rate(Song song) {
-        for(Part part : song.getScore().getPartArray())
-            this.ratePart(part);
+        this.ratePart(song.getScore().getPart(0));
+       /* for(Part part : song.getScore().getPartArray())
+            this.ratePart(part);*/
         return 0;
     }
     
@@ -27,7 +23,7 @@ public class BeatRater extends SubRater{
      * */
     private double ratePart(Part part){
         for(Phrase phrase : part.getPhraseArray()){
-            
+            System.out.println("beat length: " + phrase.getBeatLength());
         }
         
         return 0;
