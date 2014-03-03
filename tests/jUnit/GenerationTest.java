@@ -25,6 +25,7 @@ public class GenerationTest {
     private Generation generation;
     private Crossover crossover;
     private Mutator mutator;
+    private List<Individual> parents;
 
     private class TestSubRater implements ISubRater {
         
@@ -66,7 +67,8 @@ public class GenerationTest {
 
     @Test
     public void testGeneration() {
-        this.generation = new Generation(new ArrayList<Individual>());
+        List<Individual> parents = new ArrayList<Individual>();
+        this.generation = new Generation(parents);
         assertNull(generation.getChildren());
         assertNotNull(generation.getParents());
     }
