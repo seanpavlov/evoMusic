@@ -1,16 +1,10 @@
 package com.evoMusic.model.geneticAlgorithm;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
-
-import sun.security.x509.AVA;
-
 import com.evoMusic.model.Song;
 import com.evoMusic.model.enumerators.TrackTag;
-
 import jm.music.data.Part;
 import jm.music.data.Phrase;
 import jm.music.data.Score;
@@ -52,23 +46,44 @@ public class Crossover {
      * @return The resulting Song object of the cross mutation.
      */
     public Song makeCrossover(List<Individual> parents) {
+        int c = 0;
+        for (Individual i : parents){
+            for (Part p : i.getSong().getScore().getPartArray()){
+                if (c % 3 == 0){ 
+                    i.getSong().addTagToTrack(p, TrackTag.BEAT);
+                } else if (c % 5 == 0) {
+                    i.getSong().addTagToTrack(p, TrackTag.MELODY);  
+                } else {
+                    i.getSong().addTagToTrack(p, TrackTag.NONE);  
+                }
+                c++;
+            }
+        }
+
         List<TrackTag> tags = getCommonTracks(parents);
         if (tags.isEmpty()){ 
             //if theres no common tracks, watdo?
             System.err.println("No common tracktags, parents could not be crossed");
             return new Song(new Score("empty song"));
-        }else{
-            Map<Individual, List<Part>> tracksWithTag = new HashMap<Individual, List<Part>>();
+        } else {
+            List<List<Part>> tracksWithTag = new ArrayList<List<Part>>();
+            
             Score finalScore = new Score();
+            Song finalSong = new Song(finalScore);
+            int counter = 0;
             double averageTempo = 0;
             
             // tags now contains all common tags, loop over all of them and send them to crossTags one by one
             for (TrackTag t : tags){
                 for (Individual i : parents){
-                    tracksWithTag.put(i,  i.getSong().getTaggedTracks(t));
+                    tracksWithTag.add(i.getSong().getTaggedTracks(t));
+                    System.out.println(tracksWithTag.size());
                 }
+                
                 finalScore.add(crossTracks(tracksWithTag, t));
+                finalSong.addTagToTrack(counter, t);
                 tracksWithTag.clear();
+                counter++;
             }
 
             for (Individual i : parents){
@@ -77,8 +92,9 @@ public class Crossover {
 
             averageTempo = averageTempo / parents.size();
             finalScore.setTempo(averageTempo);
+            
     
-            return new Song(finalScore);
+            return finalSong;
         }
     }
     
@@ -126,40 +142,47 @@ public class Crossover {
         return intersections;
 
     }
+    /**
+     * Merge two or more parts into one single phrase
+     * 
+     * @param parts
+     * @return
+     */
+    private Part mergeTracks(List<Part> parts){
+        Part newPart = new Part();
+        List<Phrase[]> newPhrases = new ArrayList<Phrase[]>();
+
+        for (Part p : parts){
+            Phrase onePhrasePart = mergePhrases(p);
+            newPhrases.add(getPhraseIntersections(onePhrasePart));
+        }
+        
+        int nextRandom;
+        for (int i = 0; i < numberOfIntersections; i++) {
+            nextRandom = (int) (randomGen.nextDouble() * newPhrases.size());
+            newPart.addPhraseList(newPhrases.get(nextRandom));
+        }
+
+        return newPart;
+    }
     
     /**
-     * Morph all tracks form all individuals with the same TrackTag,
+     * Merge all tracks form all individuals with the same TrackTag,
      *  
      * 
      * @param tracksWithTag, all individuals mapped to their Tracks with Tag 
      * @param tag, the current tag
      * @return a new Part where all tracks are join
      */
-    private Part crossTracks(Map<Individual, List<Part>> tracksWithTag, TrackTag tag){
+    private Part crossTracks(List<List<Part>> tracksWithTag, TrackTag tag){
         Part p = new Part();
-        List<Phrase> phraselist = new ArrayList<Phrase>();
-                
-        Map<Individual, Phrase[]> phraseSections = new HashMap<Individual, Phrase[]>();
-        for (int i = 0; i < tracksWithTag.size(); i++) {
-            List<Part> tracksFromIndividualWithTags = tracksWithTag.get(i); 
-            
-            for (Part part : tracksFromIndividualWithTags){
-                phraselist.clear();
-                for (Phrase phrase : part.getPhraseArray()){
-                    phraselist.add(getPhraseIntersections(phrase));
-                }
-            }
-        }
+        List<Part> newParts = new ArrayList<Part>();
 
-        Phrase sumPhrase = new Phrase();
-        int nextRandom;
-        for (int i = 0; i < numberOfIntersections; i++) {
-//            nextRandom = (int) (randomGen.nextDouble() * parents.size());
-//            sumPhrase
-//                    .addNoteList(phraseSections.get(parents.get(nextRandom))[i]
-//                            .getNoteArray());
+        for (int i = 0; i < tracksWithTag.size(); i++) {
+            newParts.add(mergeTracks(tracksWithTag.get(i)));
         }
         
+        p = mergeTracks(newParts);
         
         return p;
     }
@@ -170,9 +193,13 @@ public class Crossover {
      * @param parts
      * @return
      */
-    private Part mergeParts(Part[] parts){
-        Part p = new Part(parts);
+    private Phrase mergePhrases(Part part){
+        Phrase phrase = new Phrase();
+        for (Phrase tempPhrase : part.getPhraseArray()){
+            phrase.addNoteList(tempPhrase.getNoteArray());
+        }
         
+        return phrase;
     }
     
 }
