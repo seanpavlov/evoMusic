@@ -68,7 +68,7 @@ public class MongoDatabaseTest {
                 nbrOfSongs < songs.size());
         Song dbSong = songs.get(0);
         
-        //Tests tacktags in retrieved song
+        //Tests tracktags in retrieved song
         List<Part> taggedTrackes = dbSong.getTaggedTracks(TrackTag.MELODY);
         assertTrue("Tracks tagged with MELODY should be same size",
                 taggedTrackes.size() == testSong.getTaggedTracks(TrackTag.MELODY).size());
@@ -89,11 +89,17 @@ public class MongoDatabaseTest {
         
         mDb.insertSong(testSong);
         Song newSong = Translator.INSTANCE.loadMidiToSong("midifiles/mm2wily1.mid");
+        for(Part part : newSong.getScore().getPartArray()){
+            newSong.addTagToTrack(part, TrackTag.BEAT);
+        }
         testSongs.add(newSong);
         newSong.addUserTag("GOOD");
         boolean result = mDb.updateSong(testSong, newSong);
         assertTrue(result);
-        assertEquals("GOOD", mDb.retrieveSongs().get(0).getUserTags().get(0));
+        Song dbSong = mDb.retrieveSongs().get(0);
+        assertEquals("GOOD", dbSong.getUserTags().get(0));
+        assertEquals(TrackTag.BEAT.toString(), 
+                dbSong.getTrackTags(dbSong.getTrack(0)).get(0).toString());
     }
     
     
