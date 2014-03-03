@@ -27,6 +27,7 @@ public class BeatRater extends SubRater{
      * */
     private double ratePart(Part part){
         for(Phrase phrase : part.getPhraseArray()){
+            
         }
         
         return 0;
