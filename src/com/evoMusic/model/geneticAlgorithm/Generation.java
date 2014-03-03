@@ -123,8 +123,8 @@ public class Generation {
         List<Individual> bestIndividuals = new ArrayList<Individual>(
                 wantedIndividuals);
         Collections.sort(individuals);
-        for (int i = 0; i < wantedIndividuals && i < individuals.size(); i++) {
-            bestIndividuals.add(individuals.get(i));
+        for (int i = 0; i < wantedIndividuals; i++) {
+            bestIndividuals.add(individuals.get(individuals.size() - i - 1));
         }
         return bestIndividuals;
     }
