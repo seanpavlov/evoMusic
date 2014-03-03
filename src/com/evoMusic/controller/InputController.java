@@ -22,16 +22,19 @@ public class InputController {
     public void run() {
         System.out.println("--- EvoMusic shell version "+Main.VERSION+" --- ");
         System.out.println("Enter '?' for help.\n");
-        final Map<String, ICommand> commandMap = Commands.getInstance().getCommandMap();
-        while (isRunning) {
-            System.out.print(prompt);
+        final Map<String, AbstractCommand> commandMap = Commands.getInstance().getCommandMap();
+        System.out.print(prompt);
+        while (isRunning && in.hasNext()) {
             command = in.next();
             args = in.nextLine().trim().split(" ");
             if(commandMap.containsKey(command)) {
-                commandMap.get(command).execute(args);
+                if(!commandMap.get(command).execute(args)) {
+                    System.out.println("evomusic: failed to execute command");
+                }
             } else {
                 System.out.println("evomusic: command not found: " + command);
             }
+            System.out.print(prompt);
         }
     }
 

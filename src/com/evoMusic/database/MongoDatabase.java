@@ -13,8 +13,8 @@ import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
 import com.evoMusic.model.Song;
-import com.evoMusic.model.Translator;
-import com.evoMusic.model.enumerators.TrackTag;
+import com.evoMusic.util.TrackTag;
+import com.evoMusic.util.Translator;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;

@@ -15,7 +15,7 @@ import org.junit.Test;
 
 import com.evoMusic.database.MongoDatabase;
 import com.evoMusic.model.Song;
-import com.evoMusic.model.Translator;
+import com.evoMusic.util.Translator;
 
 
 public class MongoDatabaseTest {

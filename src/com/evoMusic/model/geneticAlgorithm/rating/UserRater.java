@@ -3,7 +3,7 @@ package com.evoMusic.model.geneticAlgorithm.rating;
 import java.util.Scanner;
 
 import com.evoMusic.model.Song;
-import com.evoMusic.model.Translator;
+import com.evoMusic.util.Translator;
 
 public class UserRater extends SubRater {
   

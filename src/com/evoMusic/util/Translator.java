@@ -1,8 +1,10 @@
-package com.evoMusic.model;
+package com.evoMusic.util;
 import java.io.File;
 import java.io.IOException;
 
 import org.apache.commons.io.FileUtils;
+
+import com.evoMusic.model.Song;
 
 import jm.midi.MidiParser;
 import jm.midi.SMF;
@@ -20,6 +22,7 @@ public enum Translator  {
      * on load success. 
      * 
      * @param path, relative path to MIDI file
+     * @return song, if a new song object or null if file was not found
      * @throws IOException 
      */
     public Song loadMidiToSong(String path) throws IOException {
@@ -28,7 +31,6 @@ public enum Translator  {
         final String[] splitPath = path.split("/");
         // last item is "file.midi" and then "file"
         final String name = splitPath[splitPath.length-1].split("\\.")[0];
-        final Score score = new Score(name);
         
         final File midiFile = new File(path);
         if(!midiFile.exists()) {
@@ -38,10 +40,8 @@ public enum Translator  {
         
         // Using this method to avoid some annoying printing by jMusic.
         // It still prints "Convert SMF to JM". It appears to be hardcoded
-        SMF midi = new SMF();
-        System.out.println("hello.");
-        MidiParser.SMFToScore(score, midi);
-        System.out.println("hello.");
+        final Score score = Read.midiOrJmWithNoMessaging(midiFile);
+        score.setTitle(name);
         return new Song(score);
     }
 
