@@ -28,7 +28,7 @@ public class TestSuite {
      * If a mongo db has not been installed or set up properly, we get to
      * know about this before any tests are run. 
      */
-    //@BeforeClass
+    @BeforeClass
     public static void setUpDb() {
         MongoDatabase.getInstance().dropDb(TEST_DB);
         MongoDatabase.getInstance().useDbName(TEST_DB);
