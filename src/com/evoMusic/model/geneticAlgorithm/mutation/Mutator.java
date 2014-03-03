@@ -10,7 +10,7 @@ import jm.music.data.Note;
 import jm.music.data.Phrase;
 
 public class Mutator {
-    private List<ISubMutator> subMutators = new ArrayList<ISubMutator>();
+    private List<ISubMutator> subMutators;
     private double overallMutationProbability;
     private MidiUtil mu = new MidiUtil();
     
