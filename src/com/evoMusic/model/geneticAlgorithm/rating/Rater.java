@@ -6,7 +6,7 @@ import java.util.List;
 import com.evoMusic.model.Song;
 
 public class Rater {
-    List<ISubRater> subraters = new ArrayList<ISubRater>();
+    List<SubRater> subraters = new ArrayList<SubRater>();
 
     /**
      * Creates a new Rater with no subraters.
@@ -20,7 +20,7 @@ public class Rater {
      * @param subraters
      *            The given list of ISubRater.
      */
-    public Rater(List<ISubRater> subraters) {
+    public Rater(List<SubRater> subraters) {
         this.addSubRater(subraters);
     }
 
@@ -35,7 +35,7 @@ public class Rater {
 
         double rating = 0.0;
         double sumOfweights = 0.0;
-        for (ISubRater subRater : subraters) {
+        for (SubRater subRater : subraters) {
             sumOfweights += subRater.getWeight();
             if (subRater.shouldRate()) {
                 rating += subRater.rate(song) * subRater.getWeight();
@@ -51,7 +51,7 @@ public class Rater {
      * @param subRater
      *            The ISubRater to be added.
      */
-    public void addSubRater(ISubRater subRater) {
+    public void addSubRater(SubRater subRater) {
         this.subraters.add(subRater);
     }
 
@@ -61,7 +61,7 @@ public class Rater {
      * @param subraters
      *            The list of ISubRater to be added.
      */
-    public void addSubRater(List<ISubRater> subraters) {
+    public void addSubRater(List<SubRater> subraters) {
         this.subraters.addAll(subraters);
     }
 
@@ -74,7 +74,7 @@ public class Rater {
      */
     public void initSubRaterWeights(Song[] songs) {
         double rating;
-        for (ISubRater subRater : subraters) {
+        for (SubRater subRater : subraters) {
             rating = 0;
             for (Song s : songs) {
                 rating += subRater.rate(s);
