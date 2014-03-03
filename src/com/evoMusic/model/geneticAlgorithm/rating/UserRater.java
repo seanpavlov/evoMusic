@@ -5,8 +5,7 @@ import java.util.Scanner;
 import com.evoMusic.model.Song;
 import com.evoMusic.model.Translator;
 
-public class UserRater extends ISubRater {
-    
+public class UserRater extends SubRater {
     /**
      * Constructor, creates a user rater
      * 

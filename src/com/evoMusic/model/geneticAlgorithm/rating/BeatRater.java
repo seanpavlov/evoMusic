@@ -6,7 +6,7 @@ import jm.music.data.Phrase;
 
 import com.evoMusic.model.Song;
 
-public class BeatRater extends ISubRater{
+public class BeatRater extends SubRater{
     
     
     /*
