@@ -11,7 +11,7 @@ public abstract class SubRater {
      * @param song to be rated
      * @return rate value between 0 and 1
      */
-    abstract double rate(Song song);
+    abstract public double rate(Song song);
     
     /**
      * @return the current weight of this rater
