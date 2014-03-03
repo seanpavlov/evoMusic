@@ -5,10 +5,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Arrays;
 
 import jm.music.data.Part;
-import jm.music.data.Phrase;
 
 import com.evoMusic.model.Song;
 
@@ -18,7 +16,7 @@ public class BeatRater extends SubRater{
     /**
      * Rates song by analyzing beat/rythm
      * @param song Song to be rated
-     * @return double Rating value for the rated song
+     * @return double Value of rating for song
      * */
     public double rate(Song song) {
         System.out.println(song.getScore().getPartArray().length);   
