@@ -21,8 +21,14 @@ public enum Translator  {
      * 
      * @param path, relative path to MIDI file
      */
-    public Song loadMidiToSong(String path){
-        Score score = new Score();
+    public Song loadMidiToSong(String path) throws IOException {
+        //Remove appendix
+        String name = path.split("\\.")[0];
+        int pathStructure = name.lastIndexOf("/");
+        //If '/' does exist in filename, meaning its a path, substring from last appearance
+        if(pathStructure != -1)
+             name = name.substring(++pathStructure);
+        Score score = new Score(name);
         Read.midi(score, path);
         
         return new Song(score);
@@ -129,7 +135,4 @@ public enum Translator  {
     public void closeDisplayWindow(){
        // View.
     }
-    
-    
-
 }

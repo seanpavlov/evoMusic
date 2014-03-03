@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import sun.security.x509.AVA;
+
 import com.evoMusic.model.Song;
 import com.evoMusic.model.enumerators.TrackTag;
 
@@ -50,34 +52,34 @@ public class Crossover {
      * @return The resulting Song object of the cross mutation.
      */
     public Song makeCrossover(List<Individual> parents) {
-        for (TrackTag t: getCommonTracks(parents)){
-            System.out.println(t.toString());
-        }
-        Map<Individual, Phrase[]> phraseSections = new HashMap<Individual, Phrase[]>();
-        for (int i = 0; i < parents.size(); i++) {
-            phraseSections.put(parents.get(i), getPhraseIntersections(parents
-                    .get(i).getSong().getTrack(0).getPhrase(0)));
-        }
+        List<TrackTag> tags = getCommonTracks(parents);
+        if (tags.isEmpty()){ 
+            //if theres no common tracks, watdo?
+            System.err.println("No common tracktags, parents could not be crossed");
+            return new Song(new Score("empty song"));
+        }else{
+            Map<Individual, List<Part>> tracksWithTag = new HashMap<Individual, List<Part>>();
+            Score finalScore = new Score();
+            double averageTempo = 0;
+            
+            // tags now contains all common tags, loop over all of them and send them to crossTags one by one
+            for (TrackTag t : tags){
+                for (Individual i : parents){
+                    tracksWithTag.put(i,  i.getSong().getTaggedTracks(t));
+                }
+                finalScore.add(crossTracks(tracksWithTag, t));
+                tracksWithTag.clear();
+            }
 
-        Phrase sumPhrase = new Phrase();
-        int nextRandom;
-        for (int i = 0; i < numberOfIntersections; i++) {
-            nextRandom = (int) (randomGen.nextDouble() * parents.size());
-            sumPhrase
-                    .addNoteList(phraseSections.get(parents.get(nextRandom))[i]
-                            .getNoteArray());
+            for (Individual i : parents){
+                averageTempo += i.getSong().getTempo();
+            }
+
+            averageTempo = averageTempo / parents.size();
+            finalScore.setTempo(averageTempo);
+    
+            return new Song(finalScore);
         }
-
-        double averageTempo = 0;
-        for (int i = 0; i < parents.size(); i++) {
-            averageTempo += parents.get(i).getSong().getTempo();
-        }
-        averageTempo = averageTempo / parents.size();
-
-        Score finalScore = new Score(new Part(sumPhrase),
-                "Generated from crossover", averageTempo);
-
-        return new Song(finalScore);
     }
     
     /**
@@ -95,6 +97,7 @@ public class Crossover {
             for (Individual i : parents){
                if (i.getSong().getTaggedTracks(tag).isEmpty()){
                    commonTrackTags.remove(tag);
+                   //break??
                }
             }
         }
@@ -123,5 +126,53 @@ public class Crossover {
         return intersections;
 
     }
+    
+    /**
+     * Morph all tracks form all individuals with the same TrackTag,
+     *  
+     * 
+     * @param tracksWithTag, all individuals mapped to their Tracks with Tag 
+     * @param tag, the current tag
+     * @return a new Part where all tracks are join
+     */
+    private Part crossTracks(Map<Individual, List<Part>> tracksWithTag, TrackTag tag){
+        Part p = new Part();
+        List<Phrase> phraselist = new ArrayList<Phrase>();
+                
+        Map<Individual, Phrase[]> phraseSections = new HashMap<Individual, Phrase[]>();
+        for (int i = 0; i < tracksWithTag.size(); i++) {
+            List<Part> tracksFromIndividualWithTags = tracksWithTag.get(i); 
+            
+            for (Part part : tracksFromIndividualWithTags){
+                phraselist.clear();
+                for (Phrase phrase : part.getPhraseArray()){
+                    phraselist.add(getPhraseIntersections(phrase));
+                }
+            }
+        }
 
+        Phrase sumPhrase = new Phrase();
+        int nextRandom;
+        for (int i = 0; i < numberOfIntersections; i++) {
+//            nextRandom = (int) (randomGen.nextDouble() * parents.size());
+//            sumPhrase
+//                    .addNoteList(phraseSections.get(parents.get(nextRandom))[i]
+//                            .getNoteArray());
+        }
+        
+        
+        return p;
+    }
+
+    /**
+     * Merge many parts to one
+     * 
+     * @param parts
+     * @return
+     */
+    private Part mergeParts(Part[] parts){
+        Part p = new Part(parts);
+        
+    }
+    
 }

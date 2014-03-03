@@ -2,7 +2,8 @@ package com.evoMusic.model.geneticAlgorithm.rating;
 
 import com.evoMusic.model.Song;
 
-public interface ISubRater {
+public abstract class SubRater {
+    private double weight;
     
     /**
      * Rates a song or a part of it depending on the raters task.
@@ -10,22 +11,32 @@ public interface ISubRater {
      * @param song to be rated
      * @return rate value between 0 and 1
      */
-    public double rate(Song song);
+    abstract double rate(Song song);
     
     /**
      * @return the current weight of this rater
      */
-    public double getWeight();
+    public double getWeight(){
+        return weight;
+    }
     
     /**
      * Set the weight of this rater, value must be between 0 and 1
      */
-    public void setWeight(double weight);
+    public void setWeight(double weight){
+        if (weight >= 0 && weight <= 1){
+            this.weight = weight;
+        } else {
+            System.err.println("Weight must be between 0 and 1");
+        }
+    }
     
     /**
      * If the weight is 0, the rater should not be included.
      * 
      * @return if this weight is 0
      */
-    public boolean shouldRate();
+    public boolean shouldRate(){
+        return (weight!=0.0);
+    }
 }
