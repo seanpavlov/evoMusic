@@ -21,7 +21,7 @@ public enum Translator  {
      * 
      * @param path, relative path to MIDI file
      */
-    public Song loadMidiToSong(String path) throws IOException {
+    public Song loadMidiToSong(String path) {
         //Remove appendix
         String name = path.split("\\.")[0];
         int pathStructure = name.lastIndexOf("/");
