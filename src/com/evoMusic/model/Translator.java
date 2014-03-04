@@ -1,7 +1,11 @@
 package com.evoMusic.model;
 import java.io.File;
 import java.io.IOException;
+import java.util.Scanner;
 
+import com.evoMusic.model.enumerators.TrackTag;
+
+import jm.music.data.Part;
 import jm.music.data.Score;
 import jm.util.Play;
 import jm.util.Read;
@@ -29,6 +33,38 @@ public enum Translator  {
         
         return new Song(score);
     }
+    
+    /**
+     * Loads a MIDI file and call the constructor of song object once every track 
+     * is tagged, the none tag is used for all irrelevant tracks
+     * 
+     * @param path to load from
+     * @return new song object
+     */
+    public Song loadMidiToSongAndTagTracks(String path){
+        Scanner sc = new Scanner(System.in);
+        int i = 0;
+        Score score = new Score();
+        Read.midi(score, path);
+        Song song = new Song(score);
+        System.out.println("Please tag these tracks corresponding tracktag, use none for irrelevant tracks");
+        
+        for (Part p : song.getScore().getPartArray()){
+            Translator.INSTANCE.showPart(p);
+            String tag = sc.next().toString().toUpperCase();
+            
+            while (!TrackTag.contains(tag)){
+                System.out.println("No such TrackTag, enter again");
+                tag = sc.next();
+            }
+            
+            TrackTag t = TrackTag.valueOf(tag);
+            song.addTagToTrack(p, t);
+            i++;
+        }
+        
+        return song;
+    }
 
     /**
      * Saves a song the default location. 
@@ -46,7 +82,7 @@ public enum Translator  {
         File outputFile = null;
         String path = "";
         do {
-            path = "./output/" + name + (copy != 0 ? "-"+copy : "")+ ".midi";
+            path = "./output/" + name + (copy != 0 ? "-"+copy : "")+ ".mid";
             outputFile = new File(path); 
                 // if dupe, filename is appended "-1"
             copy++;
@@ -78,9 +114,25 @@ public enum Translator  {
     /**
      * Show the structure of the song in JMusics built in MIDI display
      * 
-     * @param song to be played
+     * @param song to be shown
      */
     public void showSong(Song song){
         View.show(song.getScore());
+    }
+    
+    /**
+     * Show the structure of the part in JMusics built in MIDI display
+     * 
+     * @param part to be shown
+     */
+    public void showPart(Part part){
+        View.sketch(part);
+    }
+    
+    /**
+     * Closes all showing windows 
+     */
+    public void closeDisplayWindow(){
+       // View.
     }
 }

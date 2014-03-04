@@ -85,12 +85,15 @@ public class MongoDatabase implements IDatabase {
 
         // array index is the same as track index
         // the tracks that are not used are stores as well
-
-        final LinkedList<DBEnum<TrackTag>> tracks = new LinkedList<DBEnum<TrackTag>>();
-
+        final BasicDBList tracks = new BasicDBList();
         for (int i = 0; i < nbrOfTracks; i++) {
-            //tracks.add(DBEnum.of(song.getTrackTag(i)));
-            // TODO Fix so that it can take multiple track tags.
+            //Build tag list for track
+            BasicDBList tags = new BasicDBList();
+            for(TrackTag tag : song.getTrackTags(i)){
+                tags.add(DBEnum.of(tag));
+                
+            }
+            tracks.add(tags);
         }
         String path = "";
         if(write){
@@ -116,22 +119,25 @@ public class MongoDatabase implements IDatabase {
         final String songPath = dbDoc.getString(MIDI_PATH_KEY);
         final Song song = Translator.INSTANCE.loadMidiToSong(songPath);
 
-        // set all track tags
-        final List<TrackTag> trackTags = new ArrayList<TrackTag>();
+        //Mongo basicdblist containing lists of tracktags
         final BasicDBList mongoTrackTags = ((BasicDBList) dbDoc
                 .get(TRACK_REF_KEY));
-
+        //Track index 
+        int i = 0;
         for (Iterator<Object> trackTagIt = mongoTrackTags.iterator(); trackTagIt
-                .hasNext();) {
-            trackTags.add(DBEnum.to(TrackTag.class, trackTagIt.next()));
+                .hasNext();i++) {
+            //Mongo basicdblist containing tracktags for track
+            final BasicDBList trackTags = (BasicDBList) trackTagIt.next();
+            //Add every tracktag to trackindex i in song
+            for(Object enumT : trackTags){
+                song.addTagToTrack(i, DBEnum.to(TrackTag.class, enumT));
+            }
         }
-
         // set all user tags
         final List<String> userTags = new ArrayList<String>();
         userTags.addAll(Arrays.asList(((BasicDBList) dbDoc.get(USER_TAGS_KEY))
                 .toArray(new String[0])));
 
-        song.setTrackTags(trackTags);
         song.setUserTags(userTags);
         return song;
     }
