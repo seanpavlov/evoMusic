@@ -161,15 +161,23 @@ public class SongCommand extends AbstractCommand {
     }
     
     private void tagTracks(Song song) {
+        System.out.println(song.getNbrOfTracks() + " tracks to tag.");
         System.out.println("Available track tags: ");
         TrackTag[] trackTags = TrackTag.values();
         for(int i = 0; i < trackTags.length; i++) {
             System.out.println(i+": "+trackTags[i].toString());
         }
+        System.out.println("Add multiple tags by separating them with space");
         Scanner sc = new Scanner(System.in);
+        
+        String[] trackIndexes = new String[0];
+        
         for(int i = 0; i < song.getNbrOfTracks(); i++) {
             System.out.print("Pleace Tag track "+i+": ");
-            song.addTagToTrack(i, trackTags[sc.nextInt()]);
+            trackIndexes = sc.nextLine().split(" ");
+            for (String index : trackIndexes) {
+                song.addTagToTrack(i, trackTags[Integer.parseInt(index)]);
+            }
         }
         sc.close();
     }
