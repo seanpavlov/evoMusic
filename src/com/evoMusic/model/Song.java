@@ -17,7 +17,7 @@ import jm.music.data.Score;
 public class Song {
 
     private final List<String> userTags = new ArrayList<String>();
-    private final Map<Part, List<TrackTag>> trackTags = new HashMap<Part, List<TrackTag>>();
+    private Map<Part, List<TrackTag>> trackTags = new HashMap<Part, List<TrackTag>>();
 
     private final Score score;
 
@@ -167,8 +167,8 @@ public class Song {
     }
 
     // TODO this method is not possible to implement...
-    public void setTrackTags(List<TrackTag> trackTags) {
-
+    public void setTrackTags(Map<Part, List<TrackTag>> trackTags) {
+        this.trackTags = trackTags;
     }
 
     /**
