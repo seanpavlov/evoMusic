@@ -11,10 +11,9 @@ public class InputController {
     private String command;
     private String[] args;
     private String prompt = "> ";
-    private Scanner in;
+    public final static Scanner SCANNER = new Scanner(System.in);
     
     public InputController(String[] runArgs) {
-        this.in = new Scanner(System.in);
         setPrompt("evomusic> ");
         run();
     }
@@ -24,9 +23,9 @@ public class InputController {
         System.out.println("Enter '?' for help.\n");
         final Map<String, AbstractCommand> commandMap = Commands.getInstance().getCommandMap();
         System.out.print(prompt);
-        while (isRunning && in.hasNext()) {
-            command = in.next();
-            args = in.nextLine().trim().split(" ");
+        while (isRunning && SCANNER.hasNext()) {
+            command = SCANNER.next();
+            args = SCANNER.nextLine().trim().split(" ");
             if(commandMap.containsKey(command)) {
                 if(!commandMap.get(command).execute(args)) {
                     System.out.println("evomusic: failed to execute command");
@@ -36,6 +35,7 @@ public class InputController {
             }
             System.out.print(prompt);
         }
+        SCANNER.close();
     }
 
     public void setPrompt(String prompt) {

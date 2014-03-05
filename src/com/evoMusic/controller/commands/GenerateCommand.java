@@ -3,6 +3,7 @@ package com.evoMusic.controller.commands;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import com.evoMusic.controller.AbstractCommand;
 import com.evoMusic.model.Song;
@@ -18,6 +19,7 @@ import com.evoMusic.model.geneticAlgorithm.rating.Rater;
 import com.evoMusic.model.geneticAlgorithm.rating.SubRater;
 import com.evoMusic.model.geneticAlgorithm.rating.UserRater;
 import com.evoMusic.util.Translator;
+import com.google.common.collect.Sets;
 
 public class GenerateCommand extends AbstractCommand {
 
@@ -38,6 +40,8 @@ public class GenerateCommand extends AbstractCommand {
         if(selectedSongs.size() < 2) {
             return false;
         }
+        int iterations = Integer.parseInt(args[0]);
+        System.out.println(iterations);
         List<ISubMutator> allMut = new ArrayList<ISubMutator>();
         allMut.add(new OctaveMutator(0.1, 1));
         allMut.add(new ReverseMutator(0.1, 4, 4, true));
@@ -46,14 +50,15 @@ public class GenerateCommand extends AbstractCommand {
         List<SubRater> subRaters = new LinkedList<SubRater>();
         subRaters.add(new UserRater(1));
         GeneticAlgorithm ga = new GeneticAlgorithm(selectedSongs, new Mutator(allMut, 1), new Crossover(20), new Rater(subRaters));
-        ga.setMinimumIterations(10);
+        ga.setMinimumIterations(iterations);
         ga.iterate();
         Translator.INSTANCE.playSong(ga.getBest());
         return true;
     }
-
+    
     @Override
-    public String[] getArguments() {
-        return new String[0];
+    public Set<String> getArgSet() {
+        return Sets.newHashSet("numberOfIterations");
     }
+
 }

@@ -6,12 +6,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.Set;
 
 import com.evoMusic.controller.AbstractCommand;
 import com.evoMusic.database.MongoDatabase;
 import com.evoMusic.model.Song;
 import com.evoMusic.util.TrackTag;
 import com.evoMusic.util.Translator;
+import com.google.common.collect.Sets;
 
 /**
  * Display available songs
@@ -125,9 +127,10 @@ public class SongCommand extends AbstractCommand {
             }
             
             @Override
-            public String[] getArguments() {
-                return new String[] {"path"};
+            public Set<String> getArgSet() {
+                return Sets.newHashSet("path");
             }
+            
         });
     }
 
@@ -143,8 +146,13 @@ public class SongCommand extends AbstractCommand {
     }
 
     @Override
-    public String[] getArguments() {
-        return songArgs.keySet().toArray(new String[0]);
+    public Set<String> getArgSet() {
+        return songArgs.keySet();
+    }
+    
+    @Override
+    public Map<String, AbstractCommand> getSubCommands() {
+        return songArgs;
     }
 
     public void selectSong(int songIndex) {
