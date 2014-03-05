@@ -21,6 +21,7 @@ import com.evoMusic.model.geneticAlgorithm.mutation.ISubMutator;
 import com.evoMusic.model.geneticAlgorithm.mutation.Mutator;
 import com.evoMusic.model.geneticAlgorithm.rating.Rater;
 import com.evoMusic.model.geneticAlgorithm.rating.SubRater;
+import com.evoMusic.util.TrackTag;
 import com.evoMusic.util.Translator;
 
 public class GenerationTest {
@@ -62,6 +63,7 @@ public class GenerationTest {
     @Before
     public void setUp() throws Exception {
         testSong = Translator.INSTANCE.loadMidiToSong("midifiles/mm2wily1.mid");
+        testSong.addTagToTrack(0, TrackTag.MELODY);
         List<SubRater> subRaterList = new ArrayList<SubRater>();
         subRaterList.add(new TestSubRater());
         rater = new Rater(subRaterList);
