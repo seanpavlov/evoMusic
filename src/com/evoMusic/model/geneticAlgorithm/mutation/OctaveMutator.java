@@ -31,18 +31,18 @@ public class OctaveMutator extends ISubMutator {
                     .getNote(noteIndex);
             int nbrOfSteps = (int) ((Math.random() * octaveRange) + 1);
             int pitchNbr = note.getPitch();
-            if (mu.canRaiseNote(pitchNbr, mu.NBR_OF_NOTES * nbrOfSteps)) {
-                if (mu.canLowerNote(pitchNbr, mu.NBR_OF_NOTES * nbrOfSteps)) {
+            if (mu.canRaiseNote(pitchNbr, MidiUtil.NBR_OF_NOTES * nbrOfSteps)) {
+                if (mu.canLowerNote(pitchNbr, MidiUtil.NBR_OF_NOTES * nbrOfSteps)) {
                     if (Math.random() < 0.5) {
-                        note.setPitch(pitchNbr - (mu.NBR_OF_NOTES * nbrOfSteps));
+                        note.setPitch(pitchNbr - (MidiUtil.NBR_OF_NOTES * nbrOfSteps));
                     } else {
-                        note.setPitch(pitchNbr + (mu.NBR_OF_NOTES * nbrOfSteps));
+                        note.setPitch(pitchNbr + (MidiUtil.NBR_OF_NOTES * nbrOfSteps));
                     }
                 } else {
-                    note.setPitch(pitchNbr + (mu.NBR_OF_NOTES * nbrOfSteps));
+                    note.setPitch(pitchNbr + (MidiUtil.NBR_OF_NOTES * nbrOfSteps));
                 }
-            } else if (mu.canLowerNote(pitchNbr, mu.NBR_OF_NOTES * nbrOfSteps)) {
-                note.setPitch(pitchNbr - (mu.NBR_OF_NOTES * nbrOfSteps));
+            } else if (mu.canLowerNote(pitchNbr, MidiUtil.NBR_OF_NOTES * nbrOfSteps)) {
+                note.setPitch(pitchNbr - (MidiUtil.NBR_OF_NOTES * nbrOfSteps));
             }
             song.getScore().getPart(0).getPhrase(0).setNote(note, noteIndex);
 

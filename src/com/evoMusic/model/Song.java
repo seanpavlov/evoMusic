@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.evoMusic.model.enumerators.TrackTag;
+import com.evoMusic.util.TrackTag;
 
 import jm.music.data.Part;
 import jm.music.data.Score;

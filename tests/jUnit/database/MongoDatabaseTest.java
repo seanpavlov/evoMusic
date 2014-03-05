@@ -1,23 +1,22 @@
 package jUnit.database;
 
-import static org.junit.Assert.*;
-import jUnit.TestSuite;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
-import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
 import jm.music.data.Part;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.evoMusic.database.MongoDatabase;
 import com.evoMusic.model.Song;
-import com.evoMusic.model.Translator;
-import com.evoMusic.model.enumerators.TrackTag;
+import com.evoMusic.util.TrackTag;
+import com.evoMusic.util.Translator;
 
 
 public class MongoDatabaseTest {
@@ -39,11 +38,9 @@ public class MongoDatabaseTest {
      * Make sure that we always have a fresh working song instance to work with
      * before each test.
      * 
-     * @throws IOException
-     *             if any problems with loading the MIDI occurrs.
      */
     @Before
-    public void setUpSong() throws IOException {
+    public void setUpSong() {
         testSong = Translator.INSTANCE.loadMidiToSong("midifiles/mm2wily1.mid");
         for(Part part : testSong.getScore().getPartArray()){
             testSong.addTagToTrack(part, TrackTag.MELODY);
@@ -68,14 +65,13 @@ public class MongoDatabaseTest {
                 nbrOfSongs < songs.size());
         Song dbSong = songs.get(0);
         
-        //Tests tacktags in retrieved song
+        //Tests tracktags in retrieved song
         List<Part> taggedTrackes = dbSong.getTaggedTracks(TrackTag.MELODY);
         assertTrue("Tracks tagged with MELODY should be same size",
                 taggedTrackes.size() == testSong.getTaggedTracks(TrackTag.MELODY).size());
         taggedTrackes = dbSong.getTaggedTracks(TrackTag.NONE);
         assertFalse("Tracks tagged with NONE should not be same size as MELODY in before song",
                 taggedTrackes.size() == testSong.getTaggedTracks(TrackTag.MELODY).size());
-        
         boolean removeResult = mDb.removeSong(testSong);
         assertTrue(removeResult);
         songs = mDb.retrieveSongs();
@@ -84,28 +80,19 @@ public class MongoDatabaseTest {
 
 
     @Test
-    public void testUpdateSong() throws IOException {
-        mDb.dropDb(TestSuite.TEST_DB);
-        
+    public void testUpdateSong() {
         mDb.insertSong(testSong);
         Song newSong = Translator.INSTANCE.loadMidiToSong("midifiles/mm2wily1.mid");
+        for(Part part : newSong.getScore().getPartArray()){
+            newSong.addTagToTrack(part, TrackTag.BEAT);
+        }
         testSongs.add(newSong);
         newSong.addUserTag("GOOD");
         boolean result = mDb.updateSong(testSong, newSong);
         assertTrue(result);
-        assertEquals("GOOD", mDb.retrieveSongs().get(0).getUserTags().get(0));
+        Song dbSong = mDb.retrieveSongs().get(0);
+        assertEquals("GOOD", dbSong.getUserTags().get(0));
+        assertEquals(TrackTag.BEAT.toString(), 
+                dbSong.getTrackTags(dbSong.getTrack(0)).get(0).toString());
     }
-    
-    
-    /**
-     * Clean up after the test class so we don't leave test songs in folders
-     * 
-     * */
-    @After
-    public void cleanUpSongs(){
-        for(Song song : testSongs){
-            mDb.removeFile(song.getTitle());
-        }
-    }
-
 }
