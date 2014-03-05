@@ -3,11 +3,13 @@ package com.evoMusic.model.geneticAlgorithm;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import com.evoMusic.model.Song;
-import com.evoMusic.model.enumerators.TrackTag;
+
 import jm.music.data.Part;
 import jm.music.data.Phrase;
 import jm.music.data.Score;
+
+import com.evoMusic.model.Song;
+import com.evoMusic.util.TrackTag;
 
 public class Crossover {
 

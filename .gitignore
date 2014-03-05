@@ -48,4 +48,6 @@ Session.vim
 
 
 /bin
-DBLogFile.log*
+*.log*
+/target
+

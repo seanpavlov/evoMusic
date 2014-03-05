@@ -1,22 +1,15 @@
 package jUnit.translator;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-import java.io.IOException;
-
-import org.junit.Before;
 import org.junit.Test;
 
 import com.evoMusic.model.Song;
-import com.evoMusic.model.Translator;
+import com.evoMusic.util.Translator;
 
 public class TranslatorTest {
 
-    @Before
-    public void setUpSong() throws IOException {
-        
-    }
-    
     @Test
     public void testSaveAndLoadEq(){
         String name = "Norway";

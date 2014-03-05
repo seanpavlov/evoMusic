@@ -1,10 +1,6 @@
 package com.evoMusic.model.geneticAlgorithm;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.LinkedList;
 import java.util.List;
 
 import com.evoMusic.model.Song;
@@ -28,7 +24,6 @@ public class GeneticAlgorithm {
     private boolean usingElitism;
     private double minimumRating;
     private int minimumIterations;
-    private int numberOfIterations;
     private int iterationsDone;
 
     private Generation generation;
@@ -66,7 +61,6 @@ public class GeneticAlgorithm {
         setElitism(true);
         setMinimumRating(0);
         setMinimumIterations(0);
-        this.numberOfIterations = 0;
 
     }
 
@@ -221,7 +215,7 @@ public class GeneticAlgorithm {
             }
         }
         while (highestRating < minimumRating
-                || numberOfIterations < minimumIterations) {
+                || iterationsDone < minimumIterations) {
             if (usingElitism) {
                 generation = new Generation(
                         generation.getBestIndividuals(parentsPerGeneration));
@@ -257,7 +251,7 @@ public class GeneticAlgorithm {
                 iterationsDone++;
             }
         }
-        while (numberOfIterations < n) {
+        while (iterationsDone < n) {
             if (usingElitism) {
                 generation = new Generation(
                         generation.getBestIndividuals(parentsPerGeneration));

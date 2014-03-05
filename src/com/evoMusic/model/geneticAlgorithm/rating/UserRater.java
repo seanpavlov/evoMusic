@@ -1,9 +1,10 @@
 package com.evoMusic.model.geneticAlgorithm.rating;
 
-import java.util.Scanner;
+import jm.util.Play;
 
+import com.evoMusic.controller.InputController;
 import com.evoMusic.model.Song;
-import com.evoMusic.model.Translator;
+import com.evoMusic.util.Translator;
 
 public class UserRater extends SubRater {
   
@@ -17,12 +18,17 @@ public class UserRater extends SubRater {
     }
     
     @Override
-    public double rate(Song song) {
+    public double rate(final Song song) {
         double rating = 0.0;
-        Translator.INSTANCE.playSong(song);
-        Scanner sc = new Scanner(System.in);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Translator.INSTANCE.playSong(song);     
+            }
+        }).start();
         System.out.println("Waiting for user rating input : ");
-        rating = sc.nextDouble();
+        rating = InputController.SCANNER.nextDouble();
+        Play.stopAudio();
         return rating;
     }
 }

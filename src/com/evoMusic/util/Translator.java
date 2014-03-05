@@ -1,9 +1,6 @@
-package com.evoMusic.model;
+package com.evoMusic.util;
 import java.io.File;
 import java.io.IOException;
-import java.util.Scanner;
-
-import com.evoMusic.model.enumerators.TrackTag;
 
 import jm.music.data.Part;
 import jm.music.data.Score;
@@ -11,6 +8,8 @@ import jm.util.Play;
 import jm.util.Read;
 import jm.util.View;
 import jm.util.Write;
+
+import com.evoMusic.model.Song;
 
 public enum Translator  {
     INSTANCE;
@@ -20,51 +19,28 @@ public enum Translator  {
      * on load success. 
      * 
      * @param path, relative path to MIDI file
+     * @return song, if a new song object or null if file was not found
+     * @throws IOException 
      */
     public Song loadMidiToSong(String path) {
-        //Remove appendix
-        String name = path.split("\\.")[0];
-        int pathStructure = name.lastIndexOf("/");
-        //If '/' does exist in filename, meaning its a path, substring from last appearance
-        if(pathStructure != -1)
-             name = name.substring(++pathStructure);
-        Score score = new Score(name);
-        Read.midi(score, path);
+
+        // split "./something/etc/file.midi"
+        final String[] splitPath = path.split("/");
+        // last item is "file.midi" and then "file"
+        final String name = splitPath[splitPath.length-1].split("\\.")[0];
         
+        final File midiFile = new File(path);
+        if(!midiFile.exists()) {
+            return null;
+        }
+        
+        // Using this method to avoid some annoying printing by jMusic.
+        // It still prints "Convert SMF to JM". It appears to be hardcoded
+        final Score score = Read.midiOrJmWithNoMessaging(midiFile);
+        score.setTitle(name);
         return new Song(score);
     }
     
-    /**
-     * Loads a MIDI file and call the constructor of song object once every track 
-     * is tagged, the none tag is used for all irrelevant tracks
-     * 
-     * @param path to load from
-     * @return new song object
-     */
-    public Song loadMidiToSongAndTagTracks(String path){
-        Scanner sc = new Scanner(System.in);
-        int i = 0;
-        Score score = new Score();
-        Read.midi(score, path);
-        Song song = new Song(score);
-        System.out.println("Please tag these tracks corresponding tracktag, use none for irrelevant tracks");
-        
-        for (Part p : song.getScore().getPartArray()){
-            Translator.INSTANCE.showPart(p);
-            String tag = sc.next().toString().toUpperCase();
-            
-            while (!TrackTag.contains(tag)){
-                System.out.println("No such TrackTag, enter again");
-                tag = sc.next();
-            }
-            
-            TrackTag t = TrackTag.valueOf(tag);
-            song.addTagToTrack(p, t);
-            i++;
-        }
-        
-        return song;
-    }
 
     /**
      * Saves a song the default location. 

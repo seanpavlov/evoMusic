@@ -1,7 +1,6 @@
 package com.evoMusic.model.geneticAlgorithm.mutation;
 
-import jm.music.data.Note;
-import com.evoMusic.model.*;
+import com.evoMusic.model.Song;
 
 public abstract class ISubMutator {
     
