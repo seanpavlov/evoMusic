@@ -12,7 +12,8 @@ import com.evoMusic.database.MongoDatabase;;
 
 
 @RunWith(Suite.class)
-@SuiteClasses({TranslatorTest.class, MongoDatabaseTest.class })
+@SuiteClasses({TranslatorTest.class, GenerationTest.class, MongoDatabaseTest.class })
+
 /**
  * This is our test suite class. This class runs all our test classes. 
  * To get started with jUnit 4.x, here's a good article: 

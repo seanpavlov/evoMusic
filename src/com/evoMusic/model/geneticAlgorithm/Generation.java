@@ -20,7 +20,7 @@ public class Generation {
      *            The individuals that will create this generation.
      */
     public Generation(List<Individual> parents) {
-        this.parents = parents;
+        this.parents = new ArrayList<Individual>(parents);
     }
 
     public List<Individual> getParents() {
@@ -123,8 +123,8 @@ public class Generation {
         List<Individual> bestIndividuals = new ArrayList<Individual>(
                 wantedIndividuals);
         Collections.sort(individuals);
-        for (int i = 0; i < wantedIndividuals && i < individuals.size(); i++) {
-            bestIndividuals.add(individuals.get(i));
+        for (int i = 0; i < wantedIndividuals; i++) {
+            bestIndividuals.add(individuals.get(individuals.size() - i - 1));
         }
         return bestIndividuals;
     }

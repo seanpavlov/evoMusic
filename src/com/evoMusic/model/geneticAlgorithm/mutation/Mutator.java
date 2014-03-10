@@ -6,7 +6,7 @@ import java.util.List;
 import com.evoMusic.model.Song;
 
 public class Mutator {
-    private List<ISubMutator> subMutators = new ArrayList<ISubMutator>();
+    private List<ISubMutator> subMutators;
     private double overallMutationProbability;
     private MidiUtil mu = new MidiUtil();
     
