@@ -4,12 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import jm.music.data.Note;
 import jm.music.data.Part;
 import jm.music.data.Phrase;
 import jm.music.data.Score;
 
 import com.evoMusic.model.Song;
 import com.evoMusic.util.TrackTag;
+import com.evoMusic.util.Translator;
 
 public class Crossover {
 
@@ -50,7 +52,6 @@ public class Crossover {
     public Song makeCrossover(List<Individual> parents) {
         List<TrackTag> tags = getCommonTracks(parents);
         if (tags.isEmpty()){
-            //if theres no common tracks, watdo?
             System.err.println("No common tracktags, parents could not be crossed");
             return new Song(new Score("empty song"));
         } else {
@@ -61,6 +62,7 @@ public class Crossover {
             int counter = 0;
             double averageTempo = 0;
             int instrument = 0;
+            
             // tags now contains all common tags, loop over all of them and send them to crossTags one by one
             for (TrackTag t : tags){
                 for (Individual i : parents){
@@ -83,6 +85,9 @@ public class Crossover {
 
             averageTempo = averageTempo / parents.size();
             finalScore.setTempo(averageTempo);
+            
+            //here number*number
+            System.out.println(finalScore.getPartArray()[0].getPhrase(25));
     
             return finalSong;
         }
@@ -104,6 +109,7 @@ public class Crossover {
         }
         
         p = mergeTracks(newParts);
+
         return p;
     }
     
@@ -142,10 +148,10 @@ public class Crossover {
         double endTime = sourcePhrase.getEndTime();
         double phraseTime = endTime / numberOfIntersections;
         Phrase[] intersections = new Phrase[numberOfIntersections];
-
+        
         for (int i = 0; i < numberOfIntersections; i++) {
             intersections[i] = sourcePhrase.copy(i * phraseTime, (i + 1)
-                    * phraseTime);
+                    * phraseTime, false);
         }
 
         return intersections;
@@ -166,10 +172,9 @@ public class Crossover {
             newPhrases.add(getPhraseIntersections(onePhrasePart));
         }
         
-        int nextRandom;
+        //here
         for (int i = 0; i < numberOfIntersections; i++) {
-            nextRandom = (int) (randomGen.nextDouble() * newPhrases.size());
-            newPart.addPhraseList(newPhrases.get(nextRandom));
+            newPart.addPhraseList(newPhrases.get(randomGen.nextInt(newPhrases.size())));
         }
 
         return newPart;
@@ -182,12 +187,16 @@ public class Crossover {
      * @return
      */
     private Phrase mergePhrases(Part part){
+        double timeLength = part.getEndTime();
+        
         Phrase phrase = new Phrase();
         for (Phrase tempPhrase : part.getPhraseArray()){
-           phrase.addNoteList(tempPhrase.getNoteArray(), false);
+           for (Note n : tempPhrase.getNoteArray()){
+             phrase.addNote(n);
+             if (phrase.getEndTime() >= timeLength) return phrase;
+           }
         }
 
         return phrase;
     }
-    
 }
