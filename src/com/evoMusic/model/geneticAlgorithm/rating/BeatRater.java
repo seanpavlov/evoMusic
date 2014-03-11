@@ -7,6 +7,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import jm.music.data.Part;
+import jm.music.data.Phrase;
 
 import com.evoMusic.model.Song;
 import com.evoMusic.model.enumerators.TrackTag;
@@ -34,7 +35,7 @@ public class BeatRater extends SubRater{
         }
         if(count == 0)
             return 0.0;
-        return rating/count;
+        return rating/(double)count;
     }
     
     /**
@@ -43,39 +44,52 @@ public class BeatRater extends SubRater{
      * @return double Rating value for the rated part
      * **/
     private double ratePart(Part part){
-        List<Double> rythmList = new ArrayList<Double>();
+        
         //Get the rythm array for the first phrase
-        double[] rythmArray = part.getPhraseArray()[0].getRhythmArray();
-        String asString = "";
-        //Add values to list and build values as string
-        for(double d : rythmArray){
-            asString = asString + d;
-            rythmList.add(d);
+        int count = 0;
+        double rating = 0;
+        for(Phrase phrase : part.getPhraseArray()){
+            List<Double> rythmList = new ArrayList<Double>();
+            String asString = "";
+            //Add values to list and build values as string
+            for(double d : phrase.getRhythmArray()){
+                asString = asString + d;
+                rythmList.add(d);
+            }
+            
+            //Save length before removal of pattern found
+            int before = asString.length();
+            //Calculate longest repeating patterns in list
+            List<List<Double>> longest = this.longestSequence(rythmList);
+            for(List<Double> dList : longest){
+                String nextPattern = "";
+                for(Double d : dList){
+                    nextPattern = nextPattern + d;
+                }
+                asString = asString.replace(nextPattern, "");
+            }        
+            //Get string length after removal of found pattern
+            int after = asString.length(); 
+            //Calculates rate by checking list size before removal of pattern found and after
+            rating += 1.0 - ((double)after/(double)before);
         }
         
-        //Calculate longest repeating pattern in list
-        String longestAsString = "";
-        List<Double> longest = this.longestSequence(rythmList);
-        for(Double d : longest){
-            longestAsString = longestAsString + d;
-        }
-        int before = asString.length();
-        asString  = asString.replace(longestAsString, "");
-        int after = asString.length();
         
-        //Calculates rate by checking list size before removal of pattern found and after
-        return 1.0-((double)after/(double)before);
+        //Calculate total value by calculating median of all phrases
+        return rating/(double)count;
     }
     
     
     /**
-     * Get Longest repeating sequence in list of doubles
+     * Get Longest repeating sequences as lists of double list 
      * 
      * @param rythmList List of Double values to find repeating pattern in
-     * @return List<Double> Double values representing longest repeating pattern in param 
+     * @return List<List<Double>> List of Lists of Double values representing
+     *                               longest repeating pattern in param 
      * */
-   public List<Double> longestSequence(List<Double> rythmList){
+   public List<List<Double>> longestSequence(List<Double> rythmList){
         
+        List<List<Double>> bestResult = new ArrayList<List<Double>>();
         //Create sublists from the input list
         int stringLength = rythmList.size();
         List<List<Double>> subStrings = new ArrayList<List<Double>>();
@@ -95,8 +109,10 @@ public class BeatRater extends SubRater{
         }
    
         //If list of values is all the same, largest pattern is half the list
-        if(allTheSame)
-            return rythmList.subList(0, stringLength/2);
+        if(allTheSame){
+            bestResult.add(rythmList.subList(0, stringLength/2));
+            return bestResult;
+        }
         /*
          * Sorts the List of sublists containing Double values by
          * comparing the sublists elements and  
@@ -118,7 +134,7 @@ public class BeatRater extends SubRater{
         });
         
         
-        List<Double> bestFound= new ArrayList<Double>();
+        List<Double> nextFound= new ArrayList<Double>();
         int atLeast = 1;
         int distance;
         int checkFurter = 1;
@@ -154,9 +170,10 @@ public class BeatRater extends SubRater{
                     continue;
                 }
                 
-                bestFound = this.longestCommon(list1, list2, distance);
-                atLeast = bestFound.size()+1;
-                if(bestFound.size() == distance){
+                nextFound = this.longestCommon(list1, list2, distance);
+                bestResult.add(0, nextFound);
+                atLeast = nextFound.size()+1;
+                if(nextFound.size() == distance){
                     checkFurter = Math.max(checkFurter, n+1);
                 }else{
                     checkFurter = n;
@@ -166,7 +183,7 @@ public class BeatRater extends SubRater{
             
         }
         
-        return bestFound;
+        return bestResult;
     }
     
     /* Finds longest common sequence for two lists of double values
