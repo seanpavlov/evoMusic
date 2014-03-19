@@ -14,24 +14,67 @@ import com.evoMusic.util.TrackTag;
 
 public class Crossover {
     private int intersections;
-    private int simplicity = 10;
-    private int silenceduration = 20;
+    private Integer maxDuration = null;
+    private int silenceLength = 20;
+    private int simplicity = 1;
     private Random randomGen;
 
+    /**
+     * Constructor for crossover
+     * 
+     * @param intersections
+     */
     public Crossover(int intersections){
         randomGen = new Random();
         this.intersections = intersections;
     }
 
-    public void setSimplicityLevel(int simplicity){
+    /**
+     * Sets the maximum length of the results, defaults to no restriction if 
+     * not set specifically with this method.
+     * 
+     * @param maxDuration
+     */
+    public void setMaxDuration(int maxDuration){
+        this.maxDuration = maxDuration;
+    }
+    
+    /**
+     * Sets the number of intersections to split the parents on, also set in constructor
+     * the value should not be over 40 for good results to be generated.
+     * 
+     * @param maxDuration
+     */
+    public void setIntersections(int intersections){
+        this.intersections = intersections;
+    }
+    
+    
+    /**
+     * Set simplicity level, the higher the value the less complex the results will be,
+     * defaults to 1 (complex) and should not exceed 100.
+     * 
+     * @param simplicity
+     */
+    public void setSimplicityLever(int simplicity){
         this.simplicity = simplicity;
     }
     
-    public void setMaxSilenceDiration(int silenceduration){
-        this.silenceduration = silenceduration;
+    /**
+     * Set maximum silence duration in a song, defaults to 20.
+     * 
+     * @param silenceLength
+     */
+    public void setMaxSilenceLength(int silenceLength){
+        this.silenceLength = silenceLength;
     }
     
-    
+    /**
+     * Called to generate one new offspring from a list of parents
+     * 
+     * @param parents
+     * @return child
+     */
     public Song makeCrossover(List<Individual> parents){
         Score finalScore = new Score();
         Song child = new Song(finalScore);
@@ -47,7 +90,7 @@ public class Crossover {
                 averageTempo = 0;
                 for (Individual i : parents){
                     averageTempo += i.getSong().getTempo();
-                    List<Part> p = i.getSong().getTaggedTracks(t);
+//                    List<Part> p = i.getSong().getTaggedTracks(t);
                     tracksWithTag.add(i.getSong().getTaggedTracks(t));
                 }
                 
@@ -60,10 +103,17 @@ public class Crossover {
             averageTempo = averageTempo / parents.size();
             finalScore.setTempo(averageTempo);
         }
-        
+        if (child.getScore().getEndTime() < 1) System.err.println("Error in crossover, may be extreme settings?");
         return child;
     }
     
+    /**
+     * Called for every common track tag found in the list of parents, results in one new track,
+     * for example melody or beat. 
+     * 
+     * @param tracksWithTag
+     * @return
+     */
     private Part crossTaggedTracks(List<List<Part>> tracksWithTag) {
         Part newTagPart = new Part();
         
@@ -77,6 +127,10 @@ public class Crossover {
                 for (Phrase tempPhrase : morphedTracks){
 //                  tempPhrase.setInstrument(taggedTrackPart.getInstrument());
                     newTagPart.add(tempPhrase);
+                    if (maxDuration != null && newTagPart.getEndTime() > maxDuration){ 
+                        newTagPart.removeLastPhrase();                        
+                        return newTagPart;
+                    };
                 }
             }
         }
@@ -84,16 +138,13 @@ public class Crossover {
         return newTagPart;
     }
 
-    private List<Phrase> morph(List<Phrase> choppedTrack) {
-        List<Phrase> newPhrases = new ArrayList<Phrase>(); 
-        for (int i = 0; i < choppedTrack.size() - intersections; i+=intersections){
-            Phrase newPhrase = choppedTrack.get(randomGen.nextInt(intersections) + i);   
-            newPhrases.add(newPhrase);
-        }        
-        
-        return newPhrases;
-    }
-
+    /**
+     * Chops a part into sections depending on number of intersections, each subpart contains equally
+     * many notes.
+     * 
+     * @param taggedTrackPart
+     * @return
+     */
     private List<Phrase> chop(Part taggedTrackPart) {
         List<Phrase> choppedPhrases = new ArrayList<Phrase>();
         
@@ -103,7 +154,7 @@ public class Crossover {
             Phrase newPhrase = new Phrase();
             if (numberOfNotes > 1 ){
                 for (int i = 0; i < phraseNotes.length; i++){
-                    if (phraseNotes[i].getDuration() < silenceduration) newPhrase.addNote(phraseNotes[i]);
+                    if (phraseNotes[i].getDuration() < silenceLength) newPhrase.addNote(phraseNotes[i]);
                     if (i % numberOfNotes == 0 && newPhrase.length() > simplicity){
                         choppedPhrases.add(newPhrase);
                         newPhrase = new Phrase();
@@ -113,6 +164,23 @@ public class Crossover {
         }
 
         return choppedPhrases;
+    }
+    
+    /**
+     * Combines a list of phrases into a new list, this list has randomized parts
+     * from the parameter list
+     * 
+     * @param choppedTrack
+     * @return
+     */
+    private List<Phrase> morph(List<Phrase> choppedTrack) {
+        List<Phrase> newPhrases = new ArrayList<Phrase>(); 
+        for (int i = 0; i < choppedTrack.size() - intersections; i+=intersections){
+            Phrase newPhrase = choppedTrack.get(randomGen.nextInt(intersections) + i);   
+            newPhrases.add(newPhrase);
+        }        
+        
+        return newPhrases;
     }
 
     /**
