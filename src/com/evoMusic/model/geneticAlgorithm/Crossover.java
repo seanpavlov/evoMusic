@@ -83,8 +83,13 @@ public class Crossover {
         
         List<TrackTag> tags = getCommonTracks(parents);
         if (tags.isEmpty()){
-            System.err.println("No common tracktags, parents could not be crossed");
-            return new Song(new Score("empty song"));
+            try {
+                throw new Exception("No common tracktags, parents could not be crossed");
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
         } else {
             for (TrackTag t : tags){
                 averageTempo = 0;
@@ -93,7 +98,6 @@ public class Crossover {
 //                    List<Part> p = i.getSong().getTaggedTracks(t);
                     tracksWithTag.add(i.getSong().getTaggedTracks(t));
                 }
-                
                 Part newTagPart = crossTaggedTracks(tracksWithTag);
                 finalScore.add(newTagPart);
                 
@@ -121,14 +125,14 @@ public class Crossover {
         for (List<Part> taggedTracksInParent: tracksWithTag){
             
             //loops all tracks in one parent with same tracktag
-            for (Part taggedTrackPart: taggedTracksInParent){
+            for (Part taggedTrackPart: taggedTracksInParent){                
                 List<Phrase> choppedTrack = chop(taggedTrackPart);
                 List<Phrase> morphedTracks = morph(choppedTrack);
                 for (Phrase tempPhrase : morphedTracks){
 //                  tempPhrase.setInstrument(taggedTrackPart.getInstrument());
                     newTagPart.add(tempPhrase);
                     if (maxDuration != null && newTagPart.getEndTime() > maxDuration){ 
-                        newTagPart.removeLastPhrase();                        
+                        newTagPart.removeLastPhrase();        
                         return newTagPart;
                     };
                 }
@@ -162,7 +166,6 @@ public class Crossover {
                 }
             }
         }
-
         return choppedPhrases;
     }
     
@@ -175,10 +178,10 @@ public class Crossover {
      */
     private List<Phrase> morph(List<Phrase> choppedTrack) {
         List<Phrase> newPhrases = new ArrayList<Phrase>(); 
-        for (int i = 0; i < choppedTrack.size() - intersections; i+=intersections){
+        for (int i = 0; i <= choppedTrack.size() - intersections; i+=intersections){
             Phrase newPhrase = choppedTrack.get(randomGen.nextInt(intersections) + i);   
             newPhrases.add(newPhrase);
-        }        
+        }
         
         return newPhrases;
     }

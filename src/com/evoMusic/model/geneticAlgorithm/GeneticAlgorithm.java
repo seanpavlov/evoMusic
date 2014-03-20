@@ -201,7 +201,7 @@ public class GeneticAlgorithm {
      * Iterates through generations until both minimumRating and
      * minimumIterations are fulfilled.
      */
-    public void iterate() {
+    public void iterate(){
         double highestRating = 0;
         double currentRating = 0;
         if (iterationsDone == 0) {
