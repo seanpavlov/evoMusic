@@ -72,14 +72,14 @@ public class Rater {
      * @param songs
      *            songs to initiate the rating
      */
-    public void initSubRaterWeights(Song[] songs) {
+    public void initSubRaterWeights(List<Song> songs) {
         double rating;
         for (SubRater subRater : subraters) {
             rating = 0;
             for (Song s : songs) {
                 rating += subRater.rate(s);
             }
-            rating = rating / songs.length;
+            rating = rating / songs.size();
             subRater.setWeight(rating);
         }
     }

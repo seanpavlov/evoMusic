@@ -164,6 +164,8 @@ public class Crossover {
             if (numberOfNotes > 1 ){
                 for (int i = 0; i < phraseNotes.length; i++){
                     phraseNotes[i].setPan(0.5);
+                    phraseNotes[i].setDynamic(64);
+                    
                     if (phraseNotes[i].getDuration() < silenceLength) newPhrase.addNote(phraseNotes[i]);
                     if (i % numberOfNotes == 0 && newPhrase.length() > simplicity){
                         choppedPhrases.add(newPhrase);
