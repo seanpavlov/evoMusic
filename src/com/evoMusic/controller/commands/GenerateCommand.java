@@ -48,7 +48,12 @@ public class GenerateCommand extends AbstractCommand {
         allMut.add(new SimplifyMutator(0.1, 4, 0.1));
         List<SubRater> subRaters = new LinkedList<SubRater>();
         subRaters.add(new UserRater(1));
-        GeneticAlgorithm ga = new GeneticAlgorithm(selectedSongs, new Mutator(allMut, 1), new Crossover(20), new Rater(subRaters));
+        
+        Crossover crossover = new Crossover(4);
+        crossover.setMinDuration(50);
+        crossover.setMaxDuration(200);
+        
+        GeneticAlgorithm ga = new GeneticAlgorithm(selectedSongs, new Mutator(allMut, 0), crossover, new Rater(subRaters));
         ga.setMinimumIterations(iterations);
         System.out.println("Start iterating");
         ga.iterate();

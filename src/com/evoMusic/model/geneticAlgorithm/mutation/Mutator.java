@@ -25,8 +25,13 @@ public class Mutator {
      * @param individual
      */
     public void mutate(Song individual) {
-        int nbrOfNotes = individual.getScore().getPart(0).getPhrase(0).getNoteArray().length;
-        
+        int nbrOfNotes = 0;
+        try {
+            nbrOfNotes = individual.getScore().getPart(0).getPhrase(0).getNoteArray().length;
+        }
+        catch (Exception e){
+            System.out.println("Could not mutate " + individual.getTitle());
+        }
         for (int i = 0; i < nbrOfNotes; i++) {
             if (!mu.isBlank(individual.getScore().getPart(0).getPhrase(0).getNote(i).getPitch())){
                 if (Math.random() < overallMutationProbability) {
