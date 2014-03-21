@@ -31,11 +31,10 @@ public class BeatRater extends SubRater{
             List<TrackTag> trackTags = song.getTrackTags(part);
             if(trackTags.contains(TrackTag.RHYTHM) ||
                trackTags.contains(TrackTag.BEAT)){
-                ++count;
                 rating += this.ratePart(part);
+                ++count;
             }
         }
-        /**If there is no BEAT or RHYTHM part, returns rating 0.0*/
         if(count == 0)
             return 0.0;
         return rating/count;
@@ -147,7 +146,6 @@ public class BeatRater extends SubRater{
          * difference between current list being compared (distance) and
          * how far ahead to check to remove overlaps (checkFurter)
          * */
-        //int atLeast = 1;
         int distance;
         int checkFurter = 1;
             
@@ -180,7 +178,6 @@ public class BeatRater extends SubRater{
                 
                 nextFound = this.longestCommon(firstList, secondList, distance);
                 bestResults.add(0, nextFound);
-                //atLeast = nextFound.size() + 1;
                 
                 checkFurter = (nextFound.size() == distance) ?
                         Math.max(checkFurter, n+1) : n;                
@@ -219,19 +216,25 @@ public class BeatRater extends SubRater{
     * sorts the order of the sublists accordingly
     * @param list List of sublists containing Double values to be sorted
     */
-   private void sortByValues(List<List<Double>> list){
+   public void sortByValues(List<List<Double>> list){
        Collections.sort(list,new Comparator<List<Double>>() {
            public int compare(List<Double> values, List<Double> otherValues) {
-               int maxValue =  Math.max(values.size(), otherValues.size());
-               String firstArray = "";
-               String secondArray = "";
-               for(int i = 0; i < maxValue; i++){
-                   if(i<values.size())
-                       firstArray = firstArray + values.get(i);
-                   if(i<otherValues.size())
-                       secondArray = secondArray + otherValues.get(i);
+               int minSize =  Math.min(values.size(), otherValues.size());
+               for(int i = 0; i < minSize; i++){
+                   double first = values.get(i);
+                   double second = otherValues.get(i);
+                   if(first < second)
+                       return -1;
+                   else if(first > second)
+                       return 1;
                }
-               return firstArray.compareTo(secondArray);
+               if(values.size() < otherValues.size())
+                   return -1;
+               else if(values.size() > otherValues.size())
+                   return 1;
+               else
+                   return 0;
+                         
            }
        });
    }
