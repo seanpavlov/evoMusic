@@ -15,9 +15,11 @@ import com.evoMusic.util.TrackTag;
 public class Crossover {
     private int intersections;
     private Integer maxDuration = null;
-    private int silenceLength = 20;
-    private int simplicity = 1;
-    private Random randomGen;
+    private Integer minDuration = 0;
+
+    private int silenceLength = 40;
+    private int simplicity = 5;
+    private Random randomGen;    
 
     /**
      * Constructor for crossover
@@ -40,15 +42,14 @@ public class Crossover {
     }
     
     /**
-     * Sets the number of intersections to split the parents on, also set in constructor
-     * the value should not be over 40 for good results to be generated.
+     * Sets the minimum length of the results, defaults to 10
+     * high values increases time consumption drastically
      * 
      * @param maxDuration
      */
-    public void setIntersections(int intersections){
-        this.intersections = intersections;
+    public void setMinDuration(int minDuration){
+        this.minDuration = minDuration;
     }
-    
     
     /**
      * Set simplicity level, the higher the value the less complex the results will be,
@@ -56,7 +57,7 @@ public class Crossover {
      * 
      * @param simplicity
      */
-    public void setSimplicityLever(int simplicity){
+    private void setSimplicityLevel(int simplicity){
         this.simplicity = simplicity;
     }
     
@@ -65,7 +66,7 @@ public class Crossover {
      * 
      * @param silenceLength
      */
-    public void setMaxSilenceLength(int silenceLength){
+    private void setMaxSilenceLength(int silenceLength){
         this.silenceLength = silenceLength;
     }
     
@@ -76,17 +77,20 @@ public class Crossover {
      * @return child
      */
     public Song makeCrossover(List<Individual> parents){
+        this.setMaxSilenceLength(randomGen.nextInt(40)+1);
+        this.setSimplicityLevel(randomGen.nextInt(100)+2);
+        
         Score finalScore = new Score();
         Song child = new Song(finalScore);
         List<List<Part>> tracksWithTag = new ArrayList<List<Part>>();
         double averageTempo = 0;
         
         List<TrackTag> tags = getCommonTracks(parents);
+        tags.remove(TrackTag.NONE);
         if (tags.isEmpty()){
             try {
                 throw new Exception("No common tracktags, parents could not be crossed");
             } catch (Exception e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
 
@@ -95,11 +99,11 @@ public class Crossover {
                 averageTempo = 0;
                 for (Individual i : parents){
                     averageTempo += i.getSong().getTempo();
-//                    List<Part> p = i.getSong().getTaggedTracks(t);
                     tracksWithTag.add(i.getSong().getTaggedTracks(t));
                 }
                 Part newTagPart = crossTaggedTracks(tracksWithTag);
                 finalScore.add(newTagPart);
+                child.addTagToTrack(newTagPart, t);
                 
                 tracksWithTag.clear();
             }
@@ -107,7 +111,10 @@ public class Crossover {
             averageTempo = averageTempo / parents.size();
             finalScore.setTempo(averageTempo);
         }
-        if (child.getScore().getEndTime() < 1) System.err.println("Error in crossover, may be extreme settings?");
+        
+        // obs, recursive call, forces results to be longer than a minimal duration, 
+        // increasing minDuration drastically increases complexity
+        if (child.getScore().getEndTime() < minDuration) return makeCrossover(parents);
         return child;
     }
     
@@ -120,30 +127,28 @@ public class Crossover {
      */
     private Part crossTaggedTracks(List<List<Part>> tracksWithTag) {
         Part newTagPart = new Part();
-        
         //loops all tracks with one tracktag in all parents
         for (List<Part> taggedTracksInParent: tracksWithTag){
             
             //loops all tracks in one parent with same tracktag
-            for (Part taggedTrackPart: taggedTracksInParent){                
+            for (Part taggedTrackPart: taggedTracksInParent){        
                 List<Phrase> choppedTrack = chop(taggedTrackPart);
                 List<Phrase> morphedTracks = morph(choppedTrack);
                 for (Phrase tempPhrase : morphedTracks){
 //                  tempPhrase.setInstrument(taggedTrackPart.getInstrument());
                     newTagPart.add(tempPhrase);
                     if (maxDuration != null && newTagPart.getEndTime() > maxDuration){ 
-                        newTagPart.removeLastPhrase();        
+                        newTagPart.removeLastPhrase();
                         return newTagPart;
                     };
                 }
             }
         }
-
         return newTagPart;
     }
 
     /**
-     * Chops a part into sections depending on number of intersections, each subpart contains equally
+     * Chops a part into sections depending on number of intersections, each sub part contains equally
      * many notes.
      * 
      * @param taggedTrackPart
@@ -158,6 +163,7 @@ public class Crossover {
             Phrase newPhrase = new Phrase();
             if (numberOfNotes > 1 ){
                 for (int i = 0; i < phraseNotes.length; i++){
+                    phraseNotes[i].setPan(0.5);
                     if (phraseNotes[i].getDuration() < silenceLength) newPhrase.addNote(phraseNotes[i]);
                     if (i % numberOfNotes == 0 && newPhrase.length() > simplicity){
                         choppedPhrases.add(newPhrase);
@@ -177,9 +183,9 @@ public class Crossover {
      * @return
      */
     private List<Phrase> morph(List<Phrase> choppedTrack) {
-        List<Phrase> newPhrases = new ArrayList<Phrase>(); 
-        for (int i = 0; i <= choppedTrack.size() - intersections; i+=intersections){
-            Phrase newPhrase = choppedTrack.get(randomGen.nextInt(intersections) + i);   
+        List<Phrase> newPhrases = new ArrayList<Phrase>();
+        for (int i = 0; i < choppedTrack.size(); i++){
+            Phrase newPhrase = choppedTrack.get(randomGen.nextInt(choppedTrack.size()));
             newPhrases.add(newPhrase);
         }
         
