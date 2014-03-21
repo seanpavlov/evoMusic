@@ -8,6 +8,7 @@ import java.util.Scanner;
 import java.util.Set;
 
 import com.evoMusic.controller.AbstractCommand;
+import com.evoMusic.controller.InputController;
 import com.evoMusic.database.MongoDatabase;
 import com.evoMusic.model.Song;
 import com.evoMusic.util.TrackTag;
@@ -174,10 +175,10 @@ public class SongCommand extends AbstractCommand {
             System.out.println(i+": "+trackTags[i].toString());
         }
         System.out.println("Add multiple tags by separating them with space");
-        Scanner sc = new Scanner(System.in);
+        Scanner sc = InputController.SCANNER;
         
         String[] trackIndexes = new String[0];
-        
+       
         for(int i = 0; i < song.getNbrOfTracks(); i++) {
             System.out.print("Please Tag track "+i+": ");
             trackIndexes = sc.nextLine().split(" ");
