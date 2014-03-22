@@ -108,24 +108,24 @@ public class MarkovChain {
     }
 
     public Song generateNew() {
-        int[] firstNotes = new int[1];
-        firstNotes[0] = originalSong.getScore().getPart(0).getPhrase(0).getNote(0).getPitch();
-        Song newSong = toSong(originalIntervals, originalDurations, firstNotes);
-        newSong.getScore().setTempo(originalSong.getTempo());
-        return newSong;
+//        int[] firstNotes = new int[1];
+//        firstNotes[0] = originalSong.getScore().getPart(0).getPhrase(0).getNote(0).getPitch();
+//        Song newSong = toSong(originalIntervals, originalDurations, firstNotes);
+//        newSong.getScore().setTempo(originalSong.getTempo());
+//        return newSong;
         
-//        double longestDuration = 0;
-//        double currentDuration;
-//        for(double[] durations : originalDuration) {
-//            currentDuration = 0;
-//            for(double duration : durations) {
-//                currentDuration += duration;
-//            }
-//            if(currentDuration > longestDuration) {
-//                longestDuration = currentDuration;
-//            }
-//        }
-//        return generateNew(longestDuration);
+        double longestDuration = 0;
+        double currentDuration;
+        for(double[] durations : originalDurations) {
+            currentDuration = 0;
+            for(double duration : durations) {
+                currentDuration += duration;
+            }
+            if(currentDuration > longestDuration) {
+                longestDuration = currentDuration;
+            }
+        }
+        return generateNew(longestDuration);
     }
 
     public Song generateNew(double maxSongDuration) {
@@ -137,22 +137,63 @@ public class MarkovChain {
         List<Integer> intervalList;
         List<Double> timeDiffList;
         List<Double> durationList;
-        for (int i = 0; i < originalIntervals.size(); i++) {
+        
+        int[] foundIntervals;
+        double[] foundDurations;
+        
+        // For each track:
+        for (int partNumber = 0; partNumber < originalIntervals.size(); partNumber++) {
             intervalList = new ArrayList<Integer>();
             timeDiffList = new ArrayList<Double>();
             durationList = new ArrayList<Double>();
             double songLength = 0;
+            int randomInt;
+            
+            // Add first interval
+            randomInt = (int)(rand.nextDouble() * intervalList.size());
+            intervalList.add(originalIntervals.get(partNumber)[randomInt]);
+            
             while (songLength < maxSongDuration) {
-                // TODO lookup intervals, timediff and duration at same time.
+                // TODO lookup intervals and duration at same time.
+                
+                // Add rest of intervals
+                
+                
+                // Add all durations
+                
             }
 
             newIntervals.add(intervalList);
             newTimeDiff.add(timeDiffList);
             newDuration.add(durationList);
         }
+        
+        // Find first notes
 
         // TODO convert to real notes.
         return null;
+    }
+    
+    private int selectNextInterval(int[] pattern, List<Integer> intervalList) {
+        List<Integer> foundIntervals = new ArrayList<Integer>();
+        List<Integer> timesFound = new ArrayList<Integer>();
+        boolean foundMatchingPattern;
+        for(int i = 0; i < intervalList.size() - pattern.length; i++) {
+            foundMatchingPattern = true;
+            for(int j = 0; j < pattern.length; j++) {
+                if(!(intervalList.get(i + j) == pattern[j])) {
+                    foundMatchingPattern = false;
+                    break;
+                }
+            }
+            if(foundMatchingPattern) {
+                // TODO Add interval to lists or increment its count
+            }
+        }
+        
+        
+        
+        return 0;
     }
 
     private static double getRoundedStartTime(Note note) {
