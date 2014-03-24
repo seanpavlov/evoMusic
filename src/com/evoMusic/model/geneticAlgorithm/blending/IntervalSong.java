@@ -17,16 +17,17 @@ import com.evoMusic.model.Song;
 public class IntervalSong {
 
     private List<int[]> originalIntervals;
-    private List<double[]> originalDurations;
+    private List<double[]> originalRythmValues;
+    private List<double []> originalDurations;
     private Note[] firstNotes;
     private int[] instruments;
     private int[] channels;
     private double tempo;
 
-    public IntervalSong(List<int[]> intervals, List<double[]> durations,
+    public IntervalSong(List<int[]> intervals, List<double[]> rythmValues,
             Song songSettingTemplate) {
         this.originalIntervals = intervals;
-        this.originalDurations = durations;
+        this.originalRythmValues = rythmValues;
         int numberOfTracks = intervals.size();
         this.firstNotes = new Note[numberOfTracks];
         this.instruments = new int[numberOfTracks];
@@ -44,6 +45,7 @@ public class IntervalSong {
 
     public IntervalSong(Song song) {
         this.originalIntervals = new ArrayList<int[]>();
+        this.originalRythmValues = new ArrayList<double[]>();
         this.originalDurations = new ArrayList<double[]>();
         Map<Double, List<ComparableNote>> noteMap;
         List<ComparableNote> sortedNoteList = new ArrayList<ComparableNote>();
@@ -83,9 +85,8 @@ public class IntervalSong {
             channels[partIndex] = allParts[partIndex].getChannel();
             int numberOfNotes = sortedNoteList.size();
             int[] intervals = new int[numberOfNotes - 1];
-            originalIntervals.add(intervals);
+            double[] rythmValues = new double[numberOfNotes];
             double[] durations = new double[numberOfNotes];
-            originalDurations.add(durations);
             Note currentNote = null;
             Note nextNote = null;
             for (int i = 0; i < numberOfNotes - 1; i++) {
@@ -94,13 +95,30 @@ public class IntervalSong {
                 // adding to intervals
                 intervals[i] = nextNote.getPitch() - currentNote.getPitch();
 
+                // adding to rythmValues.
+                rythmValues[i] = currentNote.getRhythmValue();
+                
                 // adding to duration
-                durations[i] = currentNote.getRhythmValue();
+                durations[i] = currentNote.getDuration();
             }
-            if (nextNote != null) {
-                durations[numberOfNotes - 1] = nextNote.getRhythmValue();
-            }
+            rythmValues[numberOfNotes - 1] = sortedNoteList.get(numberOfNotes-1).note.getRhythmValue();
+
+            originalIntervals.add(intervals);
+            originalRythmValues.add(rythmValues);
+            originalDurations.add(durations);
         }
+    }
+    
+    public List<int[]> getIntervals() {
+        return originalIntervals;
+    }
+    
+    public List<double[]> getRythmValues() {
+        return originalRythmValues;
+    }
+    
+    public List<double[]> getDurations() {
+        return originalDurations;
     }
 
     public Song toSong() {
@@ -114,9 +132,9 @@ public class IntervalSong {
         for (int i = 0; i < originalIntervals.size(); i++) {
             phrase = new Phrase(0.0);
             currentPitch = firstNotes[i].getPitch();
-            phrase.add(new Note(currentPitch, originalDurations.get(i)[0]));
+            phrase.add(new Note(currentPitch, originalRythmValues.get(i)[0]));
             currentPartsIntervals = originalIntervals.get(i);
-            currentPartsDurations = originalDurations.get(i);
+            currentPartsDurations = originalRythmValues.get(i);
             for (int j = 0; j < currentPartsIntervals.length; j++) {
                 currentPitch += currentPartsIntervals[j];
                 phrase.add(new Note(currentPitch, currentPartsDurations[j + 1]));
@@ -138,14 +156,14 @@ public class IntervalSong {
         StringBuilder string = new StringBuilder();
         for (int i = 0; i < originalIntervals.size(); i++) {
             string.append("Track " + i + ": number of notes = "
-                    + originalDurations.get(i).length + "\n");
+                    + originalRythmValues.get(i).length + "\n");
             string.append("Intervals: ");
             for (Integer interval : originalIntervals.get(i)) {
                 string.append(interval);
                 string.append(" ");
             }
             string.append("\nDurations: ");
-            for (Double duration : originalDurations.get(i)) {
+            for (Double duration : originalRythmValues.get(i)) {
                 string.append(duration);
                 string.append(" ");
             }

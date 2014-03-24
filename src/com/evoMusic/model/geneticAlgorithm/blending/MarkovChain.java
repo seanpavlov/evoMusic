@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Vector;
 
 import jm.music.data.Note;
 import jm.music.data.Part;
@@ -24,30 +26,23 @@ public class MarkovChain {
     private static final int numberOfIntervalLookbacks = 3;
     
     private Random rand;
-    private IntervalSong intervalledSong;
-    private int[] intervalSequences;
-    private int[][] intervalProbabilities;
+    private List<ProbabilityMatrix<Integer, Integer>> intervalProbabilityMatrices;
+    private List<ProbabilityMatrix<Integer, Double>> rythmValueProbabilityMatrices;
+    private List<ProbabilityMatrix<Integer, Double>> durationProbabilityMatrices;
+    private IntervalSong originalSong;
 
     public MarkovChain(Song song) {
-        this.intervalledSong = new IntervalSong(song);
-    }
-    
-
-    
-    private int getRandomNote(Phrase[] phrases) {
-        return 0;
+        this.originalSong = new IntervalSong(song);
+        this.intervalProbabilityMatrices = new ArrayList<ProbabilityMatrix<Integer, Integer>>();
+        this.rythmValueProbabilityMatrices = new ArrayList<ProbabilityMatrix<Integer, Double>>();
+        this.durationProbabilityMatrices = new ArrayList<ProbabilityMatrix<Integer, Double>>();
+        initProbabilityMatrices();
     }
 
     public Song generateNew() {
-//        int[] firstNotes = new int[1];
-//        firstNotes[0] = originalSong.getScore().getPart(0).getPhrase(0).getNote(0).getPitch();
-//        Song newSong = toSong(originalIntervals, originalDurations, firstNotes);
-//        newSong.getScore().setTempo(originalSong.getTempo());
-//        return newSong;
-        
         double longestDuration = 0;
         double currentDuration;
-        for(double[] durations : originalDurations) {
+        for(double[] durations : originalSong.getDurations()) {
             currentDuration = 0;
             for(double duration : durations) {
                 currentDuration += duration;
@@ -60,49 +55,57 @@ public class MarkovChain {
     }
 
     public Song generateNew(double maxSongDuration) {
-        // TODO optimize this!
-        List<List<Integer>> newIntervals = new ArrayList<List<Integer>>();
-        List<List<Double>> newTimeDiff = new ArrayList<List<Double>>();
-        List<List<Double>> newDuration = new ArrayList<List<Double>>();
-
-        List<Integer> intervalList;
-        List<Double> timeDiffList;
-        List<Double> durationList;
         
-        int[] foundIntervals;
-        double[] foundDurations;
+        return null;
+    }
+    
+    private void initProbabilityMatrices() {
+        int[] currentIntervals;
+        double[] currentRythmValues;
+        double[] currentDurations;
         
-        // For each track:
-        for (int partNumber = 0; partNumber < originalIntervals.size(); partNumber++) {
-            intervalList = new ArrayList<Integer>();
-            timeDiffList = new ArrayList<Double>();
-            durationList = new ArrayList<Double>();
-            double songLength = 0;
-            int randomInt;
+        ProbabilityMatrix<Integer, Integer> currentIntervalMatrix;
+        ProbabilityMatrix<Integer, Double> currentRythmValueMatrix;
+        ProbabilityMatrix<Integer, Double> currentDurationMatrix;
+        
+        Vector<Integer> sequence;
+        int currentIntervalsLength;
+        
+        // for each part
+        for(int partIndex = 0; partIndex < originalSong.getIntervals().size(); partIndex++) {
+            currentIntervals = originalSong.getIntervals().get(partIndex);
+            currentRythmValues = originalSong.getRythmValues().get(partIndex);
+            currentDurations = originalSong.getDurations().get(partIndex);
             
-            // Add first interval
-            randomInt = (int)(rand.nextDouble() * intervalList.size());
-            intervalList.add(originalIntervals.get(partNumber)[randomInt]);
+            currentIntervalMatrix = new ProbabilityMatrix<Integer, Integer>();
+            currentRythmValueMatrix = new ProbabilityMatrix<Integer, Double>();
+            currentDurationMatrix = new ProbabilityMatrix<Integer, Double>();
             
-            while (songLength < maxSongDuration) {
-                // TODO lookup intervals and duration at same time.
-                
-                // Add rest of intervals
-                
-                
-                // Add all durations
+            currentIntervalsLength = currentIntervals.length;
+            
+            for(int i = 0; i < currentIntervalsLength - (numberOfIntervalLookbacks + 1); i++) {
+                sequence = new Vector<Integer>();
+                for(int j = i; j < i + numberOfIntervalLookbacks; j++) {
+                    sequence.add(currentIntervals[j]);
+                    currentIntervalMatrix.addCount(sequence, currentIntervals[j+1]);
+                    currentRythmValueMatrix.addCount(sequence, currentRythmValues[j+1]);
+                    currentDurationMatrix.addCount(sequence, currentDurations[j+1]);
+                }
                 
             }
-
-            newIntervals.add(intervalList);
-            newTimeDiff.add(timeDiffList);
-            newDuration.add(durationList);
+            sequence = new Vector<Integer>();
+            for(int i = numberOfIntervalLookbacks; i > 0; i--) {
+                sequence.add(currentIntervalsLength-i);
+            }
+            currentRythmValueMatrix.addCount(sequence, currentRythmValues[currentRythmValues.length - 1]);
+            currentDurationMatrix.addCount(sequence, currentDurations[currentDurations.length - 1]);
+            
+            intervalProbabilityMatrices.add(currentIntervalMatrix);
+            rythmValueProbabilityMatrices.add(currentRythmValueMatrix);
+            durationProbabilityMatrices.add(currentDurationMatrix);
         }
-        
-        // Find first notes
 
-        // TODO convert to real notes.
-        return null;
+        
     }
     
     private int selectNextInterval(int[] pattern, List<Integer> intervalList) {
@@ -126,15 +129,73 @@ public class MarkovChain {
         
         return 0;
     }
-
-    private static double getRoundedStartTime(Note note) {
-        double startTime = note.getSampleStartTime();
-        startTime = (int) (startTime * timeDiffAccuracy);
-        startTime = startTime / timeDiffAccuracy;
-        return startTime;
-    }
     
-
-
-
+    private class ProbabilityMatrix <E, T> {
+        
+        private List<Vector<E>> sequences;
+        private List<T> intervals;
+        // First index is sequence, second is interval.
+        private List<List<Integer>> occurences;
+        private List<List<Double>> probabilities;
+        
+        public ProbabilityMatrix() {
+            sequences = new ArrayList<Vector<E>>();
+            intervals = new ArrayList<T>();
+            occurences = new ArrayList<List<Integer>>();
+        }
+        
+        public void addCount(Vector<E> sequence, T interval) {
+            int sequenceIndex;
+            int intervalIndex;
+            if(!sequences.contains(sequence)) {
+                sequences.add(sequence);
+            }
+            sequenceIndex = sequences.indexOf(sequence);
+            if(!intervals.contains(interval)) {
+                intervals.add(interval);
+            }
+            intervalIndex = intervals.indexOf(interval);
+            if(occurences.get(sequenceIndex) == null) {
+                occurences.add(new ArrayList<Integer>());
+            }
+            if(occurences.get(sequenceIndex).get(intervalIndex) == null) {
+                occurences.get(sequenceIndex).add(1);
+            } else {
+                occurences.get(sequenceIndex).set(intervalIndex, occurences.get(sequenceIndex).get(intervalIndex)+1);
+            }
+        }
+        
+        public void initProbabilies() {
+            probabilities = new ArrayList<List<Double>>();
+            int sum;
+            List<Integer> currentSeq;
+            for(int seqIndex = 0; seqIndex < occurences.size(); seqIndex++) {
+                probabilities.add(new ArrayList<Double>());
+                currentSeq = occurences.get(seqIndex);
+                sum = 0;
+                for(Integer count : currentSeq) {
+                    sum += count;
+                    probabilities.get(seqIndex).add(count.doubleValue());
+                }
+                for(Double currentProb : probabilities.get(seqIndex)) {
+                    currentProb = currentProb / sum;
+                }
+            }
+        }
+        
+        public List<Vector<E>> getSequenceList() {
+            return sequences;
+        }
+        
+        public List<T> getIntervalList() {
+            return intervals;
+        }
+        
+        public List<List<Double>> getProbabilities() {
+            if(probabilities == null) {
+                initProbabilies();
+            }
+            return probabilities;
+        }
+    }
 }
