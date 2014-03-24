@@ -84,7 +84,7 @@ public class CrossoverTest {
         parents.add(norway);
         
         for (int i = 1; i < 100; i++){
-            Crossover crossover = new Crossover(i);
+            Crossover crossover = new Crossover(4);
             crossover.setMaxDuration(200);
             Song child = crossover.makeCrossover(parents);
             assertTrue("Check that number of tracks equals 2", child.getScore().getEndTime() < 200);

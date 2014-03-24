@@ -179,13 +179,12 @@ public class SongCommand extends AbstractCommand {
         String[] trackIndexes = new String[0];
         
         for(int i = 0; i < song.getNbrOfTracks(); i++) {
-            System.out.print("Pleace Tag track "+i+": ");
+            System.out.print("Please Tag track "+i+": ");
             trackIndexes = sc.nextLine().split(" ");
             for (String index : trackIndexes) {
                 song.addTagToTrack(i, trackTags[Integer.parseInt(index)]);
             }
         }
-        sc.close();
     }
 
 }

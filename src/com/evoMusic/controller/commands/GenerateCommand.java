@@ -41,7 +41,6 @@ public class GenerateCommand extends AbstractCommand {
             return false;
         }
         int iterations = Integer.parseInt(args[0]);
-        System.out.println(iterations);
         List<ISubMutator> allMut = new ArrayList<ISubMutator>();
         allMut.add(new OctaveMutator(0.1, 1));
         allMut.add(new ReverseMutator(0.1, 4, 4, true));
@@ -49,8 +48,14 @@ public class GenerateCommand extends AbstractCommand {
         allMut.add(new SimplifyMutator(0.1, 4, 0.1));
         List<SubRater> subRaters = new LinkedList<SubRater>();
         subRaters.add(new UserRater(1));
-        GeneticAlgorithm ga = new GeneticAlgorithm(selectedSongs, new Mutator(allMut, 1), new Crossover(20), new Rater(subRaters));
+        
+        Crossover crossover = new Crossover(4);
+        crossover.setMinDuration(50);
+        crossover.setMaxDuration(200);
+        
+        GeneticAlgorithm ga = new GeneticAlgorithm(selectedSongs, new Mutator(allMut, 0), crossover, new Rater(subRaters));
         ga.setMinimumIterations(iterations);
+        System.out.println("Start iterating");
         ga.iterate();
         Translator.INSTANCE.playSong(ga.getBest());
         return true;
