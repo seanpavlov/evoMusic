@@ -89,14 +89,16 @@ public class MarkovChain {
             for (int intervalIndex = 0; trackLength < maxSongDuration; intervalIndex++) {
                 currentSequence = new Vector<Integer>();
                 // Adding to sequence, wont add more than is available.
-                for (int seqIndex = 0; seqIndex < numberOfIntervalLookbacks
-                        && seqIndex < intervalIndex; seqIndex++) {
+                for (int seqIndex = 0; seqIndex < numberOfIntervalLookbacks; seqIndex++) {
                     lookback = intervalIndex - (numberOfIntervalLookbacks - seqIndex);
+                    System.out.println(lookback);
                     if(lookback >= 0) {
                         currentSequence.add(currentIntervals.get(lookback));
                         
                     }
                 }
+                System.out.println("choosin");
+                System.out.println(currentSequence);
                 
                 nextInterval = currentIntervalMatrix.getNext(currentSequence);
                 nextRythmValue = currentRythmMatrix.getNext(currentSequence);
@@ -219,24 +221,30 @@ public class MarkovChain {
             probabilities = new ArrayList<List<Double>>();
             int sum;
             List<Integer> currentSeq;
+            List<Double> currentProbs;
             for (int seqIndex = 0; seqIndex < occurences.size(); seqIndex++) {
-                probabilities.add(new ArrayList<Double>());
+                currentProbs = new ArrayList<Double>();
+                probabilities.add(currentProbs);
                 currentSeq = occurences.get(seqIndex);
                 sum = 0;
                 for (Integer count : currentSeq) {
                     sum += count;
-                    probabilities.get(seqIndex).add(count.doubleValue());
+                    currentProbs.add(count.doubleValue());
                 }
-                for (Double currentProb : probabilities.get(seqIndex)) {
-                    currentProb = currentProb / sum;
+                for (int probIndex = 0; probIndex < currentProbs.size(); probIndex++) {
+                    currentProbs.set(probIndex, currentProbs.get(probIndex) / sum);
                 }
             }
         }
         
         public T getNext(Vector<E> sequence) {
+            //System.out.println(sequence);
             int sequenceIndex = sequences.indexOf(sequence);
             if(probabilities == null) {
                 initProbabilies();
+            }
+            if(sequenceIndex == -1) {
+                System.out.println(sequences);
             }
             List<Double> currentProbabilities = probabilities.get(sequenceIndex);
             double currentProbability = 0;
