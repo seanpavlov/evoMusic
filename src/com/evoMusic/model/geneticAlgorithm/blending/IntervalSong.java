@@ -18,16 +18,17 @@ public class IntervalSong {
 
     private List<int[]> originalIntervals;
     private List<double[]> originalRythmValues;
-    private List<double []> originalDurations;
+    private List<double[]> originalDurations;
     private Note[] firstNotes;
     private int[] instruments;
     private int[] channels;
     private double tempo;
 
     public IntervalSong(List<int[]> intervals, List<double[]> rythmValues,
-            Song songSettingTemplate) {
+            List<double[]> durations, Song songSettingTemplate) {
         this.originalIntervals = intervals;
         this.originalRythmValues = rythmValues;
+        this.originalDurations = durations;
         int numberOfTracks = intervals.size();
         this.firstNotes = new Note[numberOfTracks];
         this.instruments = new int[numberOfTracks];
@@ -97,26 +98,27 @@ public class IntervalSong {
 
                 // adding to rythmValues.
                 rythmValues[i] = currentNote.getRhythmValue();
-                
+
                 // adding to duration
                 durations[i] = currentNote.getDuration();
             }
-            rythmValues[numberOfNotes - 1] = sortedNoteList.get(numberOfNotes-1).note.getRhythmValue();
+            rythmValues[numberOfNotes - 1] = sortedNoteList
+                    .get(numberOfNotes - 1).note.getRhythmValue();
 
             originalIntervals.add(intervals);
             originalRythmValues.add(rythmValues);
             originalDurations.add(durations);
         }
     }
-    
+
     public List<int[]> getIntervals() {
         return originalIntervals;
     }
-    
+
     public List<double[]> getRythmValues() {
         return originalRythmValues;
     }
-    
+
     public List<double[]> getDurations() {
         return originalDurations;
     }
