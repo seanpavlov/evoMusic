@@ -87,7 +87,6 @@ public class Crossover {
         double averageTempo = 0;
         
         List<TrackTag> tags = getCommonTracks(parents);
-        System.out.println("tagslength: " + tags.size());
         tags.remove(TrackTag.NONE);
         if (tags.isEmpty()){
             try {

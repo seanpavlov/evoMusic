@@ -51,7 +51,7 @@ public class GenerateCommand extends AbstractCommand {
         List<SubRater> subRaters = new LinkedList<SubRater>();
         //subRaters.add(new UserRater(1));
         subRaters.add(new BeatRater(1));
-        Crossover crossover = new Crossover(4);
+        Crossover crossover = new Crossover(3);
         crossover.setMinDuration(50);
         crossover.setMaxDuration(200);
         
@@ -59,7 +59,7 @@ public class GenerateCommand extends AbstractCommand {
         ga.setMinimumIterations(iterations);
         System.out.println("Start iterating");
         ga.iterate();
-        Translator.INSTANCE.playPart(ga.getBest().getTaggedTracks(TrackTag.BEAT).get(0));
+        Translator.INSTANCE.playSong(ga.getBest());
         return true;
     }
     

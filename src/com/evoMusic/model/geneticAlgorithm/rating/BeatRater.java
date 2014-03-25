@@ -4,7 +4,10 @@ package com.evoMusic.model.geneticAlgorithm.rating;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.regex.Pattern;
 
 import jm.music.data.Part;
 import jm.music.data.Phrase;
@@ -32,8 +35,8 @@ public class BeatRater extends SubRater{
         double count = 0;
         for(Part part : song.getScore().getPartArray()){
             List<TrackTag> trackTags = song.getTrackTags(part);
-            if(trackTags.contains(TrackTag.RHYTHM) ||
-               trackTags.contains(TrackTag.BEAT)){
+            if(trackTags.contains(TrackTag.BEAT) ||
+               trackTags.contains(TrackTag.RHYTHM)){
                 rating += this.ratePart(part);
                 ++count;
             }
@@ -65,30 +68,49 @@ public class BeatRater extends SubRater{
             
             /**Save length before removal of patterns found*/
             double before = (double)valuesAsString.length();
-            double minimum = phrase.getRhythmArray().length * 0.15;
+            double minimum = phrase.getRhythmArray().length * 0.1;
             /**Find repeating patters of min length*/
-            List<List<Double>> longest = this.findPatterns(values, (int)minimum );
+            List<List<Double>> longest = this.findPatterns(values, (int)minimum);
+            Map<Integer, List<String>> occurrence = new HashMap<Integer, List<String>>();
             /**Remove occurrence of patterns in valuesAsString variable*/
             for(List<Double> dList : longest){
                 String nextPattern = "";
                 for(Double d : dList){
                     nextPattern = nextPattern + d;
                 }
-                /**
-                 * Check if pattern occurre more than once
-                 * in remaining valueAsString variable, pattern
-                 *  might been a part of larger pattern already removed
-                 * */
-                if(this.numberOfOccurrences(nextPattern, valuesAsString) >= 2)
-                    valuesAsString = valuesAsString.replace(nextPattern, "");
-            }        
+                /**Map string to how many occurences * length of pattern*/
+                Integer s = (this.numberOfOccurrences(nextPattern, valuesAsString)* nextPattern.length());
+                List<String> strings = occurrence.get(s);
+                if(strings == null){
+                    strings = new ArrayList<String>();
+                    strings.add(nextPattern);
+                    occurrence.put(s, strings);
+                }else{
+                    strings.add(nextPattern);
+                    occurrence.put(s, strings);
+                }
+                
+            } 
+            ArrayList<Integer> intKeys = new ArrayList<Integer>(occurrence.keySet());
+            Collections.sort(intKeys, Collections.reverseOrder());
+            for(Integer k : intKeys){
+                List<String> p = occurrence.get(k);
+                for(String s : p){
+                    /**
+                     * Check if pattern occurre more than once
+                     * in remaining valueAsString variable, pattern
+                     *  might been a part of larger pattern already removed
+                     * */
+                    if(this.numberOfOccurrences(s, valuesAsString) >= 2)
+                        valuesAsString = valuesAsString.replace(s, "");
+                }
+            }       
             /**Get string length after removal of found patterns*/
-            double after = (double)valuesAsString.length(); 
+            double after = (double)valuesAsString.length();
             /**Calculates rate by checking list size before removal of pattern found and after*/
             rating += 1.0 - (after/before);
         }
-        
-        
+      
         /**Calculate total value by calculating median of all phrases*/
         return rating/numberOfPhrases;
     }
@@ -101,7 +123,7 @@ public class BeatRater extends SubRater{
      * @return List<List<Double>> List of Lists of Double values representing
      *                               longest repeating patterns in param value
      * */
-   private List<List<Double>> findPatterns(List<Double> values, int min){
+   public List<List<Double>> findPatterns(List<Double> values, int min){
         
         /**Best result and suffix lists*/
         List<List<Double>> bestResults = new ArrayList<List<Double>>();
@@ -262,6 +284,6 @@ public class BeatRater extends SubRater{
     * @param content String content to search string pattern in
     * */
    private int numberOfOccurrences(String pattern, String content){
-       return content.split(pattern).length - 1;
+       return content.split(Pattern.quote(pattern), -1).length - 1;
    }
 }
