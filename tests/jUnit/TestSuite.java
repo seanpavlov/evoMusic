@@ -2,6 +2,7 @@ package jUnit;
 
 import jUnit.crossover.CrossoverTest;
 import jUnit.database.MongoDatabaseTest;
+import jUnit.rater.BeatRaterTest;
 import jUnit.translator.TranslatorTest;
 
 import org.junit.BeforeClass;
@@ -9,11 +10,12 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
-import com.evoMusic.database.MongoDatabase;;
+import com.evoMusic.database.MongoDatabase;
 
 
 @RunWith(Suite.class)
-@SuiteClasses({TranslatorTest.class, MongoDatabaseTest.class, CrossoverTest.class, GenerationTest.class })
+@SuiteClasses({TranslatorTest.class, MongoDatabaseTest.class, CrossoverTest.class, GenerationTest.class,
+                BeatRaterTest.class})
 
 /**
  * This is our test suite class. This class runs all our test classes. 

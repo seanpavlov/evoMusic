@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 
+import jm.util.View;
+
 import com.evoMusic.controller.AbstractCommand;
 import com.evoMusic.database.MongoDatabase;
 import com.evoMusic.model.Song;
@@ -180,6 +182,7 @@ public class SongCommand extends AbstractCommand {
         
         for(int i = 0; i < song.getNbrOfTracks(); i++) {
             System.out.print("Please Tag track "+i+": ");
+            Translator.INSTANCE.showPart(song.getTrack(i));
             trackIndexes = sc.nextLine().split(" ");
             for (String index : trackIndexes) {
                 song.addTagToTrack(i, trackTags[Integer.parseInt(index)]);

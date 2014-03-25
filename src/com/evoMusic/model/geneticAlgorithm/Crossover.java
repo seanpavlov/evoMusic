@@ -78,6 +78,7 @@ public class Crossover {
      */
     public Song makeCrossover(List<Individual> parents){
         this.setMaxSilenceLength(randomGen.nextInt(40)+1);
+        this.intersections = randomGen.nextInt(16) + 4;
         this.setSimplicityLevel(randomGen.nextInt(100)+2);
         
         Score finalScore = new Score();
@@ -86,6 +87,7 @@ public class Crossover {
         double averageTempo = 0;
         
         List<TrackTag> tags = getCommonTracks(parents);
+        System.out.println("tagslength: " + tags.size());
         tags.remove(TrackTag.NONE);
         if (tags.isEmpty()){
             try {

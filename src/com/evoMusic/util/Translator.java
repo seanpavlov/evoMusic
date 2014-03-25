@@ -2,6 +2,7 @@ package com.evoMusic.util;
 import java.io.File;
 import java.io.IOException;
 
+import jm.audio.Instrument;
 import jm.music.data.Part;
 import jm.music.data.Score;
 import jm.util.Play;
@@ -82,8 +83,13 @@ public enum Translator  {
      * @param song
      * @param trackIndex
      */
-    public void playPart(Song song, int trackIndex) {
+    /*public void playPart(Song song, int trackIndex) {
         Play.midi(new Score(song.getTrack(trackIndex), "part " + trackIndex, song.getTempo()));
+    }*/
+    
+    public void playPart(Part part){
+        part.setInstrument(Instrument.BASS);
+        Play.midi(part);
     }
 
     
