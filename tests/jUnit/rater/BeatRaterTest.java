@@ -1,4 +1,4 @@
-package jUnit.raters;
+package jUnit.rater;
 
 import static org.junit.Assert.assertTrue;
 
@@ -11,10 +11,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.evoMusic.model.Song;
-import com.evoMusic.model.Translator;
-import com.evoMusic.model.enumerators.TrackTag;
 import com.evoMusic.model.geneticAlgorithm.rating.BeatRater;
 import com.evoMusic.model.geneticAlgorithm.rating.SubRater;
+import com.evoMusic.util.TrackTag;
+import com.evoMusic.util.Translator;
 
 public class BeatRaterTest {
     
@@ -31,8 +31,8 @@ public class BeatRaterTest {
      */
     @Before
     public void setUpSong() throws IOException {
-        rater = new BeatRater();
-        testSongBeatTags = Translator.INSTANCE.loadMidiToSong("midifiles/m83-midnight_city.mid");
+        rater = new BeatRater(1);
+        testSongBeatTags = Translator.INSTANCE.loadMidiToSong("midifiles/m83.mid");
         int count = 0;
         
         /**Add beat tags to known beat parts*/
@@ -48,7 +48,7 @@ public class BeatRaterTest {
     
     @Test
     public void testSameRating(){
-        SubRater rater = new BeatRater();
+        SubRater rater = new BeatRater(1);
         double rating1 = rater.rate(testSongBeatTags);
         double rating2 = rater.rate(testSongBeatTags);
         assertTrue("Rating value should be same for same song twice", rating1 == rating2);

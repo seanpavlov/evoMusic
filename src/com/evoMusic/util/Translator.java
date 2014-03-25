@@ -1,12 +1,16 @@
-package com.evoMusic.model;
+package com.evoMusic.util;
 import java.io.File;
 import java.io.IOException;
 
+import jm.audio.Instrument;
+import jm.music.data.Part;
 import jm.music.data.Score;
 import jm.util.Play;
 import jm.util.Read;
 import jm.util.View;
 import jm.util.Write;
+
+import com.evoMusic.model.Song;
 
 public enum Translator  {
     INSTANCE;
@@ -16,19 +20,28 @@ public enum Translator  {
      * on load success. 
      * 
      * @param path, relative path to MIDI file
+     * @return song, if a new song object or null if file was not found
+     * @throws IOException 
      */
-    public Song loadMidiToSong(String path) throws IOException {
-        //Remove appendix
-        String name = path.split("\\.")[0];
-        int pathStructure = name.lastIndexOf("/");
-        //If '/' does exist in filename, meaning its a path, substring from last appearance
-        if(pathStructure != -1)
-             name = name.substring(++pathStructure);
-        Score score = new Score(name);
-        Read.midi(score, path);
+    public Song loadMidiToSong(String path) {
+
+        // split "./something/etc/file.midi"
+        final String[] splitPath = path.split("/");
+        // last item is "file.midi" and then "file"
+        final String name = splitPath[splitPath.length-1].split("\\.")[0];
         
+        final File midiFile = new File(path);
+        if(!midiFile.exists()) {
+            return null;
+        }
+        
+        // Using this method to avoid some annoying printing by jMusic.
+        // It still prints "Convert SMF to JM". It appears to be hardcoded
+        final Score score = Read.midiOrJmWithNoMessaging(midiFile);
+        score.setTitle(name);
         return new Song(score);
     }
+    
 
     /**
      * Saves a song the default location. 
@@ -46,7 +59,7 @@ public enum Translator  {
         File outputFile = null;
         String path = "";
         do {
-            path = "./output/" + name + (copy != 0 ? "-"+copy : "")+ ".midi";
+            path = "./output/" + name + (copy != 0 ? "-"+copy : "")+ ".mid";
             outputFile = new File(path); 
                 // if dupe, filename is appended "-1"
             copy++;
@@ -70,17 +83,38 @@ public enum Translator  {
      * @param song
      * @param trackIndex
      */
-    public void playPart(Song song, int trackIndex) {
+    /*public void playPart(Song song, int trackIndex) {
         Play.midi(new Score(song.getTrack(trackIndex), "part " + trackIndex, song.getTempo()));
+    }*/
+    
+    public void playPart(Part part){
+        part.setInstrument(Instrument.BASS);
+        Play.midi(part);
     }
 
     
     /**
      * Show the structure of the song in JMusics built in MIDI display
      * 
-     * @param song to be played
+     * @param song to be shown
      */
     public void showSong(Song song){
         View.show(song.getScore());
+    }
+    
+    /**
+     * Show the structure of the part in JMusics built in MIDI display
+     * 
+     * @param part to be shown
+     */
+    public void showPart(Part part){
+        View.sketch(part);
+    }
+    
+    /**
+     * Closes all showing windows 
+     */
+    public void closeDisplayWindow(){
+       // View.
     }
 }

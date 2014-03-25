@@ -1,7 +1,9 @@
-package com.evoMusic.model.enumerators;
+package com.evoMusic.util;
 
 public enum TrackTag {
 	MELODY, CHORDS,
 	RHYTHM, BEAT,
-	DRUMS,   NONE;
+	DRUMS, BASELINE,   
+	NONE;
+	
 }

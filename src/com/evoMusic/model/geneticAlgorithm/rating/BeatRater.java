@@ -10,10 +10,13 @@ import jm.music.data.Part;
 import jm.music.data.Phrase;
 
 import com.evoMusic.model.Song;
-import com.evoMusic.model.enumerators.TrackTag;
+import com.evoMusic.util.TrackTag;
 
 public class BeatRater extends SubRater{  
  
+    public BeatRater(double weight){
+        super.setWeight(weight);
+    }
     
     /**
      * Rates song by analyzing beat/rythm
@@ -62,7 +65,7 @@ public class BeatRater extends SubRater{
             
             /**Save length before removal of patterns found*/
             double before = (double)valuesAsString.length();
-            double minimum = before * 0.015;
+            double minimum = phrase.getRhythmArray().length * 0.15;
             /**Find repeating patters of min length*/
             List<List<Double>> longest = this.findPatterns(values, (int)minimum );
             /**Remove occurrence of patterns in valuesAsString variable*/

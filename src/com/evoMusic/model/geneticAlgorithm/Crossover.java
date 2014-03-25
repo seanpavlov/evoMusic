@@ -1,102 +1,218 @@
 package com.evoMusic.model.geneticAlgorithm;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
-import com.evoMusic.model.Song;
-
+import jm.music.data.Note;
 import jm.music.data.Part;
 import jm.music.data.Phrase;
 import jm.music.data.Score;
 
+import com.evoMusic.model.Song;
+import com.evoMusic.util.TrackTag;
+
 public class Crossover {
+    private int intersections;
+    private Integer maxDuration = null;
+    private Integer minDuration = 0;
 
-    private int numberOfIntersections;
-    Random randomGen;
-
-    /**
-     * Creates a mutable Crossover object containing parents that are to be
-     * crossed. The parents will not be modified by this class.
-     * 
-     * @param parents
-     *            The Song objects that will be used during crossover.
-     */
-    public Crossover(int numberOfIntersections) {
-        setNumberOfIntersections(numberOfIntersections);
-        randomGen = new Random();
-    }
+    private int silenceLength = 40;
+    private int simplicity = 5;
+    private Random randomGen;    
 
     /**
-     * Sets the number of intersections in which the crossover will swap
-     * segments between parents. The default value is the number of parents
-     * during initialization.
+     * Constructor for crossover
      * 
      * @param intersections
-     *            The number of intersections in which the crossover will swap
-     *            segments between parents.
      */
-    public void setNumberOfIntersections(int intersections) {
-        this.numberOfIntersections = intersections;
+    public Crossover(int intersections){
+        randomGen = new Random();
+        this.intersections = intersections;
     }
 
     /**
-     * Cross mutates between the parents at points with fixed interval. The
-     * final Song will have segments randomly distributed from the parents.
+     * Sets the maximum length of the results, defaults to no restriction if 
+     * not set specifically with this method.
      * 
-     * @return The resulting Song object of the cross mutation.
+     * @param maxDuration
      */
-    public Song makeCrossover(List<Individual> parents) {
-
-        Map<Individual, Phrase[]> phraseSections = new HashMap<Individual, Phrase[]>();
-        for (int i = 0; i < parents.size(); i++) {
-            phraseSections.put(parents.get(i), getPhraseIntersections(parents
-                    .get(i).getSong().getTrack(0).getPhrase(0)));
-        }
-
-        Phrase sumPhrase = new Phrase();
-        int nextRandom;
-        for (int i = 0; i < numberOfIntersections; i++) {
-            nextRandom = (int) (randomGen.nextDouble() * parents.size());
-            sumPhrase
-                    .addNoteList(phraseSections.get(parents.get(nextRandom))[i]
-                            .getNoteArray());
-        }
-
+    public void setMaxDuration(int maxDuration){
+        this.maxDuration = maxDuration;
+    }
+    
+    /**
+     * Sets the minimum length of the results, defaults to 10
+     * high values increases time consumption drastically
+     * 
+     * @param maxDuration
+     */
+    public void setMinDuration(int minDuration){
+        this.minDuration = minDuration;
+    }
+    
+    /**
+     * Set simplicity level, the higher the value the less complex the results will be,
+     * defaults to 1 (complex) and should not exceed 100.
+     * 
+     * @param simplicity
+     */
+    private void setSimplicityLevel(int simplicity){
+        this.simplicity = simplicity;
+    }
+    
+    /**
+     * Set maximum silence duration in a song, defaults to 20.
+     * 
+     * @param silenceLength
+     */
+    private void setMaxSilenceLength(int silenceLength){
+        this.silenceLength = silenceLength;
+    }
+    
+    /**
+     * Called to generate one new offspring from a list of parents
+     * 
+     * @param parents
+     * @return child
+     */
+    public Song makeCrossover(List<Individual> parents){
+        this.setMaxSilenceLength(randomGen.nextInt(40)+1);
+        this.intersections = randomGen.nextInt(16) + 4;
+        this.setSimplicityLevel(randomGen.nextInt(100)+2);
+        
+        Score finalScore = new Score();
+        Song child = new Song(finalScore);
+        List<List<Part>> tracksWithTag = new ArrayList<List<Part>>();
         double averageTempo = 0;
-        for (int i = 0; i < parents.size(); i++) {
-            averageTempo += parents.get(i).getSong().getTempo();
+        
+        List<TrackTag> tags = getCommonTracks(parents);
+        System.out.println("tagslength: " + tags.size());
+        tags.remove(TrackTag.NONE);
+        if (tags.isEmpty()){
+            try {
+                throw new Exception("No common tracktags, parents could not be crossed");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        } else {
+            for (TrackTag t : tags){
+                averageTempo = 0;
+                for (Individual i : parents){
+                    averageTempo += i.getSong().getTempo();
+                    tracksWithTag.add(i.getSong().getTaggedTracks(t));
+                }
+                Part newTagPart = crossTaggedTracks(tracksWithTag);
+                finalScore.add(newTagPart);
+                child.addTagToTrack(newTagPart, t);
+                
+                tracksWithTag.clear();
+            }
+            
+            averageTempo = averageTempo / parents.size();
+            finalScore.setTempo(averageTempo);
         }
-        averageTempo = averageTempo / parents.size();
-
-        Score finalScore = new Score(new Part(sumPhrase),
-                "Generated from crossover", averageTempo);
-
-        return new Song(finalScore);
+        
+        // obs, recursive call, forces results to be longer than a minimal duration, 
+        // increasing minDuration drastically increases complexity
+        if (child.getScore().getEndTime() < minDuration) return makeCrossover(parents);
+        return child;
+    }
+    
+    /**
+     * Called for every common track tag found in the list of parents, results in one new track,
+     * for example melody or beat. 
+     * 
+     * @param tracksWithTag
+     * @return
+     */
+    private Part crossTaggedTracks(List<List<Part>> tracksWithTag) {
+        Part newTagPart = new Part();
+        //loops all tracks with one tracktag in all parents
+        for (List<Part> taggedTracksInParent: tracksWithTag){
+            
+            //loops all tracks in one parent with same tracktag
+            for (Part taggedTrackPart: taggedTracksInParent){        
+                List<Phrase> choppedTrack = chop(taggedTrackPart);
+                List<Phrase> morphedTracks = morph(choppedTrack);
+                for (Phrase tempPhrase : morphedTracks){
+//                  tempPhrase.setInstrument(taggedTrackPart.getInstrument());
+                    newTagPart.add(tempPhrase);
+                    if (maxDuration != null && newTagPart.getEndTime() > maxDuration){ 
+                        newTagPart.removeLastPhrase();
+                        return newTagPart;
+                    };
+                }
+            }
+        }
+        return newTagPart;
     }
 
     /**
-     * Gets a Phrase chopped up in Phrases at even intervals determined by the
-     * set number of intersections. The source phrase will not be modified.
+     * Chops a part into sections depending on number of intersections, each sub part contains equally
+     * many notes.
      * 
-     * @param sourcePhrase
-     *            The Phrase that will be chopped up.
-     * @return An array containing the given Phrase chopped up in smaller
-     *         phrases.
+     * @param taggedTrackPart
+     * @return
      */
-    private Phrase[] getPhraseIntersections(Phrase sourcePhrase) {
-        double endTime = sourcePhrase.getEndTime();
-        double phraseTime = endTime / numberOfIntersections;
-        Phrase[] intersections = new Phrase[numberOfIntersections];
-
-        for (int i = 0; i < numberOfIntersections; i++) {
-            intersections[i] = sourcePhrase.copy(i * phraseTime, (i + 1)
-                    * phraseTime);
+    private List<Phrase> chop(Part taggedTrackPart) {
+        List<Phrase> choppedPhrases = new ArrayList<Phrase>();
+        
+        for (Phrase phrase : taggedTrackPart.getPhraseArray()){
+            Note[] phraseNotes = phrase.getNoteArray();
+            int numberOfNotes = phraseNotes.length / intersections;
+            Phrase newPhrase = new Phrase();
+            if (numberOfNotes > 1 ){
+                for (int i = 0; i < phraseNotes.length; i++){
+                    phraseNotes[i].setPan(0.5);
+                    if (phraseNotes[i].getDuration() < silenceLength) newPhrase.addNote(phraseNotes[i]);
+                    if (i % numberOfNotes == 0 && newPhrase.length() > simplicity){
+                        choppedPhrases.add(newPhrase);
+                        newPhrase = new Phrase();
+                    }
+                }
+            }
         }
-
-        return intersections;
-
+        return choppedPhrases;
+    }
+    
+    /**
+     * Combines a list of phrases into a new list, this list has randomized parts
+     * from the parameter list
+     * 
+     * @param choppedTrack
+     * @return
+     */
+    private List<Phrase> morph(List<Phrase> choppedTrack) {
+        List<Phrase> newPhrases = new ArrayList<Phrase>();
+        for (int i = 0; i < choppedTrack.size(); i++){
+            Phrase newPhrase = choppedTrack.get(randomGen.nextInt(choppedTrack.size()));
+            newPhrases.add(newPhrase);
+        }
+        
+        return newPhrases;
     }
 
+    /**
+     * Returns a list of all common tags that all individuals have
+     * 
+     * @param parents
+     * @return
+     */
+    private List<TrackTag> getCommonTracks(List<Individual> parents){
+        List<TrackTag> commonTrackTags = new ArrayList<TrackTag>();
+        TrackTag[] tracks = TrackTag.values();
+        
+        for (TrackTag tag : tracks){
+            commonTrackTags.add(tag);
+            for (Individual i : parents){
+               if (i.getSong().getTaggedTracks(tag).isEmpty()){
+                   commonTrackTags.remove(tag);
+                   break;
+               }
+            }
+        }
+        return commonTrackTags;
+    }
 }
