@@ -27,7 +27,12 @@ public class UserRater extends SubRater {
             }
         }).start();
         System.out.println("Waiting for user rating input : ");
-        rating = InputController.SCANNER.nextDouble();
+        String temp = InputController.SCANNER.nextLine();
+        try{
+            rating = Double.parseDouble(temp);
+        }catch(NumberFormatException e){
+            System.err.println("Could not convert String to double in UserRater.");
+        }
         Play.stopAudio();
         return rating;
     }
