@@ -101,7 +101,7 @@ public class ChordRepetitionRater extends SubRater{
     }
 
     
-    private List<List<Chord>> findChordPatterns(List<Chord> chords, int min){
+    public List<List<Chord>> findChordPatterns(List<Chord> chords, int min){
         
         /**Best result and suffix lists*/
         List<List<Chord>> bestResults = new ArrayList<List<Chord>>();
@@ -117,22 +117,50 @@ public class ChordRepetitionRater extends SubRater{
         
         inputLength = suffixList.size();
         
+        this.sortByValues(suffixList);
+        
         List<Chord> nextFound = new ArrayList<Chord>();
         
         int distance;
         int checkFurter = 1;
         
-        this.sortByValues(suffixList);
-        
-        for(List<Chord> lc : suffixList){
-            System.out.println("Next suffix: ");
-            for(Chord c : lc){
-                System.out.println(c);
+        for(int i = 1; i < inputLength; i++){
+            List<Chord> firstList = suffixList.get(i);
+            for(int n = checkFurter; n >= 1; n--){
+                
+                List<Chord> secondList = (i >= checkFurter) ? 
+                        suffixList.get(i-checkFurter) : suffixList.get(i);
+                
+                distance = Math.abs(firstList.size() - secondList.size());               
+                if(distance < min){                    
+                    checkFurter = 
+                            (firstList.size() >= min  &&
+                             secondList.size() >= min &&
+                             firstList.subList(0, min).equals(secondList.subList(0, min))) ?
+                                     Math.max(checkFurter, n+1) : n;
+                    continue;
+                }
+                
+                /** if next suffixes don't at least match or is as long as the best,
+                 *  no need to check more carefully
+                 */
+                if(!(firstList.size() >= min) || 
+                   !(secondList.size() >= min) ||
+                   !firstList.subList(0, min).equals(secondList.subList(0, min))){
+                    checkFurter = n;
+                    continue;
+                }
+                
+                nextFound = this.longestCommon(firstList, secondList, distance);
+                bestResults.add(0, nextFound);
+                
+                checkFurter = (nextFound.size() == distance) ?
+                        Math.max(checkFurter, n+1) : n;                
             }
+            
         }
-        
-        System.out.println("hej");
-        return bestResults;       
+        this.sortBySize(bestResults);
+        return bestResults;      
     }
     
     public class Chord{
@@ -215,6 +243,29 @@ public class ChordRepetitionRater extends SubRater{
                     return 1;
                 else
                     return 0;
+            }
+        });
+    }
+    
+    private List<Chord> longestCommon(List<Chord> first, List<Chord> second, int max){
+        int n = Math.min(first.size(), second.size());
+        if(max < n){
+            n = max;
+        }
+        List<Chord> longestCommon = new ArrayList<Chord>();
+        for(int i = 0; i < n; i++){
+            if(!first.get(i).equals(second.get(i))){
+                return longestCommon;
+            }
+            longestCommon.add(first.get(i));
+        }
+        return longestCommon;
+    }
+    
+    private void sortBySize(List<List<Chord>> list){
+        Collections.sort(list, new Comparator<List<Chord>>(){
+            public int compare(List<Chord> values, List<Chord> otherValues){
+                return otherValues.size() - values.size();
             }
         });
     }
