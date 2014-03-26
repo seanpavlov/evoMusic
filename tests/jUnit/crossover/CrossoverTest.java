@@ -49,7 +49,7 @@ public class CrossoverTest {
 
         Crossover crossover = new Crossover(8);
         Song child = crossover.makeCrossover(parents);
-        
+
         assertTrue("Check that number of tracks equals 2", 2 == child.getNbrOfTracks());
    }
     
