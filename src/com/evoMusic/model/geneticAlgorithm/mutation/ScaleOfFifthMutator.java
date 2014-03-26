@@ -2,6 +2,7 @@ package com.evoMusic.model.geneticAlgorithm.mutation;
 
 import jm.music.data.Note;
 import com.evoMusic.model.*;
+import com.evoMusic.util.MidiUtil;
 
 public class ScaleOfFifthMutator extends ISubMutator {
     private int stepRange;

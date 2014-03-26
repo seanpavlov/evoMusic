@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import jm.music.data.Note;
 
 import com.evoMusic.model.Song;
+import com.evoMusic.util.MidiUtil;
 
 public class ReverseMutator extends ISubMutator {
     private int nbrOfAdditionalReversing;

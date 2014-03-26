@@ -3,6 +3,7 @@ package com.evoMusic.model.geneticAlgorithm.mutation;
 import jm.music.data.Note;
 
 import com.evoMusic.model.Song;
+import com.evoMusic.util.MidiUtil;
 
 public class OctaveMutator extends ISubMutator {
     private int octaveRange;
