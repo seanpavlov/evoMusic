@@ -2,6 +2,7 @@ package com.evoMusic.model.geneticAlgorithm.rating;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +15,7 @@ import jm.music.tools.ChordAnalysis;
 
 import com.evoMusic.model.Song;
 import com.evoMusic.util.TrackTag;
+import com.google.common.collect.Range;
 
 public class ChordRepetitionRater extends SubRater{
  
@@ -30,23 +32,29 @@ public class ChordRepetitionRater extends SubRater{
     public double ratePart(Part part){
         Phrase[] phrases = part.getPhraseArray();
         Map<Double, List<Integer>> notePitches = new HashMap<Double, List<Integer>>();
+        //Map<Range<Double>, List<Note>> chords = new HashMap<Range<Double>, List<Note>>();
         Map<Double, List<Note>> chords = new HashMap<Double, List<Note>>();
+        
         System.out.println(phrases.length);
         for(Phrase phrase : phrases){
             Note[] notes = phrase.getNoteArray();
             double pStart = phrase.getStartTime();
             for(int i = 0; i < notes.length; i++){
                 Note note = notes[i];
-                if(note.getNote().equals("N/A"))
+                
+                if(note.getPitch() < 0)
                     continue;
                 double start = phrase.getNoteStartTime(i) + pStart;
+                //Range<Double> range = Range.closed(start, (start + note.getDuration()));
                 List<Integer> np = notePitches.get(start);
+               // List<Note> cn = chords.get(range);
                 List<Note> cn = chords.get(start);
-                if(cn != null && !np.contains(note.getPitch())){
+                if(cn != null){
                     np.add(note.getPitch());
                     notePitches.put(start, np);
                     
                     cn.add(note);
+                    //chords.put(range, cn);
                     chords.put(start, cn);
                 }else{
                     np = new ArrayList<Integer>();
@@ -55,26 +63,36 @@ public class ChordRepetitionRater extends SubRater{
                     notePitches.put(start, np);
                     
                     cn.add(note);
+                    //chords.put(range, cn);  
                     chords.put(start, cn);
-                    
-                }                   
+                }
+                /*for(Range<Double> r : chords.keySet()){
+                    if((!range.equals(r)) && range.isConnected(r)){
+                        List<Note> cnotes = chords.get(r);
+                        cnotes.add(note);
+                        chords.put(r, cnotes);
+                    }
+                }*/
             }
         }
         
         List<Chord> chordArray = new ArrayList<Chord>();
+        //Set<Range<Double>> keys = chords.keySet();
         Set<Double> keys = chords.keySet();
-        List<Double> k = new ArrayList<Double>(keys);
-        Collections.sort(k);
+        //List<Double> k = new ArrayList<Double>(keys);
+        //Collections.sort(k);
         System.out.println("Keys: " + keys.size());
-        for(Double d : k){
+        for(Double d : keys){
             List<Note> chord = chords.get(d);
+            List<Integer> chordPitches = new ArrayList<Integer>();
             //chordArray.add(new Chord(chord,d));
-            System.out.print("Chord: ");
+            //System.out.print("Chord: ");
             for(Note n : chord){
-                System.out.print(n.getNote() + "(pitch:"+ n.getPitch() +", Dur: " + n.getDuration() +") ");
-                
+                //System.out.print(n.getNote() + "(pitch:"+ n.getPitch() +", Dur: " + n.getDuration() +") ");
+                chordPitches.add(n.getPitch());
             }
-            System.out.println();
+            chordArray.add(new Chord(chordPitches, d));
+           // System.out.println();
         }    
         
         List<List<Chord>> foundChordPatterns = findChordPatterns(chordArray, 5);
@@ -104,11 +122,20 @@ public class ChordRepetitionRater extends SubRater{
         int distance;
         int checkFurter = 1;
         
+        this.sortByValues(suffixList);
         
+        for(List<Chord> lc : suffixList){
+            System.out.println("Next suffix: ");
+            for(Chord c : lc){
+                System.out.println(c);
+            }
+        }
+        
+        System.out.println("hej");
         return bestResults;       
     }
     
-    protected class Chord{
+    public class Chord{
         List<Integer> notes;
         double duration;
         
@@ -128,6 +155,23 @@ public class ChordRepetitionRater extends SubRater{
                 this.duration = duration;
         }
         
+        public int lessThan(Chord chord){
+            int minSize =  Math.min(this.notes.size(), chord.notes.size());
+            for(int i = 0; i < minSize; i++){
+                Integer firt = chord.notes.get(i);
+                Integer second = this.notes.get(i);
+                if(firt < second)
+                    return 1;
+                else if(firt > second)
+                    return -1;
+            }
+            if(chord.notes.size() < this.notes.size())
+                return 1;
+            else if(chord.notes.size() > this.notes.size())
+                return -1;
+            return 0;
+        }
+        
         @Override 
         public boolean equals(Object o){
             if(!(o instanceof Chord))
@@ -141,6 +185,38 @@ public class ChordRepetitionRater extends SubRater{
             }
             return true;
         }
+        
+        @Override
+        public String toString(){
+            String toString = "Chord: ( ";
+            for(Integer pitch : this.notes){
+                toString = toString + pitch + " ";
+            }
+            toString = toString + ")";
+            return toString;
+        }
+    }
+    
+    
+    public void sortByValues(List<List<Chord>> list){
+        Collections.sort(list,new Comparator<List<Chord>>() {
+            public int compare(List<Chord> values, List<Chord> otherValues) {
+                int minSize =  Math.min(values.size(), otherValues.size());
+                for(int i = 0; i < minSize; i++){
+                    Chord first = values.get(i);
+                    Chord second = otherValues.get(i);
+                    int r = first.lessThan(second);
+                    if(r != 0)
+                        return r;
+                }
+                if(values.size() < otherValues.size())
+                    return -1;
+                else if(values.size() > otherValues.size())
+                    return 1;
+                else
+                    return 0;
+            }
+        });
     }
     
 }
