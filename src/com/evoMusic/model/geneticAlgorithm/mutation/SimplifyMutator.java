@@ -2,11 +2,13 @@ package com.evoMusic.model.geneticAlgorithm.mutation;
 
 import jm.music.data.Note;
 import com.evoMusic.model.*;
+import com.evoMusic.util.MidiUtil;
 
 public class SimplifyMutator extends ISubMutator {
 
     private int nbrOfPastNeighbours;
     private double neighbourProbability;
+    
 
     /**
      * Mutate so that past neighboring notes will have the same pitch as the

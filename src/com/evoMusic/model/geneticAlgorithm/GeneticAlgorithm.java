@@ -46,17 +46,20 @@ public class GeneticAlgorithm {
      */
     public GeneticAlgorithm(List<Song> parents, Mutator mutator,
             Crossover crossover, Rater rater) {
-
+        
         setMutator(mutator);
         setRater(rater);
 
         this.firstParents = new ArrayList<Individual>();
         addIndividuals(parents, this.firstParents);
+        
+        //initiate sub raters weights.
+        rater.initSubRaterWeights(parents);
 
         setCrossover(crossover);
 
         setParentsPerGeneration(this.firstParents.size());
-        setChildrenPerGeneration(this.firstParents.size() * 3);
+        setChildrenPerGeneration(this.firstParents.size() * 5);
         setThrowAwayFirstParents(true);
         setElitism(true);
         setMinimumRating(0);
