@@ -22,11 +22,14 @@ public class ChordRepetitionRater extends SubRater{
     @Override
     public double rate(Song song) {
         double rating = 0;
-        
+        double count = 0;
         for(Part part : song.getTaggedTracks(TrackTag.CHORDS)){
             rating += this.ratePart(part);
+            ++count;
         }
-        return rating;
+        if(count == 0)
+            return 0;
+        return rating/count;
     }
     
     public double ratePart(Part part){
@@ -268,6 +271,16 @@ public class ChordRepetitionRater extends SubRater{
                 return otherValues.size() - values.size();
             }
         });
+    }
+    
+    private List<Chord> removeOccurence(List<Chord> pattern, List<Chord> chords){
+        int pointer = 0;
+        for(Chord c : chords){
+            if(c.equals(pattern.get(pointer))){
+                
+            }
+        }
+        return null;
     }
     
 }
