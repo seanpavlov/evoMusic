@@ -9,11 +9,16 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
-import com.evoMusic.database.MongoDatabase;;
+import rater.MelodyRepetitionRaterTest;
 
+import com.evoMusic.database.MongoDatabase;
 
 @RunWith(Suite.class)
-@SuiteClasses({TranslatorTest.class, MongoDatabaseTest.class, CrossoverTest.class, GenerationTest.class })
+@SuiteClasses({TranslatorTest.class, 
+    MongoDatabaseTest.class, 
+    CrossoverTest.class, 
+    GenerationTest.class,
+    MelodyRepetitionRaterTest.class})
 
 /**
  * This is our test suite class. This class runs all our test classes. 

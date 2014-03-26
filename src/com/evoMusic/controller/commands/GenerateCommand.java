@@ -16,6 +16,7 @@ import com.evoMusic.model.geneticAlgorithm.mutation.RandomNoteMutator;
 import com.evoMusic.model.geneticAlgorithm.mutation.ReverseMutator;
 import com.evoMusic.model.geneticAlgorithm.mutation.ScaleOfFifthMutator;
 import com.evoMusic.model.geneticAlgorithm.mutation.SimplifyMutator;
+import com.evoMusic.model.geneticAlgorithm.rating.MelodyRepetionRater;
 import com.evoMusic.model.geneticAlgorithm.rating.Rater;
 import com.evoMusic.model.geneticAlgorithm.rating.SubRater;
 import com.evoMusic.model.geneticAlgorithm.rating.UserRater;
@@ -49,7 +50,7 @@ public class GenerateCommand extends AbstractCommand {
         allMut.add(new ScaleOfFifthMutator(0, 3));
         allMut.add(new SimplifyMutator(0, 4, 0.1));
         List<SubRater> subRaters = new LinkedList<SubRater>();
-        subRaters.add(new UserRater(1));
+        subRaters.add(new MelodyRepetionRater(1));
         
         Crossover crossover = new Crossover(4);
         crossover.setMinDuration(50);
@@ -59,7 +60,7 @@ public class GenerateCommand extends AbstractCommand {
         ga.setMinimumIterations(iterations);
         System.out.println("Start iterating");
         ga.iterate();
-        Translator.INSTANCE.playSong(ga.getBest());
+        Translator.INSTANCE.saveSongToMidi(ga.getBest(), "the best");
         return true;
     }
     

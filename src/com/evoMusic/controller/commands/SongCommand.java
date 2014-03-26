@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 
+import jm.music.data.Part;
+
 import com.evoMusic.controller.AbstractCommand;
 import com.evoMusic.database.MongoDatabase;
 import com.evoMusic.model.Song;
@@ -54,6 +56,41 @@ public class SongCommand extends AbstractCommand {
             }
         });
 
+        /*
+         * Shows a song and the TrackTags
+         */
+        songArgs.put("tags", new AbstractCommand() {
+            @Override
+            public boolean execute(String[] args) {
+                boolean success = false;
+                if (args.length < 1) {
+                    System.out.println("Insufficient arguments provided!");
+                } else {
+                    int songIndex = -1;
+                    try {
+                        for (String arg : args) {
+                            songIndex = Integer.parseInt(arg);
+                            if (songIndex >= 0 && songIndex < songs.size()) {
+                                Song song = showSong(songIndex);
+                                for (Part p : song.getScore().getPartArray()){
+                                    System.out.println(song.getTrackTags(p));
+                                }
+                            } else {
+                                System.out.println("Unable to select song "
+                                        + songIndex);
+                            }
+                        }
+                    } catch (NumberFormatException e) {
+                        System.out.println("ERROR: Not an integer: "
+                                + e.getMessage());
+                        return false;
+                    }
+                    success = true;
+                }
+                return success;
+            }
+        });
+        
         /*
          * Select a song to be used for generating individuals
          */
@@ -157,6 +194,11 @@ public class SongCommand extends AbstractCommand {
         selectedSongs.add(songs.get(songIndex));
     }
     
+    public Song showSong(int songIndex) {
+        return songs.get(songIndex);
+    }
+    
+    
     private void storeSong(Song song) {
         if (MongoDatabase.getInstance().insertSong(song)) {
             System.out.println("Song inserted into db, \"song list\" to view it");
@@ -171,11 +213,12 @@ public class SongCommand extends AbstractCommand {
         System.out.println("Available track tags: ");
         TrackTag[] trackTags = TrackTag.values();
         for(int i = 0; i < trackTags.length; i++) {
-            System.out.println(i+": "+trackTags[i].toString());
+            System.out.print(i+": "+trackTags[i].toString() + ", ");
         }
+        System.out.println();
+        System.out.println("--------------------------");
         System.out.println("Add multiple tags by separating them with space");
         Scanner sc = new Scanner(System.in);
-        
         String[] trackIndexes = new String[0];
         
         for(int i = 0; i < song.getNbrOfTracks(); i++) {
