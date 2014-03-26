@@ -34,6 +34,11 @@ public class IntervalSong {
         this.instruments = new int[numberOfTracks];
         this.channels = new int[numberOfTracks];
         this.tempo = songSettingTemplate.getTempo();
+        for(int i = 0; i < numberOfTracks; i++) {
+            this.firstNotes[i] = new Note(60, 0.5);
+            this.instruments[i] = songSettingTemplate.getTrack(i).getInstrument();
+            this.channels[i] = songSettingTemplate.getTrack(i).getChannel();
+        }
     }
 
     // public IntervalSong(List<int[]> intervals, List<double[]> durations,
@@ -108,6 +113,7 @@ public class IntervalSong {
             originalIntervals.add(intervals);
             originalRythmValues.add(rythmValues);
             originalDurations.add(durations);
+            
         }
     }
 
@@ -130,16 +136,26 @@ public class IntervalSong {
         Part newPart;
         int currentPitch;
         int[] currentPartsIntervals;
-        double[] currentPartsDurations;
+        double[] currentPartsRythmValues;
+        int previousPitch;
+        Note newNote;
         for (int i = 0; i < originalIntervals.size(); i++) {
+            previousPitch = 0;
             phrase = new Phrase(0.0);
             currentPitch = firstNotes[i].getPitch();
             phrase.add(new Note(currentPitch, originalRythmValues.get(i)[0]));
             currentPartsIntervals = originalIntervals.get(i);
-            currentPartsDurations = originalRythmValues.get(i);
+            currentPartsRythmValues = originalRythmValues.get(i);
             for (int j = 0; j < currentPartsIntervals.length; j++) {
                 currentPitch += currentPartsIntervals[j];
-                phrase.add(new Note(currentPitch, currentPartsDurations[j + 1]));
+                if(currentPitch < 0) {
+                    newNote = new Note(Note.REST, currentPartsRythmValues[j + 1]);
+                    
+                } else {
+                    newNote = new Note(currentPitch, currentPartsRythmValues[j + 1]);
+                }
+                phrase.add(newNote);
+                previousPitch = currentPitch;
             }
             newPart = new Part();
             newPart.add(phrase);

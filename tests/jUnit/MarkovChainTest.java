@@ -31,11 +31,10 @@ public class MarkovChainTest {
         //IntervalSong intervalSong = new IntervalSong(marioSong);
         //System.out.println(intervalSong.toString());
         markov = new MarkovChain(marioSong);
-        Song song = markov.generateNew();
-        //Translator.INSTANCE.playSong(song);
+        Song newSong = markov.generateNew(100);
         //Song newSong = intervalSong.toSong();
         //Translator.INSTANCE.playPart(newSong, 5);
-        //Translator.INSTANCE.playSong(newSong);
+        Translator.INSTANCE.playSong(newSong);
         
         
         assertTrue(true);

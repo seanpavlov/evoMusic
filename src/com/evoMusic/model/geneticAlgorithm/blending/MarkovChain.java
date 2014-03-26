@@ -11,10 +11,6 @@ import com.google.common.primitives.Ints;
 
 public class MarkovChain {
 
-    /**
-     * The number of decimals kept in timeDiff.
-     */
-    private static final int timeDiffAccuracy = 10;
     private static final int numberOfIntervalLookbacks = 3;
 
     private Random rand;
@@ -70,7 +66,6 @@ public class MarkovChain {
         double nextRythmValue;
         double nextDuration;
         Vector<Integer> currentSequence;
-        
 
         // For each track.
         for (int trackIndex = 0; trackIndex < numberOfTracks; trackIndex++) {
@@ -78,28 +73,23 @@ public class MarkovChain {
             currentRythmValues = new ArrayList<Double>();
             currentDurations = new ArrayList<Double>();
             trackLength = 0;
-            currentIntervalMatrix = intervalProbabilityMatrices
-                    .get(trackIndex);
-            currentRythmMatrix = rythmValueProbabilityMatrices
-                    .get(trackIndex);
-            currentDurationMatrix = durationProbabilityMatrices
-                    .get(trackIndex);
-            
+            currentIntervalMatrix = intervalProbabilityMatrices.get(trackIndex);
+            currentRythmMatrix = rythmValueProbabilityMatrices.get(trackIndex);
+            currentDurationMatrix = durationProbabilityMatrices.get(trackIndex);
+
             int lookback;
             for (int intervalIndex = 0; trackLength < maxSongDuration; intervalIndex++) {
                 currentSequence = new Vector<Integer>();
                 // Adding to sequence, wont add more than is available.
                 for (int seqIndex = 0; seqIndex < numberOfIntervalLookbacks; seqIndex++) {
-                    lookback = intervalIndex - (numberOfIntervalLookbacks - seqIndex);
-                    System.out.println(lookback);
-                    if(lookback >= 0) {
+                    lookback = intervalIndex
+                            - (numberOfIntervalLookbacks - seqIndex);
+                    if (lookback >= 0) {
                         currentSequence.add(currentIntervals.get(lookback));
-                        
+
                     }
                 }
-                System.out.println("choosin");
-                System.out.println(currentSequence);
-                
+
                 nextInterval = currentIntervalMatrix.getNext(currentSequence);
                 nextRythmValue = currentRythmMatrix.getNext(currentSequence);
                 nextDuration = currentDurationMatrix.getNext(currentSequence);
@@ -108,12 +98,23 @@ public class MarkovChain {
                 currentRythmValues.add(nextRythmValue);
                 currentDurations.add(nextDuration);
             }
+            // Adding the last rythmValues and durations.
+            currentSequence = new Vector<Integer>();
+            for (int seqIndex = numberOfIntervalLookbacks; seqIndex > 0; seqIndex--) {
+                currentSequence.add(currentIntervals.get(currentIntervals.size() - seqIndex));
+            }
+            nextRythmValue = currentRythmMatrix.getNext(currentSequence);
+            nextDuration = currentDurationMatrix.getNext(currentSequence);
+            trackLength += nextRythmValue;
+            currentRythmValues.add(nextRythmValue);
+            currentDurations.add(nextDuration);
 
             intervals.add(Ints.toArray(currentIntervals));
             rythmValues.add(Doubles.toArray(currentRythmValues));
             durations.add(Doubles.toArray(currentDurations));
         }
-        return new IntervalSong(intervals, rythmValues, durations, realSong).toSong();
+        return new IntervalSong(intervals, rythmValues, durations, realSong)
+                .toSong();
     }
 
     private void initProbabilityMatrices() {
@@ -198,6 +199,7 @@ public class MarkovChain {
         public void addCount(Vector<E> sequence, T interval) {
             int sequenceIndex;
             int intervalIndex;
+            List<Integer> thisOccurence;
             if (!sequences.contains(sequence)) {
                 sequences.add(sequence);
             }
@@ -209,12 +211,11 @@ public class MarkovChain {
             if (occurences.size() <= sequenceIndex) {
                 occurences.add(new ArrayList<Integer>());
             }
-            if (occurences.get(sequenceIndex).size() <= intervalIndex) {
-                occurences.get(sequenceIndex).add(1);
-            } else {
-                occurences.get(sequenceIndex).set(intervalIndex,
-                        occurences.get(sequenceIndex).get(intervalIndex) + 1);
+            thisOccurence = occurences.get(sequenceIndex);
+            while (thisOccurence.size() <= intervalIndex) {
+                thisOccurence.add(0);
             }
+            thisOccurence.set(intervalIndex, thisOccurence.get(intervalIndex) + 1);
         }
 
         public void initProbabilies() {
@@ -223,6 +224,8 @@ public class MarkovChain {
             List<Integer> currentSeq;
             List<Double> currentProbs;
             for (int seqIndex = 0; seqIndex < occurences.size(); seqIndex++) {
+                // System.out.println(occurences.get(seqIndex).size());// TODO
+                // REMOVE
                 currentProbs = new ArrayList<Double>();
                 probabilities.add(currentProbs);
                 currentSeq = occurences.get(seqIndex);
@@ -232,29 +235,27 @@ public class MarkovChain {
                     currentProbs.add(count.doubleValue());
                 }
                 for (int probIndex = 0; probIndex < currentProbs.size(); probIndex++) {
-                    currentProbs.set(probIndex, currentProbs.get(probIndex) / sum);
+                    currentProbs.set(probIndex, currentProbs.get(probIndex)
+                            / sum);
                 }
             }
         }
-        
+
         public T getNext(Vector<E> sequence) {
-            //System.out.println(sequence);
+            System.out.println(sequence);// TODO remove
             int sequenceIndex = sequences.indexOf(sequence);
-            if(probabilities == null) {
+            if (probabilities == null) {
                 initProbabilies();
             }
-            if(sequenceIndex == -1) {
-                System.out.println(sequences);
-            }
-            List<Double> currentProbabilities = probabilities.get(sequenceIndex);
+            List<Double> currentProbabilities = probabilities
+                    .get(sequenceIndex);
             double currentProbability = 0;
             double randomValue = rand.nextDouble();
             int objectIndex = -1;
             do {
                 objectIndex += 1;
                 currentProbability += currentProbabilities.get(objectIndex);
-            }
-            while (currentProbability < randomValue);
+            } while (currentProbability < randomValue);
             return intervals.get(objectIndex);
         }
 
