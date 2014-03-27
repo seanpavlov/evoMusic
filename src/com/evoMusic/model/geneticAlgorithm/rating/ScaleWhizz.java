@@ -59,7 +59,7 @@ public class ScaleWhizz extends SubRater {
      * @return maximum number of hits
      */
     private int maximumScaleHits(int[] pitches) {
-        int[] scaleArr = scalePattern.getPítches();
+        int[] scaleArr = scalePattern.getPitches();
         int hits = 0;
         int currentMaxHits = 0;
 

@@ -21,7 +21,7 @@ public enum ScalePattern {
      * @return an array consisting of 1s where a pitch is included and 0s where
      *         it's not. The array index represents the note interval
      */
-    public int[] getPítches() {
+    public int[] getPitches() {
         return notePitches;
     }
 }
