@@ -15,9 +15,9 @@ import jm.music.data.Phrase;
 import com.evoMusic.model.Song;
 import com.evoMusic.util.TrackTag;
 
-public class BeatRater extends SubRater{  
+public class BeatRepetitionRater extends SubRater{  
  
-    public BeatRater(double weight){
+    public BeatRepetitionRater(double weight){
         super.setWeight(weight);
     }
     

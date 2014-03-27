@@ -14,7 +14,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.evoMusic.model.Song;
-import com.evoMusic.model.geneticAlgorithm.rating.BeatRater;
+import com.evoMusic.model.geneticAlgorithm.rating.BeatRepetitionRater;
 import com.evoMusic.model.geneticAlgorithm.rating.SubRater;
 import com.evoMusic.util.TrackTag;
 
@@ -29,7 +29,7 @@ public class BeatRaterTest {
      */
     @Before
     public void setUpSong(){
-       rater = new BeatRater(1);
+       rater = new BeatRepetitionRater(1);
        
        Score rhythmScore = new Score("Rhythm");
        Part part = new Part("s", 0, 9);
