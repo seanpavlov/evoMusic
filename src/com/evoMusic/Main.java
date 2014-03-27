@@ -3,7 +3,11 @@ package com.evoMusic;
 import java.util.ArrayList;
 import java.util.List;
 
+import jm.JMC;
+import jm.music.data.Note;
 import jm.music.data.Part;
+import jm.music.data.Phrase;
+import jm.music.data.Score;
 import jm.util.View;
 
 import com.evoMusic.controller.InputController;
@@ -19,6 +23,35 @@ public class Main {
 
     public static void main(String[] args) {
         new InputController(args);
+        /*Phrase[] phrases = {new Phrase(0.0),new Phrase(2.0),new Phrase(4.0),new Phrase(6.0)};
+        
+        for(int i = 0; i < phrases.length; i++){
+            int[] notes = new int[4];
+            for(int j = 0; j < notes.length; j++){
+                Note note = new Note(j*2, 1.0);
+                notes[j] = j*2;
+            }
+            phrases[i].addChord(notes, 1.0);
+        }
+        
+        
+        
+        
+        Part part1 = new Part();
+        part1.addPhraseList(phrases);
+        part1.setInstrument(JMC.ELECTRIC_GUITAR);
+        
+        
+        
+        Score score = new Score(part1);
+        
+        
+        Song song = new Song(score);
+        song.addTagToTrack(part1, TrackTag.CHORDS);
+        Translator.INSTANCE.playPart(song, 0);
+        ChordRepetitionRater rater = new ChordRepetitionRater(1);
+        double rating = rater.rate(song);
+        System.out.println("rating: " + rating);
         
        /* //Song song = Translator.INSTANCE.loadMidiToSong("midifiles/Elton_John-Candle_in_the_Wind.mid");
         Song song = Translator.INSTANCE.loadMidiToSong("midifiles/m83.mid");

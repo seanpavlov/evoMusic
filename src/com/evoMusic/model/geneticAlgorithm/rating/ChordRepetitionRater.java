@@ -34,7 +34,7 @@ public class ChordRepetitionRater extends SubRater{
         }  
         if(count == 0)
             return 0;
-        return rating/count;
+        return (rating/count);
     }
     
     public double ratePart(Part part){
@@ -92,7 +92,7 @@ public class ChordRepetitionRater extends SubRater{
         Set<Double> keys = chords.keySet();
         //List<Double> k = new ArrayList<Double>(keys);
         //Collections.sort(k);
-        System.out.println("Keys: " + keys.size());
+        //System.out.println("Keys: " + keys.size());
         for(Double d : keys){
             List<Note> chord = chords.get(d);
             List<Integer> chordPitches = new ArrayList<Integer>();
@@ -110,8 +110,10 @@ public class ChordRepetitionRater extends SubRater{
         }    
         
         double before = (double)valuesAsString.replaceAll("\\s+","").length();
+        //System.out.println("before: " + before);
+        int minimum = (int)(before*0.05);
         
-        List<List<Chord>> foundChordPatterns = findChordPatterns(chordArray, 4);
+        List<List<Chord>> foundChordPatterns = findChordPatterns(chordArray, minimum);
         System.out.println("Number of patterns: " + foundChordPatterns.size());
         
         Map<Integer, List<String>> occurrence = new HashMap<Integer, List<String>>();
