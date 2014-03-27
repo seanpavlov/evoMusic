@@ -15,6 +15,7 @@ import com.evoMusic.model.geneticAlgorithm.mutation.OctaveMutator;
 import com.evoMusic.model.geneticAlgorithm.mutation.ReverseMutator;
 import com.evoMusic.model.geneticAlgorithm.mutation.ScaleOfFifthMutator;
 import com.evoMusic.model.geneticAlgorithm.mutation.SimplifyMutator;
+import com.evoMusic.model.geneticAlgorithm.rating.ChordRepetitionRater;
 import com.evoMusic.model.geneticAlgorithm.rating.Rater;
 import com.evoMusic.model.geneticAlgorithm.rating.SubRater;
 import com.evoMusic.model.geneticAlgorithm.rating.UserRater;
@@ -47,8 +48,8 @@ public class GenerateCommand extends AbstractCommand {
         allMut.add(new ScaleOfFifthMutator(0.1, 3));
         allMut.add(new SimplifyMutator(0.1, 4, 0.1));
         List<SubRater> subRaters = new LinkedList<SubRater>();
-        subRaters.add(new UserRater(1));
-        
+        //subRaters.add(new UserRater(1));
+        subRaters.add(new ChordRepetitionRater(1));
         Crossover crossover = new Crossover(4);
         crossover.setMinDuration(50);
         crossover.setMaxDuration(200);

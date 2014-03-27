@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import jm.music.data.Note;
 import jm.music.data.Part;
@@ -18,6 +19,10 @@ import com.evoMusic.util.TrackTag;
 import com.google.common.collect.Range;
 
 public class ChordRepetitionRater extends SubRater{
+    
+    public ChordRepetitionRater(double weight){
+        super.setWeight(weight);
+    }
  
     @Override
     public double rate(Song song) {
@@ -26,21 +31,24 @@ public class ChordRepetitionRater extends SubRater{
         for(Part part : song.getTaggedTracks(TrackTag.CHORDS)){
             rating += this.ratePart(part);
             ++count;
-        }
+        }  
         if(count == 0)
             return 0;
         return rating/count;
     }
     
     public double ratePart(Part part){
+        
+        double rating = 0;
         Phrase[] phrases = part.getPhraseArray();
         Map<Double, List<Integer>> notePitches = new HashMap<Double, List<Integer>>();
         //Map<Range<Double>, List<Note>> chords = new HashMap<Range<Double>, List<Note>>();
         Map<Double, List<Note>> chords = new HashMap<Double, List<Note>>();
         
-        System.out.println(phrases.length);
         for(Phrase phrase : phrases){
             Note[] notes = phrase.getNoteArray();
+            if(notes.length < 1)
+                continue;
             double pStart = phrase.getStartTime();
             for(int i = 0; i < notes.length; i++){
                 Note note = notes[i];
@@ -78,7 +86,7 @@ public class ChordRepetitionRater extends SubRater{
                 }*/
             }
         }
-        
+        String valuesAsString = "";        
         List<Chord> chordArray = new ArrayList<Chord>();
         //Set<Range<Double>> keys = chords.keySet();
         Set<Double> keys = chords.keySet();
@@ -92,15 +100,57 @@ public class ChordRepetitionRater extends SubRater{
             //System.out.print("Chord: ");
             for(Note n : chord){
                 //System.out.print(n.getNote() + "(pitch:"+ n.getPitch() +", Dur: " + n.getDuration() +") ");
-                chordPitches.add(n.getPitch());
+                Integer p = n.getPitch();
+                valuesAsString = valuesAsString + p + " ";
+                chordPitches.add(p);
             }
+            valuesAsString = valuesAsString + " ";
             chordArray.add(new Chord(chordPitches, d));
            // System.out.println();
         }    
         
-        List<List<Chord>> foundChordPatterns = findChordPatterns(chordArray, 5);
+        double before = (double)valuesAsString.replaceAll("\\s+","").length();
         
-        return 0;
+        List<List<Chord>> foundChordPatterns = findChordPatterns(chordArray, 4);
+        System.out.println("Number of patterns: " + foundChordPatterns.size());
+        
+        Map<Integer, List<String>> occurrence = new HashMap<Integer, List<String>>();
+        for(List<Chord> cList : foundChordPatterns){
+            String nextChordPattern = "";
+            for(Chord c : cList){
+                nextChordPattern = nextChordPattern + c.toString();
+                nextChordPattern = nextChordPattern + " ";
+            }
+            Integer s = (this.numberOfOccurrences(nextChordPattern, valuesAsString) * nextChordPattern.length());
+            List<String> strings = occurrence.get(s);
+            if(strings == null){
+                strings = new ArrayList<String>();
+                strings.add(nextChordPattern);
+                occurrence.put(s, strings);
+            }else{
+                strings.add(nextChordPattern);
+                occurrence.put(s, strings);
+            }
+            
+            ArrayList<Integer> intKeys = new ArrayList<Integer>(occurrence.keySet());
+            Collections.sort(intKeys, Collections.reverseOrder());
+            for(Integer k : intKeys){
+                List<String> p = occurrence.get(k);
+                for(String sC : p){
+                    if(this.numberOfOccurrences(sC, valuesAsString) >= 2)
+                        valuesAsString = valuesAsString.replace(sC, "");
+                }
+            }
+            
+            
+                
+        }
+        
+        
+        
+        double after = (double)valuesAsString.replaceAll("\\s+","").length();
+        
+        return 1 - (after/before);
     }
 
     
@@ -119,6 +169,8 @@ public class ChordRepetitionRater extends SubRater{
         }
         
         inputLength = suffixList.size();
+        
+        
         
         this.sortByValues(suffixList);
         
@@ -219,11 +271,10 @@ public class ChordRepetitionRater extends SubRater{
         
         @Override
         public String toString(){
-            String toString = "Chord: ( ";
+            String toString = "";
             for(Integer pitch : this.notes){
                 toString = toString + pitch + " ";
             }
-            toString = toString + ")";
             return toString;
         }
     }
@@ -273,14 +324,13 @@ public class ChordRepetitionRater extends SubRater{
         });
     }
     
-    private List<Chord> removeOccurence(List<Chord> pattern, List<Chord> chords){
-        int pointer = 0;
-        for(Chord c : chords){
-            if(c.equals(pattern.get(pointer))){
-                
-            }
-        }
-        return null;
+    /**
+     * Returns the number of occurrences of a string pattern in string 
+     * @param pattern String pattern to count occurrences of
+     * @param content String content to search string pattern in
+     * */
+    private int numberOfOccurrences(String pattern, String content){
+        return content.split(Pattern.quote(pattern), -1).length - 1;
     }
     
 }
