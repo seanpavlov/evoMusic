@@ -12,6 +12,7 @@ import com.evoMusic.model.geneticAlgorithm.GeneticAlgorithm;
 import com.evoMusic.model.geneticAlgorithm.mutation.ISubMutator;
 import com.evoMusic.model.geneticAlgorithm.mutation.Mutator;
 import com.evoMusic.model.geneticAlgorithm.mutation.OctaveMutator;
+import com.evoMusic.model.geneticAlgorithm.mutation.RandomNoteMutator;
 import com.evoMusic.model.geneticAlgorithm.mutation.ReverseMutator;
 import com.evoMusic.model.geneticAlgorithm.mutation.ScaleOfFifthMutator;
 import com.evoMusic.model.geneticAlgorithm.mutation.SimplifyMutator;
@@ -43,10 +44,11 @@ public class GenerateCommand extends AbstractCommand {
         }
         int iterations = Integer.parseInt(args[0]);
         List<ISubMutator> allMut = new ArrayList<ISubMutator>();
-        allMut.add(new OctaveMutator(0.1, 1));
-        allMut.add(new ReverseMutator(0.1, 4, 4, true));
-        allMut.add(new ScaleOfFifthMutator(0.1, 3));
-        allMut.add(new SimplifyMutator(0.1, 4, 0.1));
+        allMut.add(new RandomNoteMutator(0.5, 12));
+        allMut.add(new OctaveMutator(0, 1));
+        allMut.add(new ReverseMutator(0, 4, 4, true));
+        allMut.add(new ScaleOfFifthMutator(0, 3));
+        allMut.add(new SimplifyMutator(0, 4, 0.1));
         List<SubRater> subRaters = new LinkedList<SubRater>();
         subRaters.add(new MelodyRepetionRater(1));
         
@@ -54,7 +56,7 @@ public class GenerateCommand extends AbstractCommand {
         crossover.setMinDuration(50);
         crossover.setMaxDuration(200);
         
-        GeneticAlgorithm ga = new GeneticAlgorithm(selectedSongs, new Mutator(allMut, 0), crossover, new Rater(subRaters));
+        GeneticAlgorithm ga = new GeneticAlgorithm(selectedSongs, new Mutator(allMut, 1), crossover, new Rater(subRaters));
         ga.setMinimumIterations(iterations);
         System.out.println("Start iterating");
         ga.iterate();
