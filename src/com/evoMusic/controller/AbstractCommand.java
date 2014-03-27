@@ -37,6 +37,10 @@ public abstract class AbstractCommand {
         return LAST_LEVEL.keySet();
     }
     
+    public String help() {
+        return "No help this command, sryz";
+    }
+    
     /**
      * 
      * @return Map containing sub commands and keys.

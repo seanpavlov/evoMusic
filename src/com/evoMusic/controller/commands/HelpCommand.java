@@ -6,6 +6,9 @@ import java.util.Map;
 import java.util.Set;
 
 import com.evoMusic.controller.AbstractCommand;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.MapMaker;
+import com.google.common.collect.Maps;
 
 /**
  * Displays help text
@@ -40,6 +43,7 @@ public class HelpCommand extends AbstractCommand {
         for (Iterator<String> it = commands.keySet().iterator(); it.hasNext();) {
             String commandKey = it.next();
             System.out.print(commandKey);
+            // Get sub commands
             AbstractCommand command = commands.get(commandKey);
             // If there are not sub commands, print the arguments
             if (command.getSubCommands() == AbstractCommand.LAST_LEVEL) {
@@ -66,9 +70,15 @@ public class HelpCommand extends AbstractCommand {
 
     @Override
     public boolean execute(String[] args) {
-        System.out.println("Available commands: ");
-        printCommands(commands, "\n");
-        System.out.println();
+        if (args.length == 0) {
+            System.out.println("Available commands: ");
+            printCommands(commands, "\n");
+            System.out.println();
+        } else {
+            printCommands(ImmutableMap.<String, AbstractCommand>builder().put(args[0], commands.get(args[0])).build(), "\n");
+            System.out.println();
+            System.out.println(commands.get(args[0]).help());
+        }
         return true;
     }
 

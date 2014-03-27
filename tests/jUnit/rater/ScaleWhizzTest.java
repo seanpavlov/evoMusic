@@ -15,6 +15,7 @@ import com.evoMusic.model.Song;
 import com.evoMusic.model.geneticAlgorithm.rating.Rater;
 import com.evoMusic.model.geneticAlgorithm.rating.ScaleWhizz;
 import com.evoMusic.util.TrackTag;
+import com.evoMusic.util.Translator;
 
 public class ScaleWhizzTest {
 
