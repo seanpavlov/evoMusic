@@ -7,7 +7,6 @@ import com.evoMusic.model.Song;
 import com.evoMusic.util.Translator;
 
 public class UserRater extends SubRater {
-  
     /**
      * Constructor, creates a user rater
      * 

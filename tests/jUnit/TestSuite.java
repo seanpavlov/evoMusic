@@ -7,6 +7,7 @@ import jUnit.mutator.RandomNoteMutatorTest;
 import jUnit.mutator.SimplifyMutatorTest;
 import jUnit.rater.MelodyRepetitionRaterTest;
 import jUnit.rater.ScaleWhizzTest;
+import jUnit.rater.BeatRaterTest;
 import jUnit.translator.TranslatorTest;
 
 import org.junit.BeforeClass;
@@ -15,6 +16,7 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 import com.evoMusic.database.MongoDatabase;
+
 
 @RunWith(Suite.class)
 @SuiteClasses({TranslatorTest.class, 
@@ -28,6 +30,7 @@ import com.evoMusic.database.MongoDatabase;
      */
     MelodyRepetitionRaterTest.class,
     ScaleWhizzTest.class,
+    BeatRaterTest.class,
     
     /*
      * Mutators

@@ -77,6 +77,10 @@ public class Crossover {
      * @return child
      */
     public Song makeCrossover(List<Individual> parents){
+        this.setMaxSilenceLength(randomGen.nextInt(40)+1);
+        this.intersections = randomGen.nextInt(16) + 4;
+        this.setSimplicityLevel(randomGen.nextInt(100)+2);
+        
         Score finalScore = new Score();
         Song child = new Song(finalScore);
         
