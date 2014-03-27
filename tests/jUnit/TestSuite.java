@@ -2,6 +2,9 @@ package jUnit;
 
 import jUnit.crossover.CrossoverTest;
 import jUnit.database.MongoDatabaseTest;
+import jUnit.mutator.OctaveMutatorTest;
+import jUnit.mutator.RandomNoteMutatorTest;
+import jUnit.mutator.SimplifyMutatorTest;
 import jUnit.rater.MelodyRepetitionRaterTest;
 import jUnit.rater.ScaleWhizzTest;
 import jUnit.translator.TranslatorTest;
@@ -18,8 +21,19 @@ import com.evoMusic.database.MongoDatabase;
     MongoDatabaseTest.class, 
     CrossoverTest.class, 
     GenerationTest.class,
+    
+    /*
+     * Raters
+     */
     MelodyRepetitionRaterTest.class,
-    ScaleWhizzTest.class})
+    ScaleWhizzTest.class,
+    
+    /*
+     * Mutators
+     */
+    RandomNoteMutatorTest.class,
+    OctaveMutatorTest.class,
+    SimplifyMutatorTest.class})
 
 /**
  * This is our test suite class. This class runs all our test classes. 
