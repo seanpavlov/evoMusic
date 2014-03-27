@@ -1,4 +1,4 @@
-package rater;
+package jUnit.rater;
 
 import static org.junit.Assert.*;
 

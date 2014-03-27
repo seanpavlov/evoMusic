@@ -35,10 +35,17 @@ public class Rater {
 
         double rating = 0.0;
         double sumOfweights = 0.0;
+        double subRating = 0.0;
         for (SubRater subRater : subraters) {
             sumOfweights += subRater.getWeight();
             if (subRater.shouldRate()) {
-                rating += subRater.rate(song) * subRater.getWeight();
+                subRating = subRater.rate(song);
+                if (subRating < 0) {
+                    System.err.println("WARNING: rater: '"
+                            + subRater.getClass().getSimpleName() + "' returned an"
+                            + "invalid rating of: " + subRating);
+                }
+                rating += subRating * subRater.getWeight();
             }
         }
         rating = rating / sumOfweights;

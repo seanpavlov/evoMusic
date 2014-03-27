@@ -8,85 +8,109 @@ import jm.music.data.Part;
 import jm.music.data.Phrase;
 
 import com.evoMusic.model.Song;
-import com.evoMusic.util.Scale;
+import com.evoMusic.util.ScalePattern;
 import com.evoMusic.util.TrackTag;
 
+/**
+ * ScaleWhizz analyzes notes and tries to fit them into a scale pattern. The
+ * more notes that can be fitted into a scale pattern, the better is the result.
+ */
 public class ScaleWhizz extends SubRater {
-    private List<Part> targeted;
 
-    //  0 = C
-    //  1 = C#
-    //  2 = D
-    // 11 = B
-    int[] notePitch;
+    private ScalePattern scalePattern;
 
-    private int numberOfNotes;
-    
+    /**
+     * Creates the sub rater. The scale pattern is by default set to diatonic as
+     * it is the most common pattern. Applies for instance to aeolian and ionian
+     * scales (standard major and minor).
+     * 
+     * @param weight
+     *            weight of this rater.
+     */
     public ScaleWhizz(double weight) {
         setWeight(weight);
+        scalePattern = ScalePattern.DIATONIC;
     }
-    
-    private void notePitchCheck(Part track) {
-        for (Phrase phrase : track.getPhraseArray()) {
-            countNotes(phrase);
-        }
-    }
-    
-    private void countNotes(Phrase phrase) {
-        for(Note note : phrase.getNoteArray()) {
-            if(!note.isRest()) {
-                notePitch[note.getPitch()%12]++;
-                numberOfNotes++;
-            }
-        }
+
+    /**
+     * The function returns 1 given 1 and 0 given 7/12 as its the worst possible
+     * outcome from the ScaleWizz
+     */
+    private double ratingLinear(double x) {
+        return 12 * x / 5.0 - 7 / 5.0;
     }
 
     @Override
     public double rate(Song song) {
-        targeted = song.getTaggedTracks(TrackTag.MELODY);
-        notePitch = new int[12];;
-        numberOfNotes = 0;
-        for (Part track : targeted) {
-            if(track.getInstrument() != Instruments.DRUM) {
-                notePitchCheck(track);
-            }
-        }
-        double hits = maximumScaleHits(notePitch, Scale.DIATONIC);
-        System.out.println("hits: "+hits );
-        System.out.println("numberOfNotes: "+numberOfNotes);
-        System.out.println("rating: " + (numberOfNotes == 0 ? 0 : hits / numberOfNotes + "\n---"));
-        return numberOfNotes == 0 ? 0 : hits / numberOfNotes;
+        List<Part> targeted = song.getTaggedTracks(TrackTag.MELODY);
+
+        PitchCounter pc = new PitchCounter(targeted);
+        int hits = maximumScaleHits(pc.notePitches);
+        return pc.numberOfNotes == 0 ? 0 : ratingLinear(1.0 * hits
+                / pc.numberOfNotes);
     }
-    
-    private int maximumScaleHits(int[] pitches, Scale scale) { 
-        int[] scaleArr = scale.getPítches();
+
+    /**
+     * Given an array of pitches, returns highest number of pitches that could be
+     * fitted into the scale pattern
+     * 
+     * @param pitches
+     *            note pitches to look at
+     * @return maximum number of hits
+     */
+    private int maximumScaleHits(int[] pitches) {
+        int[] scaleArr = scalePattern.getPítches();
         int hits = 0;
         int currentMaxHits = 0;
-        
+
+        // rotate the scale pattern its whole length
         for (int i = 0; i < scaleArr.length; i++) {
-            if( scaleArr[i] != 0 ) {
-                hits = 0;
-                
-                System.out.print("current scale: \t");
-                for (int x = 0; x < scaleArr.length; x++) {
-                    System.out.print(scaleArr[(x+i)%scaleArr.length]);
-                }
-                System.out.println();
-                System.out.print("pitches: \t");
-                for (int x = 0; x < pitches.length; x++) {
-                    System.out.print(pitches[x]);
-                }
-                
-                for (int j = 0; j < pitches.length; j++) {
-                    hits += pitches[j] * scaleArr[(j+i)%scaleArr.length];
-                }
-                System.out.println("  hits: " + hits);
-                if (hits > currentMaxHits) {
-                    currentMaxHits = hits;
+            hits = 0;
+
+            // try to fit the pitch
+            for (int j = 0; j < pitches.length; j++) {
+                hits += pitches[j] * scaleArr[(j + i) % scaleArr.length];
+            }
+
+            // save result if it improved
+            if (hits > currentMaxHits) {
+                currentMaxHits = hits;
+            }
+        }
+
+        return currentMaxHits;
+    }
+
+    /**
+     * Helper class for counting notes of different pitch
+     */
+    private final class PitchCounter {
+
+        private final int[] notePitches = new int[12];;
+        private int numberOfNotes = 0;
+
+        /**
+         * Instantiates and starts counting notes. Drum instruments are skipped
+         * for obvious reasons. 
+         * @param parts parts to be counted. 
+         */
+        private PitchCounter(List<Part> parts) {
+            for (Part track : parts) {
+                if (track.getInstrument() != Instruments.DRUM) {
+                    countNotes(track);
                 }
             }
         }
-        
-        return currentMaxHits;
+
+        private void countNotes(Part track) {
+            for (Phrase phrase : track.getPhraseArray()) {
+                for (Note note : phrase.getNoteArray()) {
+                    if (!note.isRest()) {
+                        notePitches[note.getPitch() % 12]++;
+                        numberOfNotes++;
+                    }
+                }
+            }
+        }
     }
 }
