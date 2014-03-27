@@ -30,16 +30,8 @@ import com.evoMusic.database.MongoDatabase;
  */
 public class TestSuite {
 
-    public final static String TEST_DB = MongoDatabase.DB_NAME + "_TEST";
-    
-    /**
-     * Set up Mongo to use another database name to keep the default one clean
-     * If a mongo db has not been installed or set up properly, we get to
-     * know about this before any tests are run. 
-     */
-    @BeforeClass
-    public static void setUpDb() {
-        MongoDatabase.getInstance().dropDb(TEST_DB);
-        MongoDatabase.getInstance().useDbName(TEST_DB);
-    }
+    // (\_(\
+    // (^*^ )
+    // (")(")
+
 }
