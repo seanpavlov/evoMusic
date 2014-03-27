@@ -11,7 +11,7 @@ import com.google.common.primitives.Ints;
 
 public class MarkovChain {
 
-    private static final int numberOfIntervalLookbacks = 3;
+    private static final int numberOfIntervalLookbacks = 1;
 
     private Random rand;
     private List<ProbabilityMatrix<Integer, Integer>> intervalProbabilityMatrices;
@@ -78,6 +78,7 @@ public class MarkovChain {
             currentDurationMatrix = durationProbabilityMatrices.get(trackIndex);
 
             int lookback;
+            // TODO make sequences that overlap the end and beginning maybe.
             for (int intervalIndex = 0; trackLength < maxSongDuration; intervalIndex++) {
                 currentSequence = new Vector<Integer>();
                 // Adding to sequence, wont add more than is available.
@@ -142,7 +143,7 @@ public class MarkovChain {
             currentIntervalsLength = currentIntervals.length;
 
             for (int i = 0; i < currentIntervalsLength
-                    - (numberOfIntervalLookbacks + 1); i++) {
+                    - (numberOfIntervalLookbacks); i++) {
                 // Adding for empty sequences.
                 sequence = new Vector<Integer>();
                 currentIntervalMatrix.addCount(sequence, currentIntervals[i]);
@@ -224,8 +225,6 @@ public class MarkovChain {
             List<Integer> currentSeq;
             List<Double> currentProbs;
             for (int seqIndex = 0; seqIndex < occurences.size(); seqIndex++) {
-                // System.out.println(occurences.get(seqIndex).size());// TODO
-                // REMOVE
                 currentProbs = new ArrayList<Double>();
                 probabilities.add(currentProbs);
                 currentSeq = occurences.get(seqIndex);
@@ -242,11 +241,11 @@ public class MarkovChain {
         }
 
         public T getNext(Vector<E> sequence) {
-            System.out.println(sequence);// TODO remove
             int sequenceIndex = sequences.indexOf(sequence);
             if (probabilities == null) {
                 initProbabilies();
             }
+            
             List<Double> currentProbabilities = probabilities
                     .get(sequenceIndex);
             double currentProbability = 0;

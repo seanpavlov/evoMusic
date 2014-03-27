@@ -129,6 +129,7 @@ public class IntervalSong {
         return originalDurations;
     }
 
+    // TODO Better first intervals durations etc.
     public Song toSong() {
         // All arguments must be of the same size/length!
         Score score = new Score();
@@ -137,15 +138,17 @@ public class IntervalSong {
         int currentPitch;
         int[] currentPartsIntervals;
         double[] currentPartsRythmValues;
-        int previousPitch;
+        double[] currentPartsDurations;
         Note newNote;
         for (int i = 0; i < originalIntervals.size(); i++) {
-            previousPitch = 0;
             phrase = new Phrase(0.0);
             currentPitch = firstNotes[i].getPitch();
-            phrase.add(new Note(currentPitch, originalRythmValues.get(i)[0]));
+            newNote = new Note(currentPitch, originalRythmValues.get(i)[0]);
+            newNote.setDuration(originalDurations.get(i)[0]);
+            phrase.add(newNote);
             currentPartsIntervals = originalIntervals.get(i);
             currentPartsRythmValues = originalRythmValues.get(i);
+            currentPartsDurations = originalDurations.get(i);
             for (int j = 0; j < currentPartsIntervals.length; j++) {
                 currentPitch += currentPartsIntervals[j];
                 if(currentPitch < 0) {
@@ -154,8 +157,8 @@ public class IntervalSong {
                 } else {
                     newNote = new Note(currentPitch, currentPartsRythmValues[j + 1]);
                 }
+                newNote.setDuration(currentPartsDurations[j + 1]);
                 phrase.add(newNote);
-                previousPitch = currentPitch;
             }
             newPart = new Part();
             newPart.add(phrase);

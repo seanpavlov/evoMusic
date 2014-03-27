@@ -15,6 +15,7 @@ public class MarkovChainTest {
     private Song marioSong;
     private Song marioTheme;
     private Song other;
+    private Song moonlight;
     private MarkovChain markov;
 
     @Before
@@ -22,22 +23,23 @@ public class MarkovChainTest {
         marioSong = Translator.INSTANCE.loadMidiToSong("midifiles/super_mario_world_overworld.mid");
         other = Translator.INSTANCE.loadMidiToSong("midifiles/mm2wily1.mid");
         marioTheme = Translator.INSTANCE.loadMidiToSong("midifiles/super_mario_bros_theme.mid");
+        moonlight = Translator.INSTANCE.loadMidiToSong("midifiles/mond_3.mid");
         
     }
 
     @Test
     public void test() {
-        //Translator.INSTANCE.playSong(other);
         //IntervalSong intervalSong = new IntervalSong(marioSong);
-        //System.out.println(intervalSong.toString());
-        markov = new MarkovChain(marioSong);
-        Song newSong = markov.generateNew(100);
         //Song newSong = intervalSong.toSong();
-        //Translator.INSTANCE.playPart(newSong, 5);
-        Translator.INSTANCE.playSong(newSong);
+        markov = new MarkovChain(marioSong);
+        while(true) {
+            Song newSong = markov.generateNew(100);
+            Translator.INSTANCE.playSong(newSong);
+        }
         
         
-        assertTrue(true);
+        
+        //assertTrue(true);
         //fail("Not yet implemented");
     }
 
