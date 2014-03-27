@@ -40,7 +40,7 @@ public class Rater {
             sumOfweights += subRater.getWeight();
             if (subRater.shouldRate()) {
                 subRating = subRater.rate(song);
-                if (subRating < 0) {
+                if (subRating < 0 || subRating > 1) {
                     System.err.println("WARNING: rater: '"
                             + subRater.getClass().getSimpleName() + "' returned an"
                             + "invalid rating of: " + subRating);
