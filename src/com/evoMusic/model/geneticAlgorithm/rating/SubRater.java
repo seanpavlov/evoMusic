@@ -25,7 +25,6 @@ public abstract class SubRater {
      */
     public void setWeight(double weight){
         if (weight >= 0 && weight <= 1){
-            System.out.println("Setting rater weight to " + weight);
             this.weight = weight;
         } else {
             System.err.println("Weight must be between 0 and 1");
