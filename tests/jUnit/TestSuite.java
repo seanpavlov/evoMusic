@@ -1,6 +1,12 @@
 package jUnit;
 
+import jUnit.crossover.CrossoverTest;
 import jUnit.database.MongoDatabaseTest;
+import jUnit.mutator.OctaveMutatorTest;
+import jUnit.mutator.RandomNoteMutatorTest;
+import jUnit.mutator.SimplifyMutatorTest;
+import jUnit.rater.MelodyRepetitionRaterTest;
+import jUnit.rater.ScaleWhizzTest;
 import jUnit.translator.TranslatorTest;
 
 import org.junit.BeforeClass;
@@ -8,11 +14,27 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
-import com.evoMusic.database.MongoDatabase;;
-
+import com.evoMusic.database.MongoDatabase;
 
 @RunWith(Suite.class)
-@SuiteClasses({TranslatorTest.class, GenerationTest.class, GeneticAlgorithmTest.class, MongoDatabaseTest.class })
+@SuiteClasses({TranslatorTest.class, 
+    MongoDatabaseTest.class, 
+    CrossoverTest.class, 
+    GenerationTest.class,
+    GeneticAlgorithmTest.class,
+    
+    /*
+     * Raters
+     */
+    MelodyRepetitionRaterTest.class,
+    ScaleWhizzTest.class,
+    
+    /*
+     * Mutators
+     */
+    RandomNoteMutatorTest.class,
+    OctaveMutatorTest.class,
+    SimplifyMutatorTest.class})
 
 /**
  * This is our test suite class. This class runs all our test classes. 
@@ -23,16 +45,8 @@ import com.evoMusic.database.MongoDatabase;;
  */
 public class TestSuite {
 
-    public final static String TEST_DB = MongoDatabase.DB_NAME + "_TEST";
-    
-    /**
-     * Set up Mongo to use another database name to keep the default one clean
-     * If a mongo db has not been installed or set up properly, we get to
-     * know about this before any tests are run. 
-     */
-    @BeforeClass
-    public static void setUpDb() {
-        MongoDatabase.getInstance().dropDb(TEST_DB);
-        MongoDatabase.getInstance().useDbName(TEST_DB);
-    }
+    // (\_(\
+    // (^*^ )
+    // (")(")
+
 }

@@ -1,5 +1,6 @@
 package com.evoMusic.database;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,6 +12,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
+import org.apache.commons.io.FileUtils;
+import org.bson.types.ObjectId;
+
+import com.evoMusic.controller.InputController;
 import com.evoMusic.model.Song;
 import com.evoMusic.util.TrackTag;
 import com.evoMusic.util.Translator;
@@ -60,7 +65,6 @@ public class MongoDatabase implements IDatabase {
                 mongoClient.unlock();
             }
         } catch (IOException e) {
-            // TODO Take care of Exception(s)
             e.printStackTrace();
         }
     }
@@ -83,7 +87,7 @@ public class MongoDatabase implements IDatabase {
         
         String path = Translator.INSTANCE.saveSongToMidi(song, song.getTitle());
 
-        return new BasicDBObject(TITLE_KEY, song.getTitle())
+        return new BasicDBObject("_id", song.getDbRef()).append(TITLE_KEY, song.getTitle())
                 .append(TRACK_REF_KEY, createTrackTagDBList(song))
                 .append(MIDI_PATH_KEY, path)
                 .append(USER_TAGS_KEY, song.getUserTags());
@@ -123,10 +127,10 @@ public class MongoDatabase implements IDatabase {
         Song song;
         song = Translator.INSTANCE.loadMidiToSong(songPath);
         if (song == null) {    
-            System.out.println("WARN: an error occured when loading file"
-                    + songPath);
             return null;
-        }
+        } 
+        
+        song.setDbRef((ObjectId)dbDoc.get("_id"));
 
         //Mongo basicdblist containing lists of tracktags
         final BasicDBList mongoTrackTags = ((BasicDBList) dbDoc
@@ -181,29 +185,58 @@ public class MongoDatabase implements IDatabase {
         DBCursor cursor = songs.find();
         Song song = null;
         while (cursor.hasNext()) {
-            song = createSongObject((BasicDBObject) cursor.next());
+            BasicDBObject songDb = (BasicDBObject) cursor.next();
+            song = createSongObject(songDb);
             if (song != null) {
                 listOfSongs.add(song);
+            } else {
+                fixSongNotFound(songDb, listOfSongs);
             }
         }
         cursor.close();
 
         return listOfSongs;
     }
+    private void fixSongNotFound(BasicDBObject songDb, List<Song> listOfSongs) {
+        String newPath = "";
+        String dbPath = songDb.getString(MIDI_PATH_KEY);
+        System.out.println("I could not find this song at "
+            + dbPath);
+        do {
+            System.out.print("Fix path (blank = remove db record): ");
+            newPath = InputController.SCANNER.nextLine();
+        } while(!newPath.equals("") && !new File(newPath).exists());
+        
+        if ("".equals(newPath)) {
+            removeSong(songDb.getObjectId("_id"));
+            System.out.println("Song removed!");
+            return;
+        }
+        try {
+            FileUtils.copyFile(new File(newPath), new File(dbPath));
+        } catch (IOException e) {
+            System.out.println("ERR: Cant create file "+dbPath);
+            return;
+        }
+        listOfSongs.add(createSongObject(songDb));
+    }
 
     @Override
     public boolean removeSong(Song song) {
+        return removeSong(song.getDbRef());
+    }
+    
+    @Override
+    public boolean removeSong(ObjectId dbRef) { 
         DBObject dbo = null;
         try {
-            dbo = songs.findAndRemove(
-                    new BasicDBObject(TITLE_KEY, song.getTitle())
-                    .append(TRACK_REF_KEY, createTrackTagDBList(song))
-                    .append(USER_TAGS_KEY, song.getUserTags()));
+            dbo = songs.findAndRemove(new BasicDBObject("_id", dbRef));
         } catch (MongoException me) {
             dbLogger.log(Level.WARNING, "Remove Song", me);
             return false;
         }
         return dbo != null;
+       
     }
 
     @Override

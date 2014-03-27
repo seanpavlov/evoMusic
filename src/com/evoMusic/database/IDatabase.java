@@ -3,6 +3,8 @@ package com.evoMusic.database;
 import java.io.IOException;
 import java.util.List;
 
+import org.bson.types.ObjectId;
+
 import com.evoMusic.model.Song;
 
 public interface IDatabase {
@@ -28,6 +30,13 @@ public interface IDatabase {
      * @return Boolean value depending on if remove is successful
      * */
     public boolean removeSong(Song song);
+    
+    /**
+     * Removes specific song in database
+     * @param dbRef Song database reference for the song to be removed from database
+     * @return Boolean value depending on if remove is successful
+     * */
+    public boolean removeSong(ObjectId dbRef);
     
     /**
      * Updates specific song in database

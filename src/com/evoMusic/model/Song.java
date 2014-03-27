@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.bson.types.ObjectId;
+
 import com.evoMusic.util.TrackTag;
 
 import jm.music.data.Part;
@@ -20,6 +22,8 @@ public class Song {
     private Map<Part, List<TrackTag>> trackTags = new HashMap<Part, List<TrackTag>>();
 
     private final Score score;
+    
+    private ObjectId dbRef = new ObjectId();
 
     /**
      * Creates a new Song object by copying all content from the given score.
@@ -30,7 +34,15 @@ public class Song {
     public Song(Score score) {
         this.score = score;
     }
+    
+    public ObjectId getDbRef() {
+        return dbRef;
+    }
 
+    public void setDbRef(ObjectId dbRef) {
+        this.dbRef = dbRef;
+    }
+    
     /**
      * 
      * @return the title of the score
@@ -193,5 +205,7 @@ public class Song {
     public void addUserTag(String userTag) {
         this.userTags.add(userTag);
     }
+
+    
 
 }

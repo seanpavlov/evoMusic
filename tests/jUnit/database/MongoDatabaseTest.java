@@ -25,8 +25,17 @@ public class MongoDatabaseTest {
     private static List<Song> testSongs;
     private static MongoDatabase mDb;
 
+    public final static String TEST_DB = MongoDatabase.DB_NAME + "_TEST";
+    
+    /**
+     * Set up Mongo to use another database name to keep the default one clean
+     * If a mongo db has not been installed or set up properly, we get to
+     * know about this before any tests are run. 
+     */
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
+        MongoDatabase.getInstance().dropDb(TEST_DB);
+        MongoDatabase.getInstance().useDbName(TEST_DB);
         // if a mongo db has not been installed or set up properly, we should
         // get to know about this before any tests are run. Also save instance
         // to mDb to save some keystrokes for the tests.
