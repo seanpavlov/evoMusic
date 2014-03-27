@@ -32,13 +32,8 @@ public class MarkovChainTest {
         //IntervalSong intervalSong = new IntervalSong(marioSong);
         //Song newSong = intervalSong.toSong();
         markov = new MarkovChain(marioSong);
-        while(true) {
-            Song newSong = markov.generateNew(100);
-            Translator.INSTANCE.playSong(newSong);
-        }
-        
-        
-        
+        Song newSong = markov.generateNew(1000);
+        Translator.INSTANCE.playSong(newSong);
         //assertTrue(true);
         //fail("Not yet implemented");
     }

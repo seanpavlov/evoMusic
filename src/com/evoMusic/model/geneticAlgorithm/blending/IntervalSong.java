@@ -19,23 +19,22 @@ public class IntervalSong {
     private List<int[]> originalIntervals;
     private List<double[]> originalRythmValues;
     private List<double[]> originalDurations;
-    private Note[] firstNotes;
+    private int[] firstNotes;
     private int[] instruments;
     private int[] channels;
     private double tempo;
 
     public IntervalSong(List<int[]> intervals, List<double[]> rythmValues,
-            List<double[]> durations, Song songSettingTemplate) {
+            List<double[]> durations, Song songSettingTemplate, int[] firstNotes) {
         this.originalIntervals = intervals;
         this.originalRythmValues = rythmValues;
         this.originalDurations = durations;
         int numberOfTracks = intervals.size();
-        this.firstNotes = new Note[numberOfTracks];
+        this.firstNotes = firstNotes;
         this.instruments = new int[numberOfTracks];
         this.channels = new int[numberOfTracks];
         this.tempo = songSettingTemplate.getTempo();
         for(int i = 0; i < numberOfTracks; i++) {
-            this.firstNotes[i] = new Note(60, 0.5);
             this.instruments[i] = songSettingTemplate.getTrack(i).getInstrument();
             this.channels[i] = songSettingTemplate.getTrack(i).getChannel();
         }
@@ -56,7 +55,7 @@ public class IntervalSong {
         Map<Double, List<ComparableNote>> noteMap;
         List<ComparableNote> sortedNoteList = new ArrayList<ComparableNote>();
         Part[] allParts = song.getScore().getPartArray();
-        this.firstNotes = new Note[allParts.length];
+        this.firstNotes = new int[allParts.length];
         this.instruments = new int[allParts.length];
         this.channels = new int[allParts.length];
         this.tempo = song.getTempo();
@@ -86,7 +85,7 @@ public class IntervalSong {
             }
             Collections.sort(sortedNoteList);
 
-            firstNotes[partIndex] = sortedNoteList.get(0).note;
+            firstNotes[partIndex] = sortedNoteList.get(0).note.getPitch();
             instruments[partIndex] = allParts[partIndex].getInstrument();
             channels[partIndex] = allParts[partIndex].getChannel();
             int numberOfNotes = sortedNoteList.size();
@@ -142,7 +141,7 @@ public class IntervalSong {
         Note newNote;
         for (int i = 0; i < originalIntervals.size(); i++) {
             phrase = new Phrase(0.0);
-            currentPitch = firstNotes[i].getPitch();
+            currentPitch = firstNotes[i];
             newNote = new Note(currentPitch, originalRythmValues.get(i)[0]);
             newNote.setDuration(originalDurations.get(i)[0]);
             phrase.add(newNote);

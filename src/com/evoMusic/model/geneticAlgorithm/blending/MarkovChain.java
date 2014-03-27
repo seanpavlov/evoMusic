@@ -5,13 +5,17 @@ import java.util.List;
 import java.util.Random;
 import java.util.Vector;
 
+import jm.music.data.Note;
+import jm.music.data.Part;
+import jm.music.data.Phrase;
+
 import com.evoMusic.model.Song;
 import com.google.common.primitives.Doubles;
 import com.google.common.primitives.Ints;
 
 public class MarkovChain {
 
-    private static final int numberOfIntervalLookbacks = 1;
+    private static final int numberOfIntervalLookbacks = 3;
 
     private Random rand;
     private List<ProbabilityMatrix<Integer, Integer>> intervalProbabilityMatrices;
@@ -48,11 +52,12 @@ public class MarkovChain {
     public Song generateNew(double maxSongDuration) {
         double trackLength = 0;
 
+        int numberOfTracks = originalSong.getIntervals().size();
+
         List<int[]> intervals = new ArrayList<int[]>();
         List<double[]> rythmValues = new ArrayList<double[]>();
         List<double[]> durations = new ArrayList<double[]>();
-
-        int numberOfTracks = originalSong.getIntervals().size();
+        int[] firstNotes = new int[numberOfTracks];
 
         List<Integer> currentIntervals;
         List<Double> currentRythmValues;
@@ -102,7 +107,8 @@ public class MarkovChain {
             // Adding the last rythmValues and durations.
             currentSequence = new Vector<Integer>();
             for (int seqIndex = numberOfIntervalLookbacks; seqIndex > 0; seqIndex--) {
-                currentSequence.add(currentIntervals.get(currentIntervals.size() - seqIndex));
+                currentSequence.add(currentIntervals.get(currentIntervals
+                        .size() - seqIndex));
             }
             nextRythmValue = currentRythmMatrix.getNext(currentSequence);
             nextDuration = currentDurationMatrix.getNext(currentSequence);
@@ -113,9 +119,29 @@ public class MarkovChain {
             intervals.add(Ints.toArray(currentIntervals));
             rythmValues.add(Doubles.toArray(currentRythmValues));
             durations.add(Doubles.toArray(currentDurations));
+
+            // Adding the first notes.
+            firstNotes[trackIndex] = getPseudoRandomNote(realSong.getTrack(trackIndex));
         }
-        return new IntervalSong(intervals, rythmValues, durations, realSong)
+        return new IntervalSong(intervals, rythmValues, durations, realSong, firstNotes)
                 .toSong();
+    }
+
+    private int getPseudoRandomNote(Part part) {
+        ProbabilityMatrix<Object, Integer> probabilities = new ProbabilityMatrix<Object, Integer>();
+        // Creates a dummy vector.
+        Vector<Object> vec = new Vector<Object>();
+        int newNote = 0;
+        for(Phrase phrases : part.getPhraseArray()) {
+            for(Note currentNote : phrases.getNoteArray()) {
+                probabilities.addCount(vec, currentNote.getPitch());
+            }
+        }
+        probabilities.initProbabilies();
+        do {
+            newNote = probabilities.getNext(vec);
+        } while (newNote == Note.REST);
+        return newNote;
     }
 
     private void initProbabilityMatrices() {
@@ -216,7 +242,8 @@ public class MarkovChain {
             while (thisOccurence.size() <= intervalIndex) {
                 thisOccurence.add(0);
             }
-            thisOccurence.set(intervalIndex, thisOccurence.get(intervalIndex) + 1);
+            thisOccurence.set(intervalIndex,
+                    thisOccurence.get(intervalIndex) + 1);
         }
 
         public void initProbabilies() {
@@ -245,7 +272,7 @@ public class MarkovChain {
             if (probabilities == null) {
                 initProbabilies();
             }
-            
+
             List<Double> currentProbabilities = probabilities
                     .get(sequenceIndex);
             double currentProbability = 0;
