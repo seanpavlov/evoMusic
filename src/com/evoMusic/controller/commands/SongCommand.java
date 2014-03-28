@@ -37,6 +37,15 @@ public class SongCommand extends AbstractCommand {
         this.selectedSongs = selectedSongs;
         setUpArgs();
     }
+    
+    @Override
+    public String help() {
+        StringBuilder sb = new StringBuilder();
+        for (String arg : songArgs.keySet()) {
+            sb.append("song " + arg + "\t- " + songArgs.get(arg).help() + "\n");
+        }
+        return sb.toString();
+    };
 
     private void setUpArgs() {
         
@@ -52,9 +61,38 @@ public class SongCommand extends AbstractCommand {
                 }
                 System.out.println("Selected songs:");
                 for (Song song : selectedSongs) {
-                    System.out.println(song.getTitle());;
+                    System.out.println(song.getTitle());
                 }
                 return true;
+            }
+            
+            @Override
+            public String help() {
+                return "List available and currently selected songs if any";
+            }
+        });
+        
+        /*
+         * Delete a song given a number
+         */
+        songArgs.put("delete", new AbstractCommand() {
+            
+            @Override
+            public boolean execute(String[] args) {
+                int songIndex = -1;
+                try {
+                    songIndex = Integer.parseInt(args[0]);
+                } catch (NumberFormatException e) {
+                    return false;
+                }
+                Song song = songs.remove(songIndex);
+                System.out.println("Removing song '"+song.getTitle()+"'...");
+                return MongoDatabase.getInstance().removeSong(song);
+            }
+            
+            @Override
+            public String help() {
+                return "Deletes a song given its list index given by 'song list'";
             }
         });
 
@@ -173,7 +211,7 @@ public class SongCommand extends AbstractCommand {
 
     @Override
     public boolean execute(String[] args) {
-        if (songArgs.keySet().contains(args[0])) {
+        if (args.length > 0 && songArgs.keySet().contains(args[0])) {
             String[] songListArgs = args;
                 songListArgs = Arrays.copyOfRange(args, 1, args.length);
             songArgs.get(args[0]).execute(songListArgs);

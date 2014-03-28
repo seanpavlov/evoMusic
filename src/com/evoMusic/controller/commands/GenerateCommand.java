@@ -11,17 +11,11 @@ import com.evoMusic.model.geneticAlgorithm.Crossover;
 import com.evoMusic.model.geneticAlgorithm.GeneticAlgorithm;
 import com.evoMusic.model.geneticAlgorithm.mutation.ISubMutator;
 import com.evoMusic.model.geneticAlgorithm.mutation.Mutator;
-import com.evoMusic.model.geneticAlgorithm.mutation.OctaveMutator;
-import com.evoMusic.model.geneticAlgorithm.mutation.RandomNoteMutator;
-import com.evoMusic.model.geneticAlgorithm.mutation.ReverseMutator;
-import com.evoMusic.model.geneticAlgorithm.mutation.ScaleOfFifthMutator;
-import com.evoMusic.model.geneticAlgorithm.mutation.SimplifyMutator;
-import com.evoMusic.model.geneticAlgorithm.rating.MelodyRepetionRater;
 import com.evoMusic.model.geneticAlgorithm.rating.BeatRepetitionRater;
+import com.evoMusic.model.geneticAlgorithm.rating.MelodyRepetionRater;
 import com.evoMusic.model.geneticAlgorithm.rating.Rater;
+import com.evoMusic.model.geneticAlgorithm.rating.ScaleWhizz;
 import com.evoMusic.model.geneticAlgorithm.rating.SubRater;
-import com.evoMusic.model.geneticAlgorithm.rating.UserRater;
-import com.evoMusic.util.TrackTag;
 import com.evoMusic.util.Translator;
 import com.google.common.collect.Sets;
 
@@ -46,24 +40,24 @@ public class GenerateCommand extends AbstractCommand {
         }
         int iterations = Integer.parseInt(args[0]);
         List<ISubMutator> allMut = new ArrayList<ISubMutator>();
-        allMut.add(new RandomNoteMutator(0.5, 12));
-        allMut.add(new OctaveMutator(0, 1));
-        allMut.add(new ReverseMutator(0, 4, 4, true));
-        allMut.add(new ScaleOfFifthMutator(0, 3));
-        allMut.add(new SimplifyMutator(0, 4, 0.1));
+//        allMut.add(new RandomNoteMutator(0.5, 12));
+//        allMut.add(new OctaveMutator(0, 1));
+//        allMut.add(new ReverseMutator(0, 4, 4, true));
+//        allMut.add(new ScaleOfFifthMutator(0, 3));
+//        allMut.add(new SimplifyMutator(0, 4, 0.1));
         List<SubRater> subRaters = new LinkedList<SubRater>();
         subRaters.add(new MelodyRepetionRater(1));
+        subRaters.add(new ScaleWhizz(1));
         subRaters.add(new BeatRepetitionRater(1));
         Crossover crossover = new Crossover(4);
         crossover.setMinDuration(50);
         crossover.setMaxDuration(200);
         
-        GeneticAlgorithm ga = new GeneticAlgorithm(selectedSongs, new Mutator(allMut, 1), crossover, new Rater(subRaters));
+        GeneticAlgorithm ga = new GeneticAlgorithm(selectedSongs, new Mutator(allMut, .1), crossover, new Rater(subRaters));
         ga.setMinimumIterations(iterations);
         System.out.println("Start iterating");
         ga.iterate();
-        Translator.INSTANCE.saveSongToMidi(ga.getBest(), "the best");
-
+        Translator.INSTANCE.saveSongToMidi(ga.getBest(), "best");
         return true;
     }
     

@@ -23,6 +23,7 @@ import com.evoMusic.database.MongoDatabase;
     MongoDatabaseTest.class, 
     CrossoverTest.class, 
     GenerationTest.class,
+    GeneticAlgorithmTest.class,
     
     /*
      * Raters

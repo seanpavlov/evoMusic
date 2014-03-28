@@ -20,10 +20,10 @@ public class MelodyRepetionRater extends SubRater {
     /**
      * Constructor, creates a user rater
      * 
-     * @param weight
+     * @param d
      */
-    public MelodyRepetionRater(Integer weight){
-        super.setWeight(weight);
+    public MelodyRepetionRater(double d){
+        super.setWeight(d);
     }
     
     @Override
