@@ -39,7 +39,7 @@ public class SimplifyMutator extends ISubMutator {
             int currentNoteIndex = noteIndex - 1;
             if(currentNoteIndex >= 0){
                 noteIteration: for (int i = 0; i < nbrOfPastNeighbours; i++) {
-                    while (mu.isBlank(song.getScore().getPart(0).getPhrase(0).getNote(currentNoteIndex).getPitch()) && currentNoteIndex >= 0) {
+                    while (mu.isBlank(song.getScore().getPart(0).getPhrase(0).getNote(currentNoteIndex).getPitch()) && currentNoteIndex > 0) {
                         currentNoteIndex--;
                     }
                     if (currentNoteIndex < 0) {
