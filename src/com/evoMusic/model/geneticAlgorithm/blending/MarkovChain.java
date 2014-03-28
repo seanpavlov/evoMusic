@@ -67,6 +67,7 @@ public class MarkovChain {
         ProbabilityMatrix<Integer, Double> currentRythmMatrix;
         ProbabilityMatrix<Integer, Double> currentDurationMatrix;
 
+        boolean isResting;
         int nextInterval;
         double nextRythmValue;
         double nextDuration;
@@ -78,12 +79,14 @@ public class MarkovChain {
             currentRythmValues = new ArrayList<Double>();
             currentDurations = new ArrayList<Double>();
             trackLength = 0;
+            isResting = false;
             currentIntervalMatrix = intervalProbabilityMatrices.get(trackIndex);
             currentRythmMatrix = rythmValueProbabilityMatrices.get(trackIndex);
             currentDurationMatrix = durationProbabilityMatrices.get(trackIndex);
 
             int lookback;
             // TODO make sequences that overlap the end and beginning maybe.
+            // Building the track.
             for (int intervalIndex = 0; trackLength < maxSongDuration; intervalIndex++) {
                 currentSequence = new Vector<Integer>();
                 // Adding to sequence, wont add more than is available.
@@ -97,6 +100,25 @@ public class MarkovChain {
                 }
 
                 nextInterval = currentIntervalMatrix.getNext(currentSequence);
+                // Make sure the first interval isn't a restback (high positive number) or rest.
+                if(intervalIndex == 0) {
+                    while(nextInterval > 127 || nextInterval < 0) {
+                        nextInterval = currentIntervalMatrix.getNext(currentSequence);
+                    }
+                } else {
+                    // Make sure no dubbel rest/restback is added.
+                    while(true) {
+                        if(nextInterval <= 127 || nextInterval >= 0) {
+                            break;
+                        }
+                        if((isResting && nextInterval > 127) || !isResting && nextInterval < 0) {
+                            isResting = !isResting;
+                            break;
+                        }
+                        nextInterval = currentIntervalMatrix.getNext(currentSequence);
+                    }
+                }
+
                 nextRythmValue = currentRythmMatrix.getNext(currentSequence);
                 nextDuration = currentDurationMatrix.getNext(currentSequence);
                 trackLength += nextRythmValue;

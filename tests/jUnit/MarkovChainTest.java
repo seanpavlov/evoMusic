@@ -2,6 +2,9 @@ package jUnit;
 
 import static org.junit.Assert.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -14,16 +17,23 @@ public class MarkovChainTest {
     
     private Song marioSong;
     private Song marioTheme;
-    private Song other;
+    private List<Song> flutes;
     private Song moonlight;
     private MarkovChain markov;
+    private Song nyanCat;
 
     @Before
     public void setUp() throws Exception {
+        flutes = new ArrayList<Song>();
+        flutes.add(Translator.INSTANCE.loadMidiToSong("midifiles/fp-1all.mid"));
+        flutes.add(Translator.INSTANCE.loadMidiToSong("midifiles/fp-2cou.mid"));
+        flutes.add(Translator.INSTANCE.loadMidiToSong("midifiles/fp-3sar.mid"));
+        flutes.add(Translator.INSTANCE.loadMidiToSong("midifiles/fp-4bou.mid"));
+        
         marioSong = Translator.INSTANCE.loadMidiToSong("midifiles/super_mario_world_overworld.mid");
-        other = Translator.INSTANCE.loadMidiToSong("midifiles/mm2wily1.mid");
         marioTheme = Translator.INSTANCE.loadMidiToSong("midifiles/super_mario_bros_theme.mid");
         moonlight = Translator.INSTANCE.loadMidiToSong("midifiles/mond_3.mid");
+        nyanCat = Translator.INSTANCE.loadMidiToSong("midifiles/nyan_cat.mid");
         
     }
 
@@ -31,8 +41,9 @@ public class MarkovChainTest {
     public void test() {
         //IntervalSong intervalSong = new IntervalSong(marioSong);
         //Song newSong = intervalSong.toSong();
+        //markov = new MarkovChain(flutes.get(2));
         markov = new MarkovChain(marioSong);
-        Song newSong = markov.generateNew(1000);
+        Song newSong = markov.generateNew(10000);
         Translator.INSTANCE.playSong(newSong);
         //assertTrue(true);
         //fail("Not yet implemented");

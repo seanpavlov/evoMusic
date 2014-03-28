@@ -150,12 +150,13 @@ public class IntervalSong {
             currentPartsDurations = originalDurations.get(i);
             for (int j = 0; j < currentPartsIntervals.length; j++) {
                 currentPitch += currentPartsIntervals[j];
-                if(currentPitch < 0) {
+                if(currentPitch < 0 || currentPitch > 127) {
                     newNote = new Note(Note.REST, currentPartsRythmValues[j + 1]);
                     
                 } else {
                     newNote = new Note(currentPitch, currentPartsRythmValues[j + 1]);
                 }
+                //System.out.println(currentPitch); // TODO
                 newNote.setDuration(currentPartsDurations[j + 1]);
                 phrase.add(newNote);
             }
