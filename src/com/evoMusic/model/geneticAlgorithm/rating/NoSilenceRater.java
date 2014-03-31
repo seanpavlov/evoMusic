@@ -13,9 +13,9 @@ public class NoSilenceRater extends SubRater {
 
     @Override
     public double rate(Song song) {
-        List<Phrase> allPhrases = Sort.INSTANCE.sortPhrasesOnStartTime(song);
+        List<Phrase> allPhrases = Sort.sortPhrases(song, Sort.PHRASE_START_TIME_COMPARATOR);
         double songDuration = song.getScore().getEndTime();
-        double longestSilence = 0.0001;
+        double longestSilence = 0.0;
         
         for (int i = 0; i < allPhrases.size()-1; i++){
             Phrase thisPhrase = allPhrases.get(i);
