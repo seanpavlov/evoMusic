@@ -15,7 +15,7 @@ import com.google.common.primitives.Ints;
 
 public class MarkovChain {
 
-    private static final int numberOfIntervalLookbacks = 3;
+    private static final int numberOfIntervalLookbacks = 10;
 
     private Random rand;
     private List<ProbabilityMatrix<Integer, Integer>> intervalProbabilityMatrices;
@@ -59,88 +59,90 @@ public class MarkovChain {
         List<double[]> durations = new ArrayList<double[]>();
         int[] firstNotes = new int[numberOfTracks];
 
-        List<Integer> currentIntervals;
-        List<Double> currentRythmValues;
-        List<Double> currentDurations;
+        List<Integer> trackIntervals;
+        List<Double> trackRythmValues;
+        List<Double> trackDurations;
 
-        ProbabilityMatrix<Integer, Integer> currentIntervalMatrix;
-        ProbabilityMatrix<Integer, Double> currentRythmMatrix;
-        ProbabilityMatrix<Integer, Double> currentDurationMatrix;
+        ProbabilityMatrix<Integer, Integer> trackIntervalMatrix;
+        ProbabilityMatrix<Integer, Double> trackRythmMatrix;
+        ProbabilityMatrix<Integer, Double> trackDurationMatrix;
 
         boolean isResting;
-        int nextInterval;
+        Integer nextInterval;
         double nextRythmValue;
         double nextDuration;
         Vector<Integer> currentSequence;
 
         // For each track.
         for (int trackIndex = 0; trackIndex < numberOfTracks; trackIndex++) {
-            currentIntervals = new ArrayList<Integer>();
-            currentRythmValues = new ArrayList<Double>();
-            currentDurations = new ArrayList<Double>();
+            trackIntervals = new ArrayList<Integer>();
+            trackRythmValues = new ArrayList<Double>();
+            trackDurations = new ArrayList<Double>();
             trackLength = 0;
             isResting = false;
-            currentIntervalMatrix = intervalProbabilityMatrices.get(trackIndex);
-            currentRythmMatrix = rythmValueProbabilityMatrices.get(trackIndex);
-            currentDurationMatrix = durationProbabilityMatrices.get(trackIndex);
+            trackIntervalMatrix = intervalProbabilityMatrices.get(trackIndex);
+            trackRythmMatrix = rythmValueProbabilityMatrices.get(trackIndex);
+            trackDurationMatrix = durationProbabilityMatrices.get(trackIndex);
 
-            int lookback;
-            // TODO make sequences that overlap the end and beginning maybe.
-            // Building the track.
-            for (int intervalIndex = 0; trackLength < maxSongDuration; intervalIndex++) {
-                currentSequence = new Vector<Integer>();
-                // Adding to sequence, wont add more than is available.
-                for (int seqIndex = 0; seqIndex < numberOfIntervalLookbacks; seqIndex++) {
-                    lookback = intervalIndex
-                            - (numberOfIntervalLookbacks - seqIndex);
-                    if (lookback >= 0) {
-                        currentSequence.add(currentIntervals.get(lookback));
-
+            while(trackLength < maxSongDuration) {
+                // TODO make sequences that overlap the end and beginning maybe.
+                // Building the track.
+                ArrayList<Integer> currentIntervals = new ArrayList<Integer>();
+                ArrayList<Double> currentRythmValues = new ArrayList<Double>();
+                ArrayList<Double> currentDurations = new ArrayList<Double>();
+                
+                for (int intervalIndex = 0; trackLength < maxSongDuration; intervalIndex++) {
+                    currentSequence = getNextSequence(intervalIndex, currentIntervals);
+                    nextInterval = trackIntervalMatrix.getNext(currentSequence);
+                    if(nextInterval == null) {
+                        break; // Has come to the end of the song, must start over.
                     }
-                }
-
-                nextInterval = currentIntervalMatrix.getNext(currentSequence);
-                // Make sure the first interval isn't a restback (high positive number) or rest.
-                if(intervalIndex == 0) {
-                    while(nextInterval > 127 || nextInterval < 0) {
-                        nextInterval = currentIntervalMatrix.getNext(currentSequence);
-                    }
-                } else {
-                    // Make sure no dubbel rest/restback is added.
-                    while(true) {
-                        if(nextInterval <= 127 || nextInterval >= 0) {
-                            break;
+                    // Make sure the first interval isn't a restback (high positive number) or rest.
+                    if(intervalIndex == 0) {
+                        while(nextInterval > 127 || nextInterval < 0) {
+                            nextInterval = trackIntervalMatrix.getNext(currentSequence);
                         }
-                        if((isResting && nextInterval > 127) || !isResting && nextInterval < 0) {
-                            isResting = !isResting;
-                            break;
+                    } else {
+                        // Make sure no dubbel rest/restback is added.
+                        while(true) {
+                            if(nextInterval <= 127 || nextInterval >= 0) {
+                                break;
+                            }
+                            if((isResting && nextInterval > 127) || !isResting && nextInterval < 0) {
+                                isResting = !isResting;
+                                break;
+                            }
+                            nextInterval = trackIntervalMatrix.getNext(currentSequence);
                         }
-                        nextInterval = currentIntervalMatrix.getNext(currentSequence);
                     }
+    
+                    nextRythmValue = trackRythmMatrix.getNext(currentSequence);
+                    nextDuration = trackDurationMatrix.getNext(currentSequence);
+                    trackLength += nextRythmValue;
+                    currentIntervals.add(nextInterval);
+                    currentRythmValues.add(nextRythmValue);
+                    currentDurations.add(nextDuration);
                 }
-
-                nextRythmValue = currentRythmMatrix.getNext(currentSequence);
-                nextDuration = currentDurationMatrix.getNext(currentSequence);
-                trackLength += nextRythmValue;
-                currentIntervals.add(nextInterval);
-                currentRythmValues.add(nextRythmValue);
-                currentDurations.add(nextDuration);
+                trackIntervals.addAll(currentIntervals);
+                trackRythmValues.addAll(currentRythmValues);
+                trackDurations.addAll(currentDurations);
             }
+            
             // Adding the last rythmValues and durations.
             currentSequence = new Vector<Integer>();
             for (int seqIndex = numberOfIntervalLookbacks; seqIndex > 0; seqIndex--) {
-                currentSequence.add(currentIntervals.get(currentIntervals
+                currentSequence.add(trackIntervals.get(trackIntervals
                         .size() - seqIndex));
             }
-            nextRythmValue = currentRythmMatrix.getNext(currentSequence);
-            nextDuration = currentDurationMatrix.getNext(currentSequence);
+            nextRythmValue = trackRythmMatrix.getNext(currentSequence);
+            nextDuration = trackDurationMatrix.getNext(currentSequence);
             trackLength += nextRythmValue;
-            currentRythmValues.add(nextRythmValue);
-            currentDurations.add(nextDuration);
+            trackRythmValues.add(nextRythmValue);
+            trackDurations.add(nextDuration);
 
-            intervals.add(Ints.toArray(currentIntervals));
-            rythmValues.add(Doubles.toArray(currentRythmValues));
-            durations.add(Doubles.toArray(currentDurations));
+            intervals.add(Ints.toArray(trackIntervals));
+            rythmValues.add(Doubles.toArray(trackRythmValues));
+            durations.add(Doubles.toArray(trackDurations));
 
             // Adding the first notes.
             firstNotes[trackIndex] = getPseudoRandomNote(realSong.getTrack(trackIndex));
@@ -148,6 +150,65 @@ public class MarkovChain {
         return new IntervalSong(intervals, rythmValues, durations, realSong, firstNotes)
                 .toSong();
     }
+    
+    private Vector<Integer> getNextSequence(int intervalIndex, List<Integer> currentIntervals) {
+        // Adding to sequence, wont add more than is available.
+        int lookback;
+        Vector<Integer> currentSequence = new Vector<Integer>();
+        for (int seqIndex = 0; seqIndex < numberOfIntervalLookbacks; seqIndex++) {
+            lookback = intervalIndex
+                    - (numberOfIntervalLookbacks - seqIndex);
+            if (lookback >= 0) {
+                currentSequence.add(currentIntervals.get(lookback));
+
+            }
+        }
+        return currentSequence;
+    }
+    
+//    private void doSomething(double trackLength, double maxSongDuration) {
+//        int lookback;
+//        Vector<Integer> currentSequence;
+//        for (int intervalIndex = 0; trackLength < maxSongDuration; intervalIndex++) {
+//            currentSequence = new Vector<Integer>();
+//            // Adding to sequence, wont add more than is available.
+//            for (int seqIndex = 0; seqIndex < numberOfIntervalLookbacks; seqIndex++) {
+//                lookback = intervalIndex
+//                        - (numberOfIntervalLookbacks - seqIndex);
+//                if (lookback >= 0) {
+//                    currentSequence.add(currentIntervals.get(lookback));
+//
+//                }
+//            }
+//
+//            nextInterval = currentIntervalMatrix.getNext(currentSequence);
+//            // Make sure the first interval isn't a restback (high positive number) or rest.
+//            if(intervalIndex == 0) {
+//                while(nextInterval > 127 || nextInterval < 0) {
+//                    nextInterval = currentIntervalMatrix.getNext(currentSequence);
+//                }
+//            } else {
+//                // Make sure no dubbel rest/restback is added.
+//                while(true) {
+//                    if(nextInterval <= 127 || nextInterval >= 0) {
+//                        break;
+//                    }
+//                    if((isResting && nextInterval > 127) || !isResting && nextInterval < 0) {
+//                        isResting = !isResting;
+//                        break;
+//                    }
+//                    nextInterval = currentIntervalMatrix.getNext(currentSequence);
+//                }
+//            }
+//
+//            nextRythmValue = currentRythmMatrix.getNext(currentSequence);
+//            nextDuration = currentDurationMatrix.getNext(currentSequence);
+//            trackLength += nextRythmValue;
+//            currentIntervals.add(nextInterval);
+//            currentRythmValues.add(nextRythmValue);
+//            currentDurations.add(nextDuration);
+//        }
+//    }
 
     private int getPseudoRandomNote(Part part) {
         ProbabilityMatrix<Object, Integer> probabilities = new ProbabilityMatrix<Object, Integer>();
@@ -291,6 +352,9 @@ public class MarkovChain {
 
         public T getNext(Vector<E> sequence) {
             int sequenceIndex = sequences.indexOf(sequence);
+            if(sequenceIndex == -1) {
+                return null;
+            }
             if (probabilities == null) {
                 initProbabilies();
             }

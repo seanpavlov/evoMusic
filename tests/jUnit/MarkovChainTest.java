@@ -42,9 +42,10 @@ public class MarkovChainTest {
         //IntervalSong intervalSong = new IntervalSong(marioSong);
         //Song newSong = intervalSong.toSong();
         //markov = new MarkovChain(flutes.get(2));
-        markov = new MarkovChain(marioSong);
-        Song newSong = markov.generateNew(10000);
-        Translator.INSTANCE.playSong(newSong);
+        markov = new MarkovChain(marioTheme);
+        Song newSong = markov.generateNew(1000);
+        Translator.INSTANCE.playPart(newSong, 0);
+        //Translator.INSTANCE.playPart(newSong, 0);
         //assertTrue(true);
         //fail("Not yet implemented");
     }
