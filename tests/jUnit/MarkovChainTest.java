@@ -33,7 +33,7 @@ public class MarkovChainTest {
         marioSong = Translator.INSTANCE.loadMidiToSong("midifiles/super_mario_world_overworld.mid");
         marioTheme = Translator.INSTANCE.loadMidiToSong("midifiles/super_mario_bros_theme.mid");
         moonlight = Translator.INSTANCE.loadMidiToSong("midifiles/mond_3.mid");
-        nyanCat = Translator.INSTANCE.loadMidiToSong("midifiles/nyan_cat.mid");
+        nyanCat = Translator.INSTANCE.loadMidiToSong("midifiles/nyan_cat_cut.mid");
         
     }
 
@@ -42,7 +42,7 @@ public class MarkovChainTest {
         //IntervalSong intervalSong = new IntervalSong(marioSong);
         //Song newSong = intervalSong.toSong();
         //markov = new MarkovChain(flutes.get(2));
-        markov = new MarkovChain(marioTheme);
+        markov = new MarkovChain(4, nyanCat);
         Song newSong = markov.generateNew(1000);
         Translator.INSTANCE.playPart(newSong, 0);
         //Translator.INSTANCE.playPart(newSong, 0);

@@ -15,7 +15,7 @@ import com.google.common.primitives.Ints;
 
 public class MarkovChain {
 
-    private static final int numberOfIntervalLookbacks = 10;
+    private int numberOfIntervalLookbacks;
 
     private Random rand;
     private List<ProbabilityMatrix<Integer, Integer>> intervalProbabilityMatrices;
@@ -24,7 +24,8 @@ public class MarkovChain {
     private IntervalSong originalSong;
     private Song realSong;
 
-    public MarkovChain(Song song) {
+    public MarkovChain(int lookbacks, Song song) {
+        this.numberOfIntervalLookbacks = lookbacks;
         this.rand = new Random();
         this.realSong = song;
         this.originalSong = new IntervalSong(song);
