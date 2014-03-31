@@ -97,9 +97,6 @@ public class MelodyRepetitionRaterTest {
     public void testShouldRateLess(){
         double rating1 = rater.rate(goodSong);
         double rating2 = rater.rate(badSong);
-        System.out.println("rate good " + rating1);
-        System.out.println("rate bad " + rating2);
-        
         assertTrue("Random tagged beat parts should rate less than song with known beat parts", rating1 > rating2);
     }
 }
