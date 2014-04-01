@@ -25,6 +25,9 @@ public class MarkovChain {
     private Song realSong;
 
     public MarkovChain(int lookbacks, Song song) {
+        if(lookbacks < 0) {
+            throw new IllegalArgumentException("Negative lookback value");
+        }
         this.numberOfIntervalLookbacks = lookbacks;
         this.rand = new Random();
         this.realSong = song;
