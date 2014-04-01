@@ -77,7 +77,7 @@ public class Crossover {
      * @return child
      */
     public Song makeCrossover(List<Individual> parents){
-        this.setMaxSilenceLength(randomGen.nextInt(40)+1);
+        this.setMaxSilenceLength(randomGen.nextInt(20)+1);
         this.intersections = randomGen.nextInt(16) + 4;
         this.setSimplicityLevel(randomGen.nextInt(100)+2);
         
@@ -166,6 +166,9 @@ public class Crossover {
         List<Phrase> choppedPhrases = new ArrayList<Phrase>();
 
         for (Phrase phrase : taggedTrackPart.getPhraseArray()){
+            phrase.setDynamic(64);
+            phrase.setPan(0.5);
+            
             Note[] phraseNotes = phrase.getNoteArray();
             noteCounter += phraseNotes.length;
             int numberOfNotes = (int) Math.floor(phraseNotes.length / intersections);
