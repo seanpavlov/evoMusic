@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import jm.music.data.Note;
 import jm.music.data.Part;
 import jm.music.data.Phrase;
 
@@ -60,14 +61,30 @@ public class BeatRepetitionRater extends SubRater{
         for(Phrase phrase : phrases){
             List<Double> values = new ArrayList<Double>();
             String valuesAsString = "";
+            double[] ry = phrase.getRhythmArray();
+            Note[] no = phrase.getNoteArray();
+            System.out.println("Ry: " + ry.length);
+            System.out.println("No: " + no.length);
             /**Add values to list and build valuesAsString variable*/
-            for(double d : phrase.getRhythmArray()){
+            /*for(double d : phrase.getRhythmArray()){
                 valuesAsString = valuesAsString + d;
+                //System.out.println("value: " + d);
                 values.add(d);
+            }*/
+            
+            for(Note n : no){
+                
+                if(n.getPitch() != Note.REST){
+                valuesAsString = valuesAsString + n.getRhythmValue();
+                System.out.println(n.getRhythmValue());
+                values.add(n.getRhythmValue());
+                }
             }
             
             /**Save length before removal of patterns found*/
             double before = (double)valuesAsString.length();
+            if(before == 0.0)
+                continue;
             double minimum = phrase.getRhythmArray().length * 0.1;
             /**Find repeating patters of min length*/
             List<List<Double>> longest = this.findPatterns(values, (int)minimum);
