@@ -42,8 +42,12 @@ public class MarkovChainTest {
         //IntervalSong intervalSong = new IntervalSong(marioSong);
         //Song newSong = intervalSong.toSong();
         //markov = new MarkovChain(flutes.get(2));
-        markov = new MarkovChain(4, nyanCat);
+        List<Song> nyanList = new ArrayList<Song>(1);
+        nyanList.add(nyanCat);
+        nyanList.add(flutes.get(2));
+        markov = new MarkovChain(3, nyanList);
         Song newSong = markov.generateNew(1000);
+        Translator.INSTANCE.saveSongToMidi(newSong, "NyanBach");
         Translator.INSTANCE.playPart(newSong, 0);
         //Translator.INSTANCE.playPart(newSong, 0);
         //assertTrue(true);

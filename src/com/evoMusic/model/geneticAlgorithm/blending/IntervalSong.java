@@ -25,19 +25,15 @@ public class IntervalSong {
     private double tempo;
 
     public IntervalSong(List<int[]> intervals, List<double[]> rythmValues,
-            List<double[]> durations, Song songSettingTemplate, int[] firstNotes) {
+            List<double[]> durations, int[] instruments, int[] channels,
+            double tempo, int[] firstNotes) {
         this.originalIntervals = intervals;
         this.originalRythmValues = rythmValues;
         this.originalDurations = durations;
-        int numberOfTracks = intervals.size();
         this.firstNotes = firstNotes;
-        this.instruments = new int[numberOfTracks];
-        this.channels = new int[numberOfTracks];
-        this.tempo = songSettingTemplate.getTempo();
-        for(int i = 0; i < numberOfTracks; i++) {
-            this.instruments[i] = songSettingTemplate.getTrack(i).getInstrument();
-            this.channels[i] = songSettingTemplate.getTrack(i).getChannel();
-        }
+        this.instruments = instruments;
+        this.channels = channels;
+        this.tempo = tempo;
     }
 
     // public IntervalSong(List<int[]> intervals, List<double[]> durations,
@@ -112,7 +108,7 @@ public class IntervalSong {
             originalIntervals.add(intervals);
             originalRythmValues.add(rythmValues);
             originalDurations.add(durations);
-            
+
         }
     }
 
@@ -126,6 +122,22 @@ public class IntervalSong {
 
     public List<double[]> getDurations() {
         return originalDurations;
+    }
+
+    public int[] getFirstNotes() {
+        return firstNotes;
+    }
+    
+    public int[] getInstruments() {
+        return instruments;
+    }
+    
+    public int[] getChannels() {
+        return channels;
+    }
+    
+    public double getTempo() {
+        return tempo;
     }
 
     // TODO Better first intervals durations etc.
@@ -150,13 +162,15 @@ public class IntervalSong {
             currentPartsDurations = originalDurations.get(i);
             for (int j = 0; j < currentPartsIntervals.length; j++) {
                 currentPitch += currentPartsIntervals[j];
-                if(currentPitch < 0 || currentPitch > 127) {
-                    newNote = new Note(Note.REST, currentPartsRythmValues[j + 1]);
-                    
+                if (currentPitch < 0 || currentPitch > 127) {
+                    newNote = new Note(Note.REST,
+                            currentPartsRythmValues[j + 1]);
+
                 } else {
-                    newNote = new Note(currentPitch, currentPartsRythmValues[j + 1]);
+                    newNote = new Note(currentPitch,
+                            currentPartsRythmValues[j + 1]);
                 }
-                //System.out.println(currentPitch); // TODO
+                // System.out.println(currentPitch); // TODO
                 newNote.setDuration(currentPartsDurations[j + 1]);
                 phrase.add(newNote);
             }
@@ -167,8 +181,6 @@ public class IntervalSong {
             score.add(newPart);
         }
         score.setTempo(tempo);
-        // score.setTimeSignature(song.getScore().getNumerator(),
-        // song.getScore().getDenominator());
         return new Song(score);
     }
 
