@@ -16,6 +16,8 @@ import jm.music.tools.ChordAnalysis;
 
 import com.evoMusic.model.Song;
 import com.evoMusic.util.TrackTag;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Range;
 
 public class ChordRepetitionRater extends SubRater{
@@ -34,87 +36,42 @@ public class ChordRepetitionRater extends SubRater{
         }  
         if(count == 0)
             return 0;
+        System.out.println("Rating: " + rating/count);
         return (rating/count);
     }
     
     public double ratePart(Part part){
-        
-        double rating = 0;
+        String valuesAsString = "";
         Phrase[] phrases = part.getPhraseArray();
-        Map<Double, List<Integer>> notePitches = new HashMap<Double, List<Integer>>();
-        //Map<Range<Double>, List<Note>> chords = new HashMap<Range<Double>, List<Note>>();
-        Map<Double, List<Note>> chords = new HashMap<Double, List<Note>>();
-        
+        ListMultimap<Double, Integer> notesPitches = ArrayListMultimap.create();
         for(Phrase phrase : phrases){
             Note[] notes = phrase.getNoteArray();
-            if(notes.length < 1)
+            int nbrOfPitches = notes.length;
+            if(nbrOfPitches == 0)
                 continue;
             double pStart = phrase.getStartTime();
-            for(int i = 0; i < notes.length; i++){
-                Note note = notes[i];
-                
-                if(note.getPitch() < 0)
+            for(Note note : notes){
+                if(note.getPitch() == Note.REST)
                     continue;
-                double start = phrase.getNoteStartTime(i) + pStart;
-                //Range<Double> range = Range.closed(start, (start + note.getDuration()));
-                List<Integer> np = notePitches.get(start);
-               // List<Note> cn = chords.get(range);
-                List<Note> cn = chords.get(start);
-                if(cn != null){
-                    np.add(note.getPitch());
-                    notePitches.put(start, np);
-                    
-                    cn.add(note);
-                    //chords.put(range, cn);
-                    chords.put(start, cn);
-                }else{
-                    np = new ArrayList<Integer>();
-                    cn = new ArrayList<Note>();
-                    np.add(note.getPitch());
-                    notePitches.put(start, np);
-                    
-                    cn.add(note);
-                    //chords.put(range, cn);  
-                    chords.put(start, cn);
-                }
-                /*for(Range<Double> r : chords.keySet()){
-                    if((!range.equals(r)) && range.isConnected(r)){
-                        List<Note> cnotes = chords.get(r);
-                        cnotes.add(note);
-                        chords.put(r, cnotes);
-                    }
-                }*/
+                pStart = pStart + note.getRhythmValue();
+                notesPitches.put(pStart, note.getPitch());
             }
-        }
-        String valuesAsString = "";        
+        }        
         List<Chord> chordArray = new ArrayList<Chord>();
-        //Set<Range<Double>> keys = chords.keySet();
-        Set<Double> keys = chords.keySet();
-        //List<Double> k = new ArrayList<Double>(keys);
-        //Collections.sort(k);
-        //System.out.println("Keys: " + keys.size());
+        List<Double> keys = new ArrayList<Double>(notesPitches.keySet());
         for(Double d : keys){
-            List<Note> chord = chords.get(d);
-            List<Integer> chordPitches = new ArrayList<Integer>();
-            //chordArray.add(new Chord(chord,d));
-            //System.out.print("Chord: ");
-            for(Note n : chord){
-                //System.out.print(n.getNote() + "(pitch:"+ n.getPitch() +", Dur: " + n.getDuration() +") ");
-                Integer p = n.getPitch();
-                valuesAsString = valuesAsString + p + " ";
-                chordPitches.add(p);
+            List<Integer> pitches = notesPitches.get(d);
+            for(Integer i : pitches){
+                valuesAsString = valuesAsString + i + " ";
             }
             valuesAsString = valuesAsString + " ";
-            chordArray.add(new Chord(chordPitches, d));
-           // System.out.println();
+            chordArray.add(new Chord(pitches, d));
         }    
         
         double before = (double)valuesAsString.replaceAll("\\s+","").length();
-        //System.out.println("before: " + before);
-        int minimum = (int)(before*0.05);
+        int minimum = (int)(before*0.01);
         
         List<List<Chord>> foundChordPatterns = findChordPatterns(chordArray, minimum);
-        System.out.println("Number of patterns: " + foundChordPatterns.size());
         
         Map<Integer, List<String>> occurrence = new HashMap<Integer, List<String>>();
         for(List<Chord> cList : foundChordPatterns){
@@ -146,10 +103,7 @@ public class ChordRepetitionRater extends SubRater{
             
             
                 
-        }
-        
-        
-        
+        }        
         double after = (double)valuesAsString.replaceAll("\\s+","").length();
         
         return 1 - (after/before);
