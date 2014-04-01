@@ -3,8 +3,11 @@ package com.evoMusic.util;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import jm.music.data.Note;
 import jm.music.data.Part;
 import jm.music.data.Phrase;
 
@@ -70,5 +73,28 @@ public abstract class Sort {
         }
         Collections.sort(allPhrases, comparator);
         return allPhrases;
+    }
+    
+    public static List<List<Note>> getSortedNoteList(Part part) {
+        Map<Double, List<Note>> noteMap = new HashMap<Double, List<Note>>();
+        List<Double> startTimeList = new ArrayList<Double>();
+        List<List<Note>> sortedNoteList = new ArrayList<List<Note>>();
+        double songLength;
+        for (Phrase phrase : part.getPhraseArray()) {
+            songLength = phrase.getStartTime();
+            for (Note note : phrase.getNoteArray()) {
+                if (!noteMap.containsKey(songLength)) {
+                    noteMap.put(songLength, new ArrayList<Note>());
+                    startTimeList.add(songLength);
+                }
+                noteMap.get(songLength).add(note);
+                songLength += note.getRhythmValue();
+            }
+        }
+        Collections.sort(startTimeList);
+        for(Double startTime : startTimeList) {
+            sortedNoteList.add(noteMap.get(startTime));
+        }
+        return sortedNoteList;
     }
 }
