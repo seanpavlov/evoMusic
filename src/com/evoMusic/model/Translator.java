@@ -1,4 +1,4 @@
-package com.evoMusic.util;
+package com.evoMusic.model;
 import java.io.File;
 import java.io.IOException;
 
@@ -9,8 +9,6 @@ import jm.util.Play;
 import jm.util.Read;
 import jm.util.View;
 import jm.util.Write;
-
-import com.evoMusic.model.Song;
 
 public enum Translator  {
     INSTANCE;
@@ -42,15 +40,20 @@ public enum Translator  {
         return new Song(score);
     }
     
-
     /**
-     * Saves a song the default location. 
+     * Saves a song to a specified location
      * 
-     * @param song, song object to save
-     * @return the path to the saved MIDI file
-     */  
-    public String saveSongToMidi(Song song, String name) {
-        File theDir = new File("./output/");
+     * @param song
+     *          the song object to save
+     * @param name
+     *          the preferred name. if taken append with a number
+     * @param dir
+     *          the directory to save it to
+     * @return
+     *          the path to the saved MIDI file
+     */
+    public String saveSongToMidi(Song song, String name, String dir) {
+        File theDir = new File(dir);
         if (!theDir.exists()){
             theDir.mkdir();
         }
@@ -59,7 +62,7 @@ public enum Translator  {
         File outputFile = null;
         String path = "";
         do {
-            path = "./output/" + name + (copy != 0 ? "-"+copy : "")+ ".mid";
+            path = dir + "/" + name + (copy != 0 ? "-"+copy : "")+ ".mid";
             outputFile = new File(path); 
                 // if dupe, filename is appended "-1"
             copy++;
@@ -67,6 +70,18 @@ public enum Translator  {
         Write.midi(song.getScore(), path);
         return path;
     }
+    
+    /**
+     * Saves a song the default location. 
+     * 
+     * @param song, song object to save
+     * @return the path to the saved MIDI file
+     */  
+    public String saveSongToMidi(Song song, String name) {
+        return saveSongToMidi(song, name, "./output/");
+        
+    }
+    
 
     /**
      * Play a song object in JMusics built in player

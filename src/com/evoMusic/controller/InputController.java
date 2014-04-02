@@ -4,26 +4,29 @@ import java.util.Map;
 import java.util.Scanner;
 
 import com.evoMusic.Main;
+import com.evoMusic.controller.commands.AbstractCommand;
 
-public class InputController {
-
+public enum InputController {
+    
+    INSTANCE;
+    
     private boolean isRunning = true;
     private String command;
     private String[] args;
     private String prompt = "> ";
-    public final static Scanner SCANNER = new Scanner(System.in);
+    private Commands commands;
+    private final Scanner SCANNER = new Scanner(System.in);
 
-    public InputController(String[] runArgs) {
+    private InputController() {
+        commands = new Commands(SCANNER);
         setPrompt("evomusic> ");
-        run();
     }
 
-    public void run() {
+    public void run(String[] runArgs) {
         System.out.println("--- EvoMusic shell version " + Main.VERSION
                 + " --- ");
         System.out.println("Enter '?' for help.\n");
-        final Map<String, AbstractCommand> commandMap = Commands.getInstance()
-                .getCommandMap();
+        final Map<String, AbstractCommand> commandMap = commands.getCommandMap();
         System.out.print(prompt);
         String argStr = "";
         while (isRunning && SCANNER.hasNext()) {
@@ -46,6 +49,10 @@ public class InputController {
 
     public void setPrompt(String prompt) {
         this.prompt = prompt;
+    }
+
+    public Scanner getScanner() {
+        return SCANNER;
     }
 
 }

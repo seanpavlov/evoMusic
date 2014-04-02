@@ -11,9 +11,9 @@ import jm.music.data.Phrase;
 import jm.music.data.Score;
 
 import com.evoMusic.model.Song;
+import com.evoMusic.model.Translator;
 import com.evoMusic.util.Helpers;
 import com.evoMusic.util.TrackTag;
-import com.evoMusic.util.Translator;
 
 public class MelodyRepetionRater extends SubRater {
     

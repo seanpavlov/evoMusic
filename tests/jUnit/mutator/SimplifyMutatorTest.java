@@ -8,10 +8,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.evoMusic.model.Song;
+import com.evoMusic.model.Translator;
 import com.evoMusic.model.geneticAlgorithm.mutation.SimplifyMutator;
 import com.evoMusic.util.MidiUtil;
 import com.evoMusic.util.TrackTag;
-import com.evoMusic.util.Translator;
 
 public class SimplifyMutatorTest {
 

@@ -1,7 +1,6 @@
 package jUnit.mutator;
 
 import static org.junit.Assert.*;
-import static org.junit.Assert.fail;
 import jm.music.data.Note;
 import jm.music.data.Part;
 
@@ -9,9 +8,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.evoMusic.model.Song;
+import com.evoMusic.model.Translator;
 import com.evoMusic.model.geneticAlgorithm.mutation.OctaveMutator;
 import com.evoMusic.util.TrackTag;
-import com.evoMusic.util.Translator;
 
 public class OctaveMutatorTest {
 

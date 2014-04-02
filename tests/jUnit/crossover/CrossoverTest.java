@@ -9,11 +9,11 @@ import java.util.Random;
 import org.junit.Test;
 
 import com.evoMusic.model.Song;
+import com.evoMusic.model.Translator;
 import com.evoMusic.model.geneticAlgorithm.Crossover;
 import com.evoMusic.model.geneticAlgorithm.Individual;
 import com.evoMusic.model.geneticAlgorithm.mutation.Mutator;
 import com.evoMusic.util.TrackTag;
-import com.evoMusic.util.Translator;
 
 public class CrossoverTest {
 

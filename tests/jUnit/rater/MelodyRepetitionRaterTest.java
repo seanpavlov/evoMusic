@@ -14,10 +14,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.evoMusic.model.Song;
+import com.evoMusic.model.Translator;
 import com.evoMusic.model.geneticAlgorithm.rating.MelodyRepetionRater;
 import com.evoMusic.model.geneticAlgorithm.rating.SubRater;
 import com.evoMusic.util.TrackTag;
-import com.evoMusic.util.Translator;
 
 public class MelodyRepetitionRaterTest {
     private Song badSong, goodSong, testSong;

@@ -1,24 +1,25 @@
 package com.evoMusic.database;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
-import org.apache.commons.io.FileUtils;
 import org.bson.types.ObjectId;
 
-import com.evoMusic.controller.InputController;
 import com.evoMusic.model.Song;
+import com.evoMusic.model.Translator;
 import com.evoMusic.util.TrackTag;
-import com.evoMusic.util.Translator;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
@@ -27,6 +28,7 @@ import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoException;
+import com.mongodb.QueryBuilder;
 
 public class MongoDatabase implements IDatabase {
 
@@ -35,18 +37,12 @@ public class MongoDatabase implements IDatabase {
     private MongoClient mongoClient;
     private DB db;
     private DBCollection songs;
+    private String dbResFolder;
     public final static String TITLE_KEY = "title",
             TRACK_REF_KEY = "track_ref", MIDI_PATH_KEY = "midi_path",
             USER_TAGS_KEY = "user_tags", DB_NAME = "evoMusic",
-            SONG_COLLECTION = "Songs";
-
-    // Song collection:
-    // title,
-    // track [
-    // {index, tag}
-    // ,...]
-    // midi-path
-    // user tags ex. "cool jazz"
+            SONG_COLLECTION = "Songs", ID_KEY = "_id", 
+            DEFAULT_DB_RES_FOLDER = "dbres";
 
     protected MongoDatabase() {
         try {
@@ -58,6 +54,7 @@ public class MongoDatabase implements IDatabase {
             dbLogger.setLevel(Level.WARNING);
             mongoClient = new MongoClient();
             useDbName(DB_NAME);
+            setDbResfolder(DEFAULT_DB_RES_FOLDER);
 
             // make sure database is writable an more importantly that it's
             // reachable.
@@ -69,6 +66,7 @@ public class MongoDatabase implements IDatabase {
         }
     }
 
+
     public static MongoDatabase getInstance() {
         if (instance == null) {
             instance = new MongoDatabase();
@@ -76,6 +74,14 @@ public class MongoDatabase implements IDatabase {
         return instance;
     }
 
+    /**
+     * Set the folder used for db resources. ie song midi files
+     * @param dbResFolder the folder from which to save and load data
+     */
+    public void setDbResfolder(String dbResFolder) {
+        this.dbResFolder = dbResFolder;
+    }
+    
     /**
      * Creates database representation from given Song object
      * 
@@ -85,7 +91,7 @@ public class MongoDatabase implements IDatabase {
      * */
     private DBObject createDBObject(Song song) {
         
-        String path = Translator.INSTANCE.saveSongToMidi(song, song.getTitle());
+        String path = Translator.INSTANCE.saveSongToMidi(song, song.getTitle(), dbResFolder);
 
         return new BasicDBObject("_id", song.getDbRef()).append(TITLE_KEY, song.getTitle())
                 .append(TRACK_REF_KEY, createTrackTagDBList(song))
@@ -124,11 +130,11 @@ public class MongoDatabase implements IDatabase {
      * */
     private Song createSongObject(BasicDBObject dbDoc) {
         final String songPath = dbDoc.getString(MIDI_PATH_KEY);
+        if (Files.notExists(Paths.get(songPath))) {
+            return null;
+        }
         Song song;
         song = Translator.INSTANCE.loadMidiToSong(songPath);
-        if (song == null) {    
-            return null;
-        } 
         
         song.setDbRef((ObjectId)dbDoc.get("_id"));
 
@@ -181,46 +187,34 @@ public class MongoDatabase implements IDatabase {
 
     @Override
     public List<Song> retrieveSongs() {
-        List<Song> listOfSongs = new LinkedList<Song>();
+        LinkedList<Song> listOfSongs = new LinkedList<Song>();
         DBCursor cursor = songs.find();
-        Song song = null;
         while (cursor.hasNext()) {
             BasicDBObject songDb = (BasicDBObject) cursor.next();
-            song = createSongObject(songDb);
+            Song song = createSongObject(songDb);
             if (song != null) {
                 listOfSongs.add(song);
-            } else {
-                fixSongNotFound(songDb, listOfSongs);
             }
         }
         cursor.close();
-
         return listOfSongs;
     }
-    private void fixSongNotFound(BasicDBObject songDb, List<Song> listOfSongs) {
-        String newPath = "";
-        String dbPath = songDb.getString(MIDI_PATH_KEY);
-        System.out.println("I could not find this song at "
-            + dbPath);
-        do {
-            System.out.print("Fix path (blank = remove db record): ");
-            newPath = InputController.SCANNER.nextLine();
-        } while(!newPath.equals("") && !new File(newPath).exists());
-        
-        if ("".equals(newPath)) {
-            removeSong(songDb.getObjectId("_id"));
-            System.out.println("Song removed!");
-            return;
+    
+    public Map<ObjectId, String> getBrokenPaths() {
+        List<Song> workingSongs = retrieveSongs();
+        List<ObjectId> songIds = new LinkedList<ObjectId>();
+        for (Song s : workingSongs) {
+            System.out.println("yello: SONG LOLOL" + s);
+            songIds.add(s.getDbRef());
         }
-        try {
-            FileUtils.copyFile(new File(newPath), new File(dbPath));
-        } catch (IOException e) {
-            System.out.println("ERR: Cant create file "+dbPath);
-            return;
+        DBCursor cursor = songs.find(QueryBuilder.start(ID_KEY).notIn(songIds).get());
+        Map<ObjectId, String> result = new HashMap<ObjectId, String>();
+        for (DBObject dbo : cursor) {
+            result.put((ObjectId)dbo.get(ID_KEY), (String)dbo.get(MIDI_PATH_KEY));
         }
-        listOfSongs.add(createSongObject(songDb));
+        return result;
     }
-
+    
     @Override
     public boolean removeSong(Song song) {
         return removeSong(song.getDbRef());
@@ -238,7 +232,7 @@ public class MongoDatabase implements IDatabase {
         return dbo != null;
        
     }
-
+    
     @Override
     public boolean updateSong(Song oldSong, Song newSong) {
         try {
@@ -261,6 +255,12 @@ public class MongoDatabase implements IDatabase {
     @Override
     public void dropDb(String dbName) {
         mongoClient.dropDatabase(dbName);
+    }
+
+    public Song getSong(ObjectId songRef) {
+        BasicDBObject songDoc = (BasicDBObject)songs.findOne(songRef);
+        Song song = createSongObject(songDoc);
+        return song;
     }
 
 }

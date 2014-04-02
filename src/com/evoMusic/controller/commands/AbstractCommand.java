@@ -1,4 +1,4 @@
-package com.evoMusic.controller;
+package com.evoMusic.controller.commands;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -1,5 +1,7 @@
 package com.evoMusic.controller.commands;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -8,14 +10,14 @@ import java.util.Scanner;
 import java.util.Set;
 
 import jm.music.data.Part;
-import jm.util.View;
 
-import com.evoMusic.controller.AbstractCommand;
-import com.evoMusic.controller.InputController;
+import org.apache.commons.io.FileUtils;
+import org.bson.types.ObjectId;
+
 import com.evoMusic.database.MongoDatabase;
 import com.evoMusic.model.Song;
+import com.evoMusic.model.Translator;
 import com.evoMusic.util.TrackTag;
-import com.evoMusic.util.Translator;
 import com.google.common.collect.Sets;
 
 /**
@@ -23,9 +25,10 @@ import com.google.common.collect.Sets;
  */
 public class SongCommand extends AbstractCommand {
 
-    private List<Song> songs = MongoDatabase.getInstance().retrieveSongs();
+    private List<Song> songs;
     private Map<String, AbstractCommand> songArgs = new HashMap<String, AbstractCommand>();
     private List<Song> selectedSongs;
+    private Scanner sc;
 
     /**
      * Creates the song command
@@ -33,9 +36,40 @@ public class SongCommand extends AbstractCommand {
      *              reference to list of songs selected to be used for generating
      *              individuals
      */
-    public SongCommand(List<Song> selectedSongs) {
+    public SongCommand(List<Song> selectedSongs, Scanner sc) {
         this.selectedSongs = selectedSongs;
+        this.sc = sc;
+        this.songs = MongoDatabase.getInstance().retrieveSongs();
+        Map<ObjectId, String> brokenPaths = MongoDatabase.getInstance().getBrokenPaths();
+        for (ObjectId id : brokenPaths.keySet()) {
+            fixSongNotFound(id, brokenPaths.get(id));
+        }
         setUpArgs();
+    }
+    
+    private void fixSongNotFound(ObjectId songRef, String path) {
+        String newPath = "";
+        String dbPath = path;
+        System.out.println("I could not find this song at "
+            + dbPath);
+        
+        do {
+            System.out.print("Fix path (blank = remove db record): ");
+            newPath = sc.nextLine();
+        } while (!newPath.equals("") && !new File(newPath).exists());
+        
+        if ("".equals(newPath)) {
+            MongoDatabase.getInstance().removeSong(songRef);
+            System.out.println("Song removed!");
+            return;
+        }
+        try {
+            FileUtils.copyFile(new File(newPath), new File(dbPath));
+        } catch (IOException e) {
+            System.out.println("ERR: Cant create file "+dbPath);
+            return;
+        }
+        songs.add(MongoDatabase.getInstance().getSong(songRef));
     }
     
     @Override
@@ -258,7 +292,6 @@ public class SongCommand extends AbstractCommand {
         System.out.println();
         System.out.println("--------------------------");
         System.out.println("Add multiple tags by separating them with space");
-        Scanner sc = InputController.SCANNER;
         String[] trackIndexes = new String[0];
        
         for(int i = 0; i < song.getNbrOfTracks(); i++) {
