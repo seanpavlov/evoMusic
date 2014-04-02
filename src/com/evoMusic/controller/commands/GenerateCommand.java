@@ -11,7 +11,9 @@ import com.evoMusic.model.geneticAlgorithm.Crossover;
 import com.evoMusic.model.geneticAlgorithm.GeneticAlgorithm;
 import com.evoMusic.model.geneticAlgorithm.mutation.ISubMutator;
 import com.evoMusic.model.geneticAlgorithm.mutation.Mutator;
+import com.evoMusic.model.geneticAlgorithm.mutation.OctaveMutator;
 import com.evoMusic.model.geneticAlgorithm.rating.BeatRepetitionRater;
+import com.evoMusic.model.geneticAlgorithm.rating.CrazyNoteOctaveRater;
 import com.evoMusic.model.geneticAlgorithm.rating.MelodyRepetionRater;
 import com.evoMusic.model.geneticAlgorithm.rating.ChordRepetitionRater;
 import com.evoMusic.model.geneticAlgorithm.rating.Rater;
@@ -41,7 +43,7 @@ public class GenerateCommand extends AbstractCommand {
         int iterations = Integer.parseInt(args[0]);
         List<ISubMutator> allMut = new ArrayList<ISubMutator>();
 //        allMut.add(new RandomNoteMutator(0.5, 12));
-//        allMut.add(new OctaveMutator(0, 1));
+        allMut.add(new OctaveMutator(0, 1));
 //        allMut.add(new ReverseMutator(0, 4, 4, true));
 //        allMut.add(new ScaleOfFifthMutator(0, 3));
 //        allMut.add(new SimplifyMutator(0, 4, 0.1));
@@ -50,6 +52,7 @@ public class GenerateCommand extends AbstractCommand {
         subRaters.add(new ScaleWhizz(1));
         subRaters.add(new BeatRepetitionRater(1));
         subRaters.add(new ChordRepetitionRater(1));
+        subRaters.add(new CrazyNoteOctaveRater(1));
         Crossover crossover = new Crossover(4);
         crossover.setMinDuration(50);
         crossover.setMaxDuration(200);
@@ -58,7 +61,8 @@ public class GenerateCommand extends AbstractCommand {
         ga.setMinimumIterations(iterations);
         System.out.println("Start iterating");
         ga.iterate();
-        Translator.INSTANCE.saveSongToMidi(ga.getBest(), "best");
+        //Translator.INSTANCE.saveSongToMidi(ga.getBest(), "best");
+        Translator.INSTANCE.playSong(ga.getBest());
         return true;
     }
     
