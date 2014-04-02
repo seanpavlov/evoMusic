@@ -204,7 +204,6 @@ public class MongoDatabase implements IDatabase {
         List<Song> workingSongs = retrieveSongs();
         List<ObjectId> songIds = new LinkedList<ObjectId>();
         for (Song s : workingSongs) {
-            System.out.println("yello: SONG LOLOL" + s);
             songIds.add(s.getDbRef());
         }
         DBCursor cursor = songs.find(QueryBuilder.start(ID_KEY).notIn(songIds).get());
