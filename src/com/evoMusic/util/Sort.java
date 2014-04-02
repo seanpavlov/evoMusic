@@ -1,6 +1,7 @@
 package com.evoMusic.util;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -15,9 +16,9 @@ import com.evoMusic.model.Song;
 
 public abstract class Sort {
     
-    public static abstract class PhraseComparator implements Comparator<Phrase> {
+    private static abstract class PhraseComparator implements Comparator<Phrase> {
  
-        public abstract double getDiff(Phrase o1, Phrase o2);
+        protected abstract double getDiff(Phrase o1, Phrase o2);
         
         @Override
         public int compare(Phrase o1, Phrase o2) {
@@ -67,9 +68,7 @@ public abstract class Sort {
         List<Phrase> allPhrases = new ArrayList<Phrase>();
 
         for (Part part : song.getScore().getPartArray()) {
-            for (Phrase phrase : part.getPhraseArray()) {
-                allPhrases.add(phrase);
-            }
+            allPhrases.addAll(Arrays.asList(part.getPhraseArray()));
         }
         Collections.sort(allPhrases, comparator);
         return allPhrases;
