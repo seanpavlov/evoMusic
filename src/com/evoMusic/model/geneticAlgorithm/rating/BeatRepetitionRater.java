@@ -63,7 +63,7 @@ public class BeatRepetitionRater extends SubRater{
             String valuesAsString = "";
             /**Add rhythm values to list and build valuesAsString variable*/           
             for(Note n : phrase.getNoteArray()){              
-                if(n.getPitch() != Note.REST){
+                if(n.getPitch() >= 0 || n.getPitch() <= 127){
                     double rhythmValue = n.getRhythmValue();
                     valuesAsString = valuesAsString + rhythmValue;
                     values.add(rhythmValue);
