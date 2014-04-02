@@ -13,6 +13,7 @@ import com.evoMusic.model.geneticAlgorithm.mutation.ISubMutator;
 import com.evoMusic.model.geneticAlgorithm.mutation.Mutator;
 import com.evoMusic.model.geneticAlgorithm.rating.BeatRepetitionRater;
 import com.evoMusic.model.geneticAlgorithm.rating.MelodyRepetionRater;
+import com.evoMusic.model.geneticAlgorithm.rating.ChordRepetitionRater;
 import com.evoMusic.model.geneticAlgorithm.rating.Rater;
 import com.evoMusic.model.geneticAlgorithm.rating.ScaleWhizz;
 import com.evoMusic.model.geneticAlgorithm.rating.SubRater;
@@ -48,6 +49,7 @@ public class GenerateCommand extends AbstractCommand {
         subRaters.add(new MelodyRepetionRater(1));
         subRaters.add(new ScaleWhizz(1));
         subRaters.add(new BeatRepetitionRater(1));
+        subRaters.add(new ChordRepetitionRater(1));
         Crossover crossover = new Crossover(4);
         crossover.setMinDuration(50);
         crossover.setMaxDuration(200);

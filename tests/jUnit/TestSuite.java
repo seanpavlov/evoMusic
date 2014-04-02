@@ -5,6 +5,7 @@ import jUnit.database.MongoDatabaseTest;
 import jUnit.mutator.OctaveMutatorTest;
 import jUnit.mutator.RandomNoteMutatorTest;
 import jUnit.mutator.SimplifyMutatorTest;
+import jUnit.rater.ChordRepetitionRaterTest;
 import jUnit.rater.MelodyRepetitionRaterTest;
 import jUnit.rater.NoSilenceRaterTest;
 import jUnit.rater.ScaleWhizzTest;
@@ -33,6 +34,7 @@ import com.evoMusic.database.MongoDatabase;
     ScaleWhizzTest.class,
     BeatRaterTest.class,
     NoSilenceRaterTest.class,
+    ChordRepetitionRaterTest.class,
     
     /*
      * Mutators
