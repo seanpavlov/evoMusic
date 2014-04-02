@@ -72,7 +72,7 @@ public class GeneticAlgorithmTest {
         testGA.setThrowAwayFirstParents(false);
     }
 
-    @After
+    /*@After
     public void tearDown() throws Exception {
     }
 
@@ -99,7 +99,7 @@ public class GeneticAlgorithmTest {
     @Test
     public void testIterate() {
         fail("Not yet implemented");
-    }
+    }*/
 
     @Test
     public void testIterateInt() {
@@ -123,7 +123,7 @@ public class GeneticAlgorithmTest {
                 + newBestRating, firstRating < newBestRating);
     }
 
-    @Test
+/*    @Test
     public void testGetBestChild() {
         fail("Not yet implemented");
     }
@@ -132,5 +132,5 @@ public class GeneticAlgorithmTest {
     public void testGetBest() {
         fail("Not yet implemented");
     }
-
+*/
 }
