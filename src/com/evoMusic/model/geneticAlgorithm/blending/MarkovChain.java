@@ -183,18 +183,30 @@ public class MarkovChain {
 
     // First index is instrument, second is channel. because instrument and
     // channel must match.
-    // TODO implement.
     private List<int[]> getRandomInstrumentsAndChannels() {
-        List<int[]> instrumentAndChannels = new ArrayList<int[]>(2);
-        instrumentAndChannels.add(intervalledSongs.get(0).getInstruments());
-        instrumentAndChannels.add(intervalledSongs.get(0).getChannels());
-        return instrumentAndChannels;
+        int[] instruments = new int[numberOfTracks];
+        int[] channels = new int[numberOfTracks];
+        List<int[]> instrumentsAndChannels = new ArrayList<int[]>(2);
+        double nextRand;
+        int numberOfSongs = intervalledSongs.size();
+        for(int trackIndex = 0; trackIndex < numberOfTracks; trackIndex++) {
+            nextRand = rand.nextDouble()*numberOfSongs;
+            instruments[trackIndex] = intervalledSongs.get((int)nextRand).getInstruments()[trackIndex];
+            channels[trackIndex] = intervalledSongs.get((int)nextRand).getChannels()[trackIndex];
+        }
+        instrumentsAndChannels.add(instruments);
+        instrumentsAndChannels.add(channels);
+        return instrumentsAndChannels;
 
     }
 
-    // TODO Make pseudo random.
+    // TODO Make more random.
     private double getRandomTempo() {
-        return 120;
+        double tempo = 0;
+        for(IntervalSong song : intervalledSongs) {
+            tempo += song.getTempo();
+        }
+        return tempo / intervalledSongs.size();
     }
 
     private Vector<Integer> getNextSequence(int intervalIndex,

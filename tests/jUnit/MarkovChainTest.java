@@ -47,7 +47,7 @@ public class MarkovChainTest {
         nyanList.add(flutes.get(2));
         markov = new MarkovChain(3, nyanList);
         Song newSong = markov.generateNew(1000);
-        Translator.INSTANCE.saveSongToMidi(newSong, "NyanBach");
+        //Translator.INSTANCE.saveSongToMidi(newSong, "NyanBach");
         Translator.INSTANCE.playPart(newSong, 0);
         //Translator.INSTANCE.playPart(newSong, 0);
         //assertTrue(true);
