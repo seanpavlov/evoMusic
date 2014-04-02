@@ -5,18 +5,15 @@ import jUnit.database.MongoDatabaseTest;
 import jUnit.mutator.OctaveMutatorTest;
 import jUnit.mutator.RandomNoteMutatorTest;
 import jUnit.mutator.SimplifyMutatorTest;
+import jUnit.rater.BeatRaterTest;
 import jUnit.rater.MelodyRepetitionRaterTest;
 import jUnit.rater.NoSilenceRaterTest;
 import jUnit.rater.ScaleWhizzTest;
-import jUnit.rater.BeatRaterTest;
 import jUnit.translator.TranslatorTest;
 
-import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
-
-import com.evoMusic.database.MongoDatabase;
 
 
 @RunWith(Suite.class)
@@ -24,6 +21,7 @@ import com.evoMusic.database.MongoDatabase;
     MongoDatabaseTest.class, 
     CrossoverTest.class, 
     GenerationTest.class,
+    SongTest.class,
 //    GeneticAlgorithmTest.class,
     
     /*

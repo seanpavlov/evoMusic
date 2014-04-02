@@ -1,6 +1,7 @@
 package com.evoMusic.model;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -18,7 +19,7 @@ import com.evoMusic.util.TrackTag;
  */
 public class Song {
 
-    private final List<String> userTags = new ArrayList<String>();
+    private final Set<String> userTags = new HashSet<String>();
 
     private List<Track> tracks = new LinkedList<>();
     private final Score score;
@@ -39,10 +40,18 @@ public class Song {
         
     }
     
+    /**
+     * @return the object's reference id in the database.
+     */
     public ObjectId getDbRef() {
         return dbRef;
     }
 
+    /**
+     * The dbRef is used to uniquely identify a Song in the database
+     * An id is created when the song is instantiated.  
+     * @param dbRef set the object's reference id
+     */
     public void setDbRef(ObjectId dbRef) {
         this.dbRef = dbRef;
     }
@@ -65,6 +74,10 @@ public class Song {
         return tracks.get(index);
     }
     
+    /**
+     * 
+     * @return The song's tracks
+     */
     public List<Track> getTracks() {
         return tracks;
     }
@@ -97,7 +110,7 @@ public class Song {
      * 
      * @return the tags describing the song, created by the user.
      */
-    public List<String> getUserTags() {
+    public Set<String> getUserTags() {
         return userTags;
     }
 
