@@ -7,12 +7,16 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import jm.music.data.Note;
 import jm.music.data.Part;
 import jm.music.data.Phrase;
 
 import com.evoMusic.model.Song;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ListMultimap;
 
 public abstract class Sort {
     
@@ -75,22 +79,18 @@ public abstract class Sort {
     }
     
     public static List<List<Note>> getSortedNoteList(Part part) {
-        Map<Double, List<Note>> noteMap = new HashMap<Double, List<Note>>();
-        List<Double> startTimeList = new ArrayList<Double>();
+        ListMultimap<Double, Note> noteMap = ArrayListMultimap.create();
+        SortedSet<Double> startTimeList = new TreeSet<Double>();
         List<List<Note>> sortedNoteList = new ArrayList<List<Note>>();
         double songLength;
         for (Phrase phrase : part.getPhraseArray()) {
             songLength = phrase.getStartTime();
             for (Note note : phrase.getNoteArray()) {
-                if (!noteMap.containsKey(songLength)) {
-                    noteMap.put(songLength, new ArrayList<Note>());
-                    startTimeList.add(songLength);
-                }
-                noteMap.get(songLength).add(note);
+                noteMap.put(songLength, note);
+                startTimeList.add(songLength);
                 songLength += note.getRhythmValue();
             }
         }
-        Collections.sort(startTimeList);
         for(Double startTime : startTimeList) {
             sortedNoteList.add(noteMap.get(startTime));
         }

@@ -50,7 +50,7 @@ public class ChordRepetitionRater extends SubRater{
             double currentPhraseLength = phrase.getStartTime();
             for(Note note : notes){
                 int notePitch = note.getPitch();
-                if(notePitch >= 0 || notePitch <= 127)
+                if(notePitch == Note.REST)
                     continue;
                 currentPhraseLength += note.getRhythmValue();
                 notesPitches.put(currentPhraseLength, notePitch);
