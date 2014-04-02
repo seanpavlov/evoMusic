@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import jm.music.data.Note;
 import jm.music.data.Part;
 import jm.music.data.Phrase;
 
@@ -60,10 +61,13 @@ public class BeatRepetitionRater extends SubRater{
         for(Phrase phrase : phrases){
             List<Double> values = new ArrayList<Double>();
             String valuesAsString = "";
-            /**Add values to list and build valuesAsString variable*/
-            for(double d : phrase.getRhythmArray()){
-                valuesAsString = valuesAsString + d;
-                values.add(d);
+            /**Add rhythm values to list and build valuesAsString variable*/           
+            for(Note n : phrase.getNoteArray()){              
+                if(n.getPitch() != Note.REST){
+                    double rhythmValue = n.getRhythmValue();
+                    valuesAsString = valuesAsString + rhythmValue;
+                    values.add(rhythmValue);
+                }
             }
             
             /**Save length before removal of patterns found*/
