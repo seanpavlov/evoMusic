@@ -1,17 +1,15 @@
 package jUnit.mutator;
 
 import static org.junit.Assert.assertTrue;
+import jUnit.Helpers;
 import jm.music.data.Note;
-import jm.music.data.Part;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import com.evoMusic.model.Song;
-import com.evoMusic.model.Translator;
 import com.evoMusic.model.geneticAlgorithm.mutation.SimplifyMutator;
 import com.evoMusic.util.MidiUtil;
-import com.evoMusic.util.TrackTag;
 
 public class SimplifyMutatorTest {
 
@@ -24,10 +22,7 @@ public class SimplifyMutatorTest {
      */
     @Before
     public void setUpSong() {
-        testSong = Translator.INSTANCE.loadMidiToSong("midifiles/super_mario_bros_theme.mid");
-        for (Part part : testSong.getScore().getPartArray()) {
-            testSong.addTagToTrack(part, TrackTag.MELODY);
-        }
+        testSong = Helpers.createTestSong();
     }
     
     @Test
@@ -35,7 +30,7 @@ public class SimplifyMutatorTest {
         MidiUtil mu = new MidiUtil();
         int testRange = 2;
         int nbrOfTestings = 1000;
-        Note[] notes = testSong.getScore().getPart(0).getPhrase(0).getNoteArray();
+        Note[] notes = testSong.getTrack(0).getPart().getPhrase(0).getNoteArray();
         int nbrOfNotes = notes.length;
         int nbrOfNeighbours = 0;
         int candidateIndex = 0;

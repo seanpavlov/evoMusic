@@ -34,19 +34,19 @@ public class SimplifyMutator extends ISubMutator {
     @Override
     public void mutate(Song song, int noteIndex) {
         if (Math.random() < this.getProbability()) {
-            Note note = song.getScore().getPart(0).getPhrase(0).getNote(noteIndex);
+            Note note = song.getTrack(0).getPart().getPhrase(0).getNote(noteIndex);
             MidiUtil mu = new MidiUtil();
             int currentNoteIndex = noteIndex - 1;
             if(currentNoteIndex >= 0){
                 noteIteration: for (int i = 0; i < nbrOfPastNeighbours; i++) {
-                    while (mu.isBlank(song.getScore().getPart(0).getPhrase(0).getNote(currentNoteIndex).getPitch()) && currentNoteIndex > 0) {
+                    while (mu.isBlank(song.getTrack(0).getPart().getPhrase(0).getNote(currentNoteIndex).getPitch()) && currentNoteIndex > 0) {
                         currentNoteIndex--;
                     }
                     if (currentNoteIndex < 0) {
                         break noteIteration;
                     } else {
                         if (Math.random() < neighbourProbability) {
-                            song.getScore().getPart(0).getPhrase(0)
+                            song.getTrack(0).getPart().getPhrase(0)
                                     .getNote(currentNoteIndex)
                                     .setPitch(note.getPitch());
                         }

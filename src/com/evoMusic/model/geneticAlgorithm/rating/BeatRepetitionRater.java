@@ -13,6 +13,7 @@ import jm.music.data.Part;
 import jm.music.data.Phrase;
 
 import com.evoMusic.model.Song;
+import com.evoMusic.model.Track;
 import com.evoMusic.util.TrackTag;
 
 public class BeatRepetitionRater extends SubRater{  
@@ -33,13 +34,11 @@ public class BeatRepetitionRater extends SubRater{
          */
         double rating = 0;
         double count = 0;
-        for(Part part : song.getScore().getPartArray()){
-            List<TrackTag> trackTags = song.getTrackTags(part);
-            if(trackTags.contains(TrackTag.BEAT) ||
-               trackTags.contains(TrackTag.RHYTHM)){
-                rating += this.ratePart(part);
-                ++count;
-            }
+        List<Track> targetTracks = song.getTaggedTracks(TrackTag.BEAT);
+        targetTracks.addAll(song.getTaggedTracks(TrackTag.RHYTHM));
+        for(Track track : targetTracks){
+            rating += this.ratePart(track.getPart());
+            ++count;
         }
         if(count == 0)
             return 0.0;

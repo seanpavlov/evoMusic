@@ -10,6 +10,7 @@ import jm.music.data.Phrase;
 import jm.music.data.Score;
 
 import com.evoMusic.model.Song;
+import com.evoMusic.model.Track;
 import com.evoMusic.util.TrackTag;
 
 public class Crossover {
@@ -94,7 +95,7 @@ public class Crossover {
         this.setMaxSilenceLength(randomGen.nextInt(10)+1);
         this.setSimplicityLevel(randomGen.nextInt(50)+2);
         
-        List<List<Part>> tracksWithTag = new ArrayList<List<Part>>();
+        List<List<Track>> tracksWithTag = new ArrayList<List<Track>>();
         double averageTempo = 0;
         
         List<TrackTag> tags = getCommonTracks(parents);
@@ -112,9 +113,9 @@ public class Crossover {
                 tracksWithTag.add(i.getSong().getTaggedTracks(t));
             }
 
-            Part newTagPart = crossTaggedTracks(tracksWithTag);
-            finalScore.add(newTagPart);
-            child.addTagToTrack(newTagPart, t);
+            Track newTagPart = crossTaggedTracks(tracksWithTag);
+            newTagPart.addTag(t);
+            child.addTrack(newTagPart);
             
             tracksWithTag.clear();
         }
@@ -131,27 +132,27 @@ public class Crossover {
      * @param tracksWithTag
      * @return
      */
-    private Part crossTaggedTracks(List<List<Part>> tracksWithTag) {
+    private Track crossTaggedTracks(List<List<Track>> tracksWithTag) {
         Part newTagPart = new Part();
         int noteCounter = 0;
         
         //loops all tracks with one tracktag in all parents
-        for (List<Part> taggedTracksInParent: tracksWithTag){
+        for (List<Track> taggedTracksInParent: tracksWithTag){
             //loops all tracks in one parent with same tracktag
 
-            for (Part taggedTrackPart: taggedTracksInParent){
-                List<Phrase> choppedTrack = chop(taggedTrackPart, noteCounter);
+            for (Track taggedTrack: taggedTracksInParent){
+                List<Phrase> choppedTrack = chop(taggedTrack.getPart(), noteCounter);
                 List<Phrase> morphedTracks = morph(choppedTrack, noteCounter);
                 for (Phrase tempPhrase : morphedTracks){
                     newTagPart.add(tempPhrase);
                     if (maxDuration != null && newTagPart.getEndTime() > maxDuration){ 
                         newTagPart.removeLastPhrase();
-                        return newTagPart;
+                        return new Track(newTagPart);
                     };
                 }
             }
         }
-        return newTagPart;
+        return new Track(newTagPart);
     }
 
     /**

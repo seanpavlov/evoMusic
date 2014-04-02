@@ -8,11 +8,9 @@ import java.util.List;
 import jm.music.data.Note;
 import jm.music.data.Part;
 import jm.music.data.Phrase;
-import jm.music.data.Score;
 
 import com.evoMusic.model.Song;
-import com.evoMusic.model.Translator;
-import com.evoMusic.util.Helpers;
+import com.evoMusic.model.Track;
 import com.evoMusic.util.TrackTag;
 
 public class MelodyRepetionRater extends SubRater {
@@ -29,16 +27,16 @@ public class MelodyRepetionRater extends SubRater {
     @Override
     public double rate(Song song) {
         double rating = 0; 
-        List<Part> tracks = new ArrayList<Part>();
+        List<Track> tracks = new ArrayList<Track>();
         tracks.addAll(song.getTaggedTracks(TrackTag.MELODY));
 
         if (tracks.isEmpty()) {
             return 0.0; 
         }
         int i = 0;
-        for (Part p : tracks){
+        for (Track t : tracks){
             i++;
-            rating += ratePart(p);
+            rating += ratePart(t.getPart());
         }
         
         Double rate = rating / i;

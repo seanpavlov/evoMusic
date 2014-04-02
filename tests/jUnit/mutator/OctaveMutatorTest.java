@@ -1,6 +1,7 @@
 package jUnit.mutator;
 
 import static org.junit.Assert.*;
+import jUnit.Helpers;
 import jm.music.data.Note;
 import jm.music.data.Part;
 
@@ -23,16 +24,13 @@ public class OctaveMutatorTest {
      */
     @Before
     public void setUpSong() {
-        testSong = Translator.INSTANCE.loadMidiToSong("midifiles/super_mario_bros_theme.mid");
-        for (Part part : testSong.getScore().getPartArray()) {
-            testSong.addTagToTrack(part, TrackTag.MELODY);
-        }
+        testSong = Helpers.createTestSong();
     }
     
     @Test
     public void testRangeWithinRange(){
         int testRange = 2;
-        Note[] notes = testSong.getScore().getPart(0).getPhrase(0).getNoteArray();
+        Note[] notes = testSong.getTrack(0).getPart().getPhrase(0).getNoteArray();
         boolean breakedRule = false;
         int thisStep = 0;
         repeatedTest: for(int j = 0; j < 1000; j++){
@@ -55,7 +53,7 @@ public class OctaveMutatorTest {
     
     @Test
     public void testOctave(){
-        Note[] notes = testSong.getScore().getPart(0).getPhrase(0).getNoteArray();
+        Note[] notes = testSong.getTrack(0).getPart().getPhrase(0).getNoteArray();
         int nbrOfNotes = notes.length;
         OctaveMutator om = new OctaveMutator(1, 2);
         int oldPitch = 0;
@@ -64,7 +62,7 @@ public class OctaveMutatorTest {
             if(notes[i].getPitch() >= 0){
                 oldPitch = notes[i].getPitch();
                 om.mutate(testSong, i);
-                newPitch = testSong.getScore().getPart(0).getPhrase(0).getNoteArray()[i].getPitch();
+                newPitch = testSong.getTrack(0).getPart().getPhrase(0).getNoteArray()[i].getPitch();
                 break findCandidate;
             }
         }

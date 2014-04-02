@@ -54,7 +54,7 @@ public class RandomNoteMutator extends ISubMutator {
                 sumOfProbability += probabilityList[currentStep];
             }
             int nbrOfSteps = currentStep + 1;
-            Note currentNote = song.getScore().getPart(0).getPhrase(0)
+            Note currentNote = song.getTrack(0).getPart().getPhrase(0)
                     .getNote(noteIndex);
             int pitchNbr = currentNote.getPitch();
             if (mu.canRaiseNote(pitchNbr, nbrOfSteps)) {

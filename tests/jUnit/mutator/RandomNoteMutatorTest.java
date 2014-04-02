@@ -1,6 +1,7 @@
 package jUnit.mutator;
 
 import static org.junit.Assert.assertTrue;
+import jUnit.Helpers;
 import jm.music.data.Note;
 import jm.music.data.Part;
 
@@ -24,17 +25,13 @@ public class RandomNoteMutatorTest {
      */
     @Before
     public void setUpSong() {
-        testSong = Translator.INSTANCE
-                .loadMidiToSong("midifiles/super_mario_bros_theme.mid");
-        for (Part part : testSong.getScore().getPartArray()) {
-            testSong.addTagToTrack(part, TrackTag.MELODY);
-        }
+        testSong = Helpers.createTestSong();
     }
 
     @Test
     public void testRandomNote() {
         int testRange = 2;
-        Note[] notes = testSong.getScore().getPart(0).getPhrase(0)
+        Note[] notes = testSong.getTrack(0).getPart().getPhrase(0)
                 .getNoteArray();
         int nbrOfNotes = notes.length;
         int candidateIndex = 0;
@@ -49,7 +46,7 @@ public class RandomNoteMutatorTest {
                 break findCandidate;
             }
         }
-        int newPitch = testSong.getScore().getPart(0).getPhrase(0)
+        int newPitch = testSong.getTrack(0).getPart().getPhrase(0)
                 .getNote(candidateIndex).getPitch();
         assertTrue("Old Pitch: " + oldPitch + "\nNewPitch: " + newPitch,
                 newPitch <= oldPitch + testRange

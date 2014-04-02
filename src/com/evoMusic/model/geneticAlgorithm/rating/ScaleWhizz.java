@@ -8,6 +8,7 @@ import jm.music.data.Part;
 import jm.music.data.Phrase;
 
 import com.evoMusic.model.Song;
+import com.evoMusic.model.Track;
 import com.evoMusic.util.ScalePattern;
 import com.evoMusic.util.TrackTag;
 
@@ -42,7 +43,7 @@ public class ScaleWhizz extends SubRater {
 
     @Override
     public double rate(Song song) {
-        List<Part> targeted = song.getTaggedTracks(TrackTag.MELODY);
+        List<Track> targeted = song.getTaggedTracks(TrackTag.MELODY);
 
         PitchCounter pc = new PitchCounter(targeted);
         int hits = maximumScaleHits(pc.notePitches);
@@ -92,18 +93,18 @@ public class ScaleWhizz extends SubRater {
         /**
          * Instantiates and starts counting notes. Drum instruments are skipped
          * for obvious reasons. 
-         * @param parts parts to be counted. 
+         * @param tracks tracks to be counted. 
          */
-        private PitchCounter(List<Part> parts) {
-            for (Part track : parts) {
-                if (track.getInstrument() != Instruments.DRUM) {
+        private PitchCounter(List<Track> tracks) {
+            for (Track track : tracks) {
+                if (track.getPart().getInstrument() != Instruments.DRUM) {
                     countNotes(track);
                 }
             }
         }
 
-        private void countNotes(Part track) {
-            for (Phrase phrase : track.getPhraseArray()) {
+        private void countNotes(Track track) {
+            for (Phrase phrase : track.getPart().getPhraseArray()) {
                 for (Note note : phrase.getNoteArray()) {
                     if (!note.isRest()) {
                         notePitches[note.getPitch() % 12]++;
