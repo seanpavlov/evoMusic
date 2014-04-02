@@ -28,13 +28,13 @@ public class Mutator {
     public void mutate(Song individual) {
         int nbrOfNotes = 0;
         try {
-            nbrOfNotes = individual.getScore().getPart(0).getPhrase(0).getNoteArray().length;
+            nbrOfNotes = individual.getTrack(0).getPart().getPhrase(0).getNoteArray().length;
         }
         catch (Exception e){
             System.out.println("Could not mutate " + individual.getTitle());
         }
         for (int i = 0; i < nbrOfNotes; i++) {
-            if (!mu.isBlank(individual.getScore().getPart(0).getPhrase(0).getNote(i).getPitch())){
+            if (!mu.isBlank(individual.getTrack(0).getPart().getPhrase(0).getNote(i).getPitch())){
                 if (Math.random() < overallMutationProbability) {
                     for(ISubMutator subMutator : subMutators){
                         if(Math.random() < subMutator.getProbability()){

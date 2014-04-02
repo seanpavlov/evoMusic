@@ -29,7 +29,7 @@ public class OctaveMutator extends ISubMutator {
     public void mutate(Song song, int noteIndex) {
         if (Math.random() < this.getProbability()) {
             MidiUtil mu = new MidiUtil();
-            Note note = song.getScore().getPart(0).getPhrase(0)
+            Note note = song.getTrack(0).getPart().getPhrase(0)
                     .getNote(noteIndex);
             nbrOfSteps = (int) ((Math.random() * octaveRange) + 1);
             int pitchNbr = note.getPitch();
@@ -46,7 +46,7 @@ public class OctaveMutator extends ISubMutator {
             } else if (mu.canLowerNote(pitchNbr, MidiUtil.NBR_OF_NOTES * nbrOfSteps)) {
                 note.setPitch(pitchNbr - (MidiUtil.NBR_OF_NOTES * nbrOfSteps));
             }
-            song.getScore().getPart(0).getPhrase(0).setNote(note, noteIndex);
+            song.getTrack(0).getPart().getPhrase(0).setNote(note, noteIndex);
 
         }
     }

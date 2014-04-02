@@ -80,7 +80,7 @@ public class BeatRaterTest {
        part.addPhrase(phr);
        rhythmScore.addPart(part);
        testSongBeatTags = new Song(rhythmScore);
-       testSongBeatTags.addTagToTrack(part, TrackTag.BEAT);
+       testSongBeatTags.addTagToTrack(0, TrackTag.BEAT);
        
        /**Set phrase to part and add to score and finally create new Song testSongNoBeatTags*/
        part2.addPhrase(phr2);
@@ -91,11 +91,11 @@ public class BeatRaterTest {
        part3.add(phr3);
        rhythmScore3.add(part3);
        perfectSong = new Song(rhythmScore3);
-       perfectSong.addTagToTrack(part3, TrackTag.BEAT);
+       perfectSong.addTagToTrack(0, TrackTag.BEAT);
        
        /**create new Song testSong and tag part with BEAT*/
        testSong = new Song(rhythmScore2);
-       testSong.addTagToTrack(part2, TrackTag.BEAT);
+       testSong.addTagToTrack(0, TrackTag.BEAT);
     }
     
     /**

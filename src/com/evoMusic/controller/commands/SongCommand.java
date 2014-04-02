@@ -16,6 +16,7 @@ import org.bson.types.ObjectId;
 
 import com.evoMusic.database.MongoDatabase;
 import com.evoMusic.model.Song;
+import com.evoMusic.model.Track;
 import com.evoMusic.model.Translator;
 import com.evoMusic.util.TrackTag;
 import com.google.common.collect.Sets;
@@ -146,8 +147,8 @@ public class SongCommand extends AbstractCommand {
                             songIndex = Integer.parseInt(arg);
                             if (songIndex >= 0 && songIndex < songs.size()) {
                                 Song song = showSong(songIndex);
-                                for (Part p : song.getScore().getPartArray()){
-                                    System.out.println(song.getTrackTags(p));
+                                for (int i = 0; i < song.getNbrOfTracks(); i++){
+                                    System.out.println(song.getTrack(i).getTags());
                                 }
                             } else {
                                 System.out.println("Unable to select song "
@@ -296,7 +297,7 @@ public class SongCommand extends AbstractCommand {
        
         for(int i = 0; i < song.getNbrOfTracks(); i++) {
             System.out.print("Please Tag track "+i+": ");
-            Translator.INSTANCE.showPart(song.getTrack(i));
+            Translator.INSTANCE.showPart(song.getTrack(i).getPart());
             trackIndexes = sc.nextLine().split(" ");
             for (String index : trackIndexes) {
                 song.addTagToTrack(i, trackTags[Integer.parseInt(index)]);

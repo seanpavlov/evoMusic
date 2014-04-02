@@ -12,6 +12,7 @@ import jm.music.data.Part;
 import jm.music.data.Phrase;
 
 import com.evoMusic.model.Song;
+import com.evoMusic.model.Track;
 import com.evoMusic.util.TrackTag;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
@@ -27,8 +28,8 @@ public class ChordRepetitionRater extends SubRater{
         double rating = 0;
         double count = 0;
         /**Rate every part tracked with CHORDS and return median rating value*/
-        for(Part part : song.getTaggedTracks(TrackTag.CHORDS)){
-            rating += this.ratePart(part);
+        for(Track track : song.getTaggedTracks(TrackTag.CHORDS)){
+            rating += this.ratePart(track.getPart());
             ++count;
         }  
         if(count == 0)

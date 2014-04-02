@@ -5,13 +5,12 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import jUnit.Helpers;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-
-import jm.music.data.Part;
 
 import org.apache.commons.io.FileUtils;
 import org.bson.types.ObjectId;
@@ -22,6 +21,7 @@ import org.junit.Test;
 
 import com.evoMusic.database.MongoDatabase;
 import com.evoMusic.model.Song;
+import com.evoMusic.model.Track;
 import com.evoMusic.model.Translator;
 import com.evoMusic.util.TrackTag;
 import com.google.common.io.Files;
@@ -64,10 +64,7 @@ public class MongoDatabaseTest {
      */
     @Before
     public void setUpSong() {
-        testSong = Translator.INSTANCE.loadMidiToSong("midifiles/mm2wily1.mid");
-        for(Part part : testSong.getScore().getPartArray()){
-            testSong.addTagToTrack(part, TrackTag.MELODY);
-        }
+        testSong = Helpers.createTestSong();
     }
 
     @Test
@@ -87,7 +84,7 @@ public class MongoDatabaseTest {
         Song dbSong = songs.get(0);
         
         //Tests tracktags in retrieved song
-        List<Part> taggedTrackes = dbSong.getTaggedTracks(TrackTag.MELODY);
+        List<Track> taggedTrackes = dbSong.getTaggedTracks(TrackTag.MELODY);
         assertTrue("Tracks tagged with MELODY should be same size",
                 taggedTrackes.size() == testSong.getTaggedTracks(TrackTag.MELODY).size());
         taggedTrackes = dbSong.getTaggedTracks(TrackTag.NONE);
@@ -104,16 +101,15 @@ public class MongoDatabaseTest {
     public void testUpdateSong() {
         mDb.insertSong(testSong);
         Song newSong = Translator.INSTANCE.loadMidiToSong("midifiles/mm2wily1.mid");
-        for(Part part : newSong.getScore().getPartArray()){
-            newSong.addTagToTrack(part, TrackTag.BEAT);
+        for(Track track : newSong.getTracks()){
+            track.addTag(TrackTag.BEAT);
         }
         newSong.addUserTag("GOOD");
         boolean result = mDb.updateSong(testSong, newSong);
         assertTrue(result);
         Song dbSong = mDb.retrieveSongs().get(0);
-        assertEquals("GOOD", dbSong.getUserTags().get(0));
-        assertEquals(TrackTag.BEAT.toString(), 
-                dbSong.getTrackTags(dbSong.getTrack(0)).get(0).toString());
+        assertTrue(dbSong.getUserTags().contains("GOOD"));
+        assertTrue(dbSong.getTrack(0).getTags().contains(TrackTag.BEAT));
         
     }
     

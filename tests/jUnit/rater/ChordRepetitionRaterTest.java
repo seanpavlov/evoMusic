@@ -69,7 +69,7 @@ public class ChordRepetitionRaterTest {
        part.addPhraseList(phrases);
        Score score = new Score(part);
        perfectSong = new Song(score);
-       perfectSong.addTagToTrack(part, TrackTag.CHORDS);
+       perfectSong.addTagToTrack(0, TrackTag.CHORDS);
        
        testSongNoChordTags = new Song(score);
        
@@ -77,13 +77,13 @@ public class ChordRepetitionRaterTest {
        part2.addPhraseList(phrases2);
        Score score2 = new Score(part2);
        testSongChordTags = new Song(score2);
-       testSongChordTags.addTagToTrack(part2, TrackTag.CHORDS);
+       testSongChordTags.addTagToTrack(0, TrackTag.CHORDS);
        
        Part part3 = new Part();
        part3.addPhraseList(phrases3);
        Score score3 = new Score(part3);
        testSong = new Song(score3);
-       testSong.addTagToTrack(part3, TrackTag.CHORDS);
+       testSong.addTagToTrack(0, TrackTag.CHORDS);
        
     }
     
