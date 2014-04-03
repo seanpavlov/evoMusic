@@ -62,6 +62,9 @@ public class Generation {
             mutator.mutate(song);
             children.add(new Individual(song, rater.rate(song)));
         }
+        // Updating the mutation probability if mutator use decreasing
+        // probability ratio.
+        mutator.updateMutationProbability();
     }
 
     /**
