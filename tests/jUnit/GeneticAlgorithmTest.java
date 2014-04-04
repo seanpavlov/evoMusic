@@ -66,7 +66,7 @@ public class GeneticAlgorithmTest {
         parents.add(testParent);
         List<ISubMutator> subMutators = new ArrayList<ISubMutator>();
         subMutators.add(new ScaleOfFifthMutator(0.5, 1));
-        Mutator mutator = new Mutator(subMutators, 0.5);
+        Mutator mutator = new Mutator(new ArrayList<ISubMutator>(), 0.1, 0.1, 0);
         Crossover crossover = new Crossover(8);
         testGA = new GeneticAlgorithm(parents, mutator, crossover, rater);
         testGA.setThrowAwayFirstParents(false);
