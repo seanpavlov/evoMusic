@@ -15,7 +15,7 @@ import com.evoMusic.util.TrackTag;
 public class Track {
 
     private final Part songPart;
-    private Set<TrackTag> ttags = new HashSet<>();
+    private Set<TrackTag> trackTags = new HashSet<>();
     
     /**
      * @param part The tracks Part class
@@ -24,12 +24,18 @@ public class Track {
         this.songPart = part;
     }
 
+    public Track(Part part, TrackTag trackTag) {
+        this.songPart = part;
+        this.trackTags.add(trackTag);
+        // TODO Auto-generated constructor stub
+    }
+
     /**
      * 
      * @return The set of tags that this track has been tagged with
      */
     public Set<TrackTag> getTags() {
-        return ttags;
+        return trackTags;
     }
     
     /**
@@ -38,7 +44,7 @@ public class Track {
      * @return true if the tag was added, false otherwise
      */
     public boolean addTag(TrackTag tag) {
-        return ttags.add(tag);
+        return trackTags.add(tag);
     }
 
     /**
@@ -47,7 +53,7 @@ public class Track {
      * @return true if it the track has the given tag, false otherwise
      */
     public boolean hasTag(TrackTag tag) {
-        return ttags.contains(tag);
+        return trackTags.contains(tag);
     }
     
     /**
