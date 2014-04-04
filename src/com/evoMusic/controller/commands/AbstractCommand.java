@@ -1,4 +1,4 @@
-package com.evoMusic.controller;
+package com.evoMusic.controller.commands;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -35,6 +35,10 @@ public abstract class AbstractCommand {
      */
     public Set<String> getArgSet() {
         return LAST_LEVEL.keySet();
+    }
+    
+    public String help() {
+        return "No help this command, sryz";
     }
     
     /**

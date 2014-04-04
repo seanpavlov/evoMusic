@@ -6,6 +6,7 @@ import java.util.List;
 import com.evoMusic.model.Song;
 import com.evoMusic.model.geneticAlgorithm.mutation.Mutator;
 import com.evoMusic.model.geneticAlgorithm.rating.Rater;
+import com.evoMusic.util.Parameters;
 
 /**
  * 
@@ -46,17 +47,21 @@ public class GeneticAlgorithm {
      */
     public GeneticAlgorithm(List<Song> parents, Mutator mutator,
             Crossover crossover, Rater rater) {
-
+        
         setMutator(mutator);
         setRater(rater);
+        setCrossover(crossover);
 
         this.firstParents = new ArrayList<Individual>();
         addIndividuals(parents, this.firstParents);
+        generation = new Generation(firstParents);
+        
+        //initiate sub raters weights.
+//        rater.initSubRaterWeights(parents);
 
-        setCrossover(crossover);
 
         setParentsPerGeneration(this.firstParents.size());
-        setChildrenPerGeneration(this.firstParents.size() * 3);
+        setChildrenPerGeneration(this.firstParents.size() * 5);
         setThrowAwayFirstParents(true);
         setElitism(true);
         setMinimumRating(0);
@@ -204,32 +209,13 @@ public class GeneticAlgorithm {
     public void iterate(){
         double highestRating = 0;
         double currentRating = 0;
-        if (iterationsDone == 0) {
-            generation = new Generation(firstParents);
-            generation.makeChildren(crossover, mutator, rater,
-                    childrenPerGeneration);
-            if (throwAwayFirstParents) {
-                generation = new Generation(
-                        generation.getBestChildren(parentsPerGeneration));
-                iterationsDone++;
-            }
-        }
         while (highestRating < minimumRating
                 || iterationsDone < minimumIterations) {
-            if (usingElitism) {
-                generation = new Generation(
-                        generation.getBestIndividuals(parentsPerGeneration));
-            } else {
-                generation = new Generation(
-                        generation.getBestChildren(parentsPerGeneration));
-            }
-            currentRating = generation.getBestIndividuals(1).get(0).getRating();
+            currentRating = nextGeneration();            
             if (currentRating > highestRating) {
+                System.out.println("Best songs rating is : "+ currentRating);
                 highestRating = currentRating;
             }
-            generation.makeChildren(crossover, mutator, rater,
-                    childrenPerGeneration);
-            iterationsDone++;
         }
     }
 
@@ -241,28 +227,29 @@ public class GeneticAlgorithm {
      *            The number of generations to iterate over.
      */
     public void iterate(int n) {
-        if (iterationsDone == 0) {
-            generation = new Generation(firstParents);
-            generation.makeChildren(crossover, mutator, rater,
-                    childrenPerGeneration);
-            if (throwAwayFirstParents) {
-                generation = new Generation(
-                        generation.getBestChildren(parentsPerGeneration));
-                iterationsDone++;
-            }
-        }
         while (iterationsDone < n) {
-            if (usingElitism) {
-                generation = new Generation(
-                        generation.getBestIndividuals(parentsPerGeneration));
-            } else {
-                generation = new Generation(
-                        generation.getBestChildren(parentsPerGeneration));
-            }
+            nextGeneration();
+        }
+    }
+    
+    private double nextGeneration() {
+        if (iterationsDone == 0) {
             generation.makeChildren(crossover, mutator, rater,
                     childrenPerGeneration);
-            iterationsDone++;
+        } else if (iterationsDone == 1 && throwAwayFirstParents) {
+            generation = new Generation(
+                    generation.getBestChildren(parentsPerGeneration));
+        } else if (usingElitism) {
+            generation = new Generation(
+                    generation.getBestIndividuals(parentsPerGeneration));
+        } else {
+            generation = new Generation(
+                    generation.getBestChildren(parentsPerGeneration));
         }
+        generation.makeChildren(crossover, mutator, rater,
+                childrenPerGeneration);
+        iterationsDone++;
+        return generation.getBestIndividuals(1).get(0).getRating();
     }
 
     /**
@@ -274,6 +261,9 @@ public class GeneticAlgorithm {
         return generation.getBestChildren(1).get(0).getSong();
     }
 
+    public double getBestRating() {
+        return generation.getBestIndividuals(1).get(0).getRating();
+    }
     /**
      * Gets the child or parent which has the highest rating of the current
      * generation.
@@ -283,6 +273,10 @@ public class GeneticAlgorithm {
      */
     public Song getBest() {
         return generation.getBestIndividuals(1).get(0).getSong();
+    }
+
+    public Generation getGeneration() {
+        return generation;
     }
 
 }

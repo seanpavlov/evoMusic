@@ -1,20 +1,23 @@
 package com.evoMusic.model.geneticAlgorithm.rating;
 
+import java.util.Scanner;
+
 import jm.util.Play;
 
-import com.evoMusic.controller.InputController;
 import com.evoMusic.model.Song;
-import com.evoMusic.util.Translator;
+import com.evoMusic.model.Translator;
 
 public class UserRater extends SubRater {
-  
+    private Scanner sc;
+    
     /**
      * Constructor, creates a user rater
      * 
      * @param weight
      */
-    public UserRater(double weight){
+    public UserRater(double weight, Scanner sc){
         super.setWeight(weight);
+        this.sc = sc;
     }
     
     @Override
@@ -27,7 +30,12 @@ public class UserRater extends SubRater {
             }
         }).start();
         System.out.println("Waiting for user rating input : ");
-        rating = InputController.SCANNER.nextDouble();
+        String temp = sc.nextLine();
+        try{
+            rating = Double.parseDouble(temp);
+        }catch(NumberFormatException e){
+            System.err.println("Could not convert String to double in UserRater.");
+        }
         Play.stopAudio();
         return rating;
     }

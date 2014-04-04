@@ -6,7 +6,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 import com.evoMusic.model.Song;
-import com.evoMusic.util.Translator;
+import com.evoMusic.model.Translator;
 
 public class TranslatorTest {
 

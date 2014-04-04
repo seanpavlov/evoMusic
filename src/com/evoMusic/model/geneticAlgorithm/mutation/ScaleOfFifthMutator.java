@@ -2,6 +2,7 @@ package com.evoMusic.model.geneticAlgorithm.mutation;
 
 import jm.music.data.Note;
 import com.evoMusic.model.*;
+import com.evoMusic.util.MidiUtil;
 
 public class ScaleOfFifthMutator extends ISubMutator {
     private int stepRange;
@@ -29,7 +30,7 @@ public class ScaleOfFifthMutator extends ISubMutator {
     public void mutate(Song song, int noteIndex) {
         if (Math.random() < this.getProbability()) {
             MidiUtil mu = new MidiUtil();
-            Note note = song.getScore().getPart(0).getPhrase(0)
+            Note note = song.getTrack(0).getPart().getPhrase(0)
                     .getNote(noteIndex);
             int nbrOfSteps = (int) ((Math.random() * stepRange) + 1);
             int pitchNbr = note.getPitch();
@@ -46,7 +47,7 @@ public class ScaleOfFifthMutator extends ISubMutator {
             } else if (mu.canLowerNote(pitchNbr, (5 * nbrOfSteps))) {
                 note.setPitch(pitchNbr - (5 * nbrOfSteps));
             }
-            song.getScore().getPart(0).getPhrase(0).setNote(note, noteIndex);
+            song.getTrack(0).getPart().getPhrase(0).setNote(note, noteIndex);
 
         }
     }

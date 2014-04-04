@@ -1,14 +1,17 @@
 package com.evoMusic.model;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-
-import com.evoMusic.util.TrackTag;
+import java.util.Set;
 
 import jm.music.data.Part;
 import jm.music.data.Score;
+
+import org.bson.types.ObjectId;
+
+import com.evoMusic.util.TrackTag;
 
 /**
  * A class that uses the properties from the Score class.
@@ -16,10 +19,12 @@ import jm.music.data.Score;
  */
 public class Song {
 
-    private final List<String> userTags = new ArrayList<String>();
-    private Map<Part, List<TrackTag>> trackTags = new HashMap<Part, List<TrackTag>>();
+    private final Set<String> userTags = new HashSet<String>();
 
+    private List<Track> tracks = new LinkedList<>();
     private final Score score;
+    
+    private ObjectId dbRef = new ObjectId();
 
     /**
      * Creates a new Song object by copying all content from the given score.
@@ -29,8 +34,28 @@ public class Song {
      */
     public Song(Score score) {
         this.score = score;
+        for (Part p : score.getPartArray()) {
+            tracks.add(new Track(p));
+        }
+        
+    }
+    
+    /**
+     * @return the object's reference id in the database.
+     */
+    public ObjectId getDbRef() {
+        return dbRef;
     }
 
+    /**
+     * The dbRef is used to uniquely identify a Song in the database
+     * An id is created when the song is instantiated.  
+     * @param dbRef set the object's reference id
+     */
+    public void setDbRef(ObjectId dbRef) {
+        this.dbRef = dbRef;
+    }
+    
     /**
      * 
      * @return the title of the score
@@ -45,16 +70,24 @@ public class Song {
      *            the index of the track in the score
      * @return the track as a Part object with the specified index.
      */
-    public Part getTrack(int index) {
-        return score.getPart(index);
+    public Track getTrack(int index) {
+        return tracks.get(index);
     }
-
+    
+    /**
+     * 
+     * @return The song's tracks
+     */
+    public List<Track> getTracks() {
+        return tracks;
+    }
+    
     /**
      * 
      * @return the number of tracks in this song's score.
      */
     public int getNbrOfTracks() {
-        return score.getPartArray().length;
+        return tracks.size();
     }
 
     /**
@@ -77,7 +110,7 @@ public class Song {
      * 
      * @return the tags describing the song, created by the user.
      */
-    public List<String> getUserTags() {
+    public Set<String> getUserTags() {
         return userTags;
     }
 
@@ -90,25 +123,7 @@ public class Song {
      *            The tag to be applied to the track.
      */
     public void addTagToTrack(int trackIndex, TrackTag tag) {
-        addTagToTrack(getTrack(trackIndex), tag);
-    }
-
-    /**
-     * Adds a TrackTag to the specified track. If the track already has the
-     * given tag, no change will be made.
-     * 
-     * @param track
-     *            The track in question.
-     * @param tag
-     *            The tag to be applied to the track.
-     */
-    public void addTagToTrack(Part track, TrackTag tag) {
-        if (!trackTags.containsKey(track)) {
-            trackTags.put(track, new ArrayList<TrackTag>());
-        }
-        if (!trackTags.get(track).contains(tag)) {
-            trackTags.get(track).add(tag);
-        }
+        getTrack(trackIndex).addTag(tag);
     }
 
     /**
@@ -116,34 +131,12 @@ public class Song {
      * 
      * @param trackIndex
      *            The index of the track from which the tag is requested.
-     * @return A list with the corresponding tags for the given track. Returns
+     * @return A set with the corresponding tags for the given track. Returns
      *         an empty list if track has no tags.
-     * @throws IndexOutOfBoundsException
-     *             if the track index is outside the the number of tracks
-     *             boundary.
      */
-    public List<TrackTag> getTrackTags(int trackIndex)
+    public Set<TrackTag> getTrackTags(int trackIndex)
             throws IndexOutOfBoundsException {
-        if (trackIndex >= score.getPartList().size()) {
-            throw new IndexOutOfBoundsException();
-        }
-        return getTrackTags(getTrack(trackIndex));
-    }
-
-    /**
-     * Given a track, returns the tag(s) of that track.
-     * 
-     * @param track
-     *            The track from which the tags is requested.
-     * @return A list with the corresponding tags for the given track. Returns
-     *         an empty list if track has no tags.
-     */
-    public List<TrackTag> getTrackTags(Part track) {
-        if (!trackTags.containsKey(track)) {
-            return new ArrayList<TrackTag>();
-        } else {
-            return trackTags.get(track);
-        }
+        return tracks.get(trackIndex).getTags();
     }
 
     /**
@@ -154,21 +147,14 @@ public class Song {
      * @return A list with all tracks corresponding to the given track if any,
      *         else an empty list.
      */
-    public List<Part> getTaggedTracks(TrackTag tag) {
-        List<Part> trackList = new ArrayList<Part>();
-        for (Part track : getScore().getPartArray()) {
-            if (trackTags.containsKey(track)) {
-                if (trackTags.get(track).contains(tag)) {
-                    trackList.add(track);
-                }
+    public List<Track> getTaggedTracks(TrackTag tag) {
+        List<Track> trackList = new ArrayList<Track>();
+        for (Track track : tracks) {
+            if (track.hasTag(tag)) {
+                trackList.add(track);
             }
         }
         return trackList;
-    }
-
-    // TODO this method is not possible to implement...
-    public void setTrackTags(Map<Part, List<TrackTag>> trackTags) {
-        this.trackTags = trackTags;
     }
 
     /**
@@ -192,6 +178,15 @@ public class Song {
      */
     public void addUserTag(String userTag) {
         this.userTags.add(userTag);
+    }
+
+    /**
+     * Adds a new track to the song's score
+     * @param newTagPart
+     */
+    public void addTrack(Track newTagPart) {
+        score.add(newTagPart.getPart());
+        tracks.add(newTagPart);
     }
 
 }

@@ -1,4 +1,4 @@
-package com.evoMusic.model.geneticAlgorithm.mutation;
+package com.evoMusic.util;
 
 public class MidiUtil {
     public final static int NBR_OF_NOTES = 12;

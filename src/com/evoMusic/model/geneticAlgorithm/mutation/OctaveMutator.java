@@ -3,9 +3,11 @@ package com.evoMusic.model.geneticAlgorithm.mutation;
 import jm.music.data.Note;
 
 import com.evoMusic.model.Song;
+import com.evoMusic.util.MidiUtil;
 
 public class OctaveMutator extends ISubMutator {
     private int octaveRange;
+    private int nbrOfSteps = 0;
 
     /**
      * Raises or lower the note pitch in steps of octaves.
@@ -27,9 +29,9 @@ public class OctaveMutator extends ISubMutator {
     public void mutate(Song song, int noteIndex) {
         if (Math.random() < this.getProbability()) {
             MidiUtil mu = new MidiUtil();
-            Note note = song.getScore().getPart(0).getPhrase(0)
+            Note note = song.getTrack(0).getPart().getPhrase(0)
                     .getNote(noteIndex);
-            int nbrOfSteps = (int) ((Math.random() * octaveRange) + 1);
+            nbrOfSteps = (int) ((Math.random() * octaveRange) + 1);
             int pitchNbr = note.getPitch();
             if (mu.canRaiseNote(pitchNbr, MidiUtil.NBR_OF_NOTES * nbrOfSteps)) {
                 if (mu.canLowerNote(pitchNbr, MidiUtil.NBR_OF_NOTES * nbrOfSteps)) {
@@ -44,9 +46,18 @@ public class OctaveMutator extends ISubMutator {
             } else if (mu.canLowerNote(pitchNbr, MidiUtil.NBR_OF_NOTES * nbrOfSteps)) {
                 note.setPitch(pitchNbr - (MidiUtil.NBR_OF_NOTES * nbrOfSteps));
             }
-            song.getScore().getPart(0).getPhrase(0).setNote(note, noteIndex);
+            song.getTrack(0).getPart().getPhrase(0).setNote(note, noteIndex);
 
         }
     }
+    
+    public int getNbrOfSteps(){
+        return nbrOfSteps;
+    }
+    
+    public int getOctaveRange(){
+        return octaveRange;
+    }
+    
 
 }

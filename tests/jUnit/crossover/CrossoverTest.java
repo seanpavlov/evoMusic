@@ -9,11 +9,11 @@ import java.util.Random;
 import org.junit.Test;
 
 import com.evoMusic.model.Song;
+import com.evoMusic.model.Translator;
 import com.evoMusic.model.geneticAlgorithm.Crossover;
 import com.evoMusic.model.geneticAlgorithm.Individual;
 import com.evoMusic.model.geneticAlgorithm.mutation.Mutator;
 import com.evoMusic.util.TrackTag;
-import com.evoMusic.util.Translator;
 
 public class CrossoverTest {
 
@@ -49,7 +49,7 @@ public class CrossoverTest {
 
         Crossover crossover = new Crossover(8);
         Song child = crossover.makeCrossover(parents);
-        
+
         assertTrue("Check that number of tracks equals 2", 2 == child.getNbrOfTracks());
    }
     

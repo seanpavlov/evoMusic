@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import jm.music.data.Note;
 
 import com.evoMusic.model.Song;
+import com.evoMusic.util.MidiUtil;
 
 public class ReverseMutator extends ISubMutator {
     private int nbrOfAdditionalReversing;
@@ -49,7 +50,7 @@ public class ReverseMutator extends ISubMutator {
                 ArrayList<Integer> noteIndexes = new ArrayList<Integer>();
                 ArrayList<Note> notes = new ArrayList<Note>();
                 noteIndexes.add(noteIndex);
-                notes.add(song.getScore().getPart(0).getPhrase(0)
+                notes.add(song.getTrack(0).getPart().getPhrase(0)
                         .getNote(noteIndex));
                 int currentIndex = noteIndex - 1;
                 noteIteration: for (int i = 1; i < nbrOfTotalReversing; i++) {
@@ -60,7 +61,7 @@ public class ReverseMutator extends ISubMutator {
                         break noteIteration;
                     } else {
                         noteIndexes.add(currentIndex);
-                        notes.add(song.getScore().getPart(0).getPhrase(0)
+                        notes.add(song.getTrack(0).getPart().getPhrase(0)
                                 .getNote(currentIndex));
                     }
                 }
@@ -75,7 +76,7 @@ public class ReverseMutator extends ISubMutator {
                     } else {
                         int newPitch = notes.get(totalReverses - 1 - j)
                                 .getPitch();
-                        song.getScore().getPart(0).getPhrase(0)
+                        song.getTrack(0).getPart().getPhrase(0)
                                 .getNote(noteIndexes.get(j)).setPitch(newPitch);
                     }
                 }
