@@ -6,6 +6,7 @@ import java.util.List;
 import com.evoMusic.model.Song;
 import com.evoMusic.model.geneticAlgorithm.mutation.Mutator;
 import com.evoMusic.model.geneticAlgorithm.rating.Rater;
+import com.evoMusic.util.Parameters;
 
 /**
  * 
