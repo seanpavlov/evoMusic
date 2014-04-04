@@ -1,11 +1,16 @@
 package com.evoMusic.model.geneticAlgorithm.blending;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 import java.util.Vector;
 
+import jm.music.data.Part;
+
 import com.evoMusic.model.Song;
+import com.evoMusic.util.TrackTag;
 import com.google.common.primitives.Doubles;
 import com.google.common.primitives.Ints;
 
@@ -46,6 +51,13 @@ public class MarkovChain {
 
     // TODO Implement and make sure all tracks match each other.
     private List<Song> trimSongParts(List<Song> songList) {
+        Set<TrackTag> allTrackTags = new HashSet<TrackTag>();
+        // Finding all track tags.
+        for (Song song : songList) {
+            for (Part part : song.getScore().getPartArray()) {
+                
+            }
+        }
         return songList;
 
     }
@@ -189,10 +201,12 @@ public class MarkovChain {
         List<int[]> instrumentsAndChannels = new ArrayList<int[]>(2);
         double nextRand;
         int numberOfSongs = intervalledSongs.size();
-        for(int trackIndex = 0; trackIndex < numberOfTracks; trackIndex++) {
-            nextRand = rand.nextDouble()*numberOfSongs;
-            instruments[trackIndex] = intervalledSongs.get((int)nextRand).getInstruments()[trackIndex];
-            channels[trackIndex] = intervalledSongs.get((int)nextRand).getChannels()[trackIndex];
+        for (int trackIndex = 0; trackIndex < numberOfTracks; trackIndex++) {
+            nextRand = rand.nextDouble() * numberOfSongs;
+            instruments[trackIndex] = intervalledSongs.get((int) nextRand)
+                    .getInstruments()[trackIndex];
+            channels[trackIndex] = intervalledSongs.get((int) nextRand)
+                    .getChannels()[trackIndex];
         }
         instrumentsAndChannels.add(instruments);
         instrumentsAndChannels.add(channels);
@@ -203,7 +217,7 @@ public class MarkovChain {
     // TODO Make more random.
     private double getRandomTempo() {
         double tempo = 0;
-        for(IntervalSong song : intervalledSongs) {
+        for (IntervalSong song : intervalledSongs) {
             tempo += song.getTempo();
         }
         return tempo / intervalledSongs.size();
