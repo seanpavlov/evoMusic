@@ -85,7 +85,9 @@ public class CrazyNoteOctaveRater extends SubRater{
     
     
     
-    /**Sorts every note in song according to their start time.*/
+    /**Sorts every note in song according to their start time.
+     * @param song Song containging the notes to sort
+     * @return List list of list containing the sorted notes*/
     private List<List<Note>> getSortedNoteList(Song song) {
         
         ListMultimap<Double, Note> noteMap = ArrayListMultimap.create();
