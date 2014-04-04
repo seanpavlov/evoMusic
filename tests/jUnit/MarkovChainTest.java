@@ -9,9 +9,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.evoMusic.model.Song;
+import com.evoMusic.model.Translator;
 import com.evoMusic.model.geneticAlgorithm.blending.IntervalSong;
 import com.evoMusic.model.geneticAlgorithm.blending.MarkovChain;
-import com.evoMusic.util.Translator;
 
 public class MarkovChainTest {
     
@@ -48,7 +48,7 @@ public class MarkovChainTest {
         markov = new MarkovChain(3, nyanList);
         Song newSong = markov.generateNew(1000);
         //Translator.INSTANCE.saveSongToMidi(newSong, "NyanBach");
-        Translator.INSTANCE.playPart(newSong, 0);
+        Translator.INSTANCE.playPart(newSong.getTrack(0).getPart());
         //Translator.INSTANCE.playPart(newSong, 0);
         //assertTrue(true);
         //fail("Not yet implemented");
