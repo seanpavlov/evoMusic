@@ -49,10 +49,10 @@ public class GenerateCommand extends AbstractCommand {
 //        allMut.add(new ScaleOfFifthMutator(0, 3));
 //        allMut.add(new SimplifyMutator(0, 4, 0.1));
         List<SubRater> subRaters = new LinkedList<SubRater>();
-        subRaters.add(new MelodyRepetionRater(0.5));
-        subRaters.add(new ScaleWhizz(0.5));
-        subRaters.add(new BeatRepetitionRater(0.5));
-        subRaters.add(new ChordRepetitionRater(0.5));
+        subRaters.add(new MelodyRepetionRater(1));
+        subRaters.add(new ScaleWhizz(1));
+        subRaters.add(new BeatRepetitionRater(1));
+        subRaters.add(new ChordRepetitionRater(1));
         subRaters.add(new NoSilenceRater(1));
         subRaters.add(new CrazyNoteOctaveRater(1));
         Crossover crossover = new Crossover(4);
