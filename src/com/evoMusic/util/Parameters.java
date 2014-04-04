@@ -12,7 +12,6 @@ package com.evoMusic.util;
  * belongs to random note. Random note is a mutator. Therefore named
  * MUTATOR_RANDOM_NOTE_PORBABILITY
  * 
- * 
  */
 public class Parameters {
 
