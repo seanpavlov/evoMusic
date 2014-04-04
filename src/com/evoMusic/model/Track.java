@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import jm.music.data.Part;
+import jm.music.data.Phrase;
 
 import com.evoMusic.util.TrackTag;
 
@@ -14,7 +15,7 @@ import com.evoMusic.util.TrackTag;
  */
 public class Track {
 
-    private final Part songPart;
+    private Part songPart;
     private Set<TrackTag> ttags = new HashSet<>();
     
     /**
@@ -58,4 +59,35 @@ public class Track {
         return songPart;
     }
     
-}
+    /**
+     * Merges other track into this track
+     * @param other track to mutate into this track
+     */
+    public void merge(Track other) {
+        Part otherP = other.getPart();
+        songPart.addPhraseList(otherP.getPhraseArray());
+    }
+    
+    /**
+     * Inserts a track into this track
+     * Existing notes in this track will be will be shifted so that notes
+     * 
+     * @param other Track to be inserted into this track
+     * @param rhythmVal position where the first note should be inserted
+     */
+    public void insert(Track other, double rhythmVal) {
+        if (songPart.getEndTime() <= rhythmVal) {
+            
+            for (Phrase p : other.getPart().getPhraseArray()) {
+                p.setStartTime(p.getStartTime() + rhythmVal);
+            }
+            songPart.addPhraseList(other.getPart().getPhraseArray());
+        } else {
+            Part start = songPart.copy(0, rhythmVal);
+            Part end = songPart.copy(rhythmVal, songPart.getEndTime());
+            songPart = start;
+            songPart.addPhraseList(other.getPart().getPhraseArray());
+            songPart.addPhraseList(end.getPhraseArray());
+        }
+    }
+} 
