@@ -1,6 +1,8 @@
 package com.evoMusic.model;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import jm.music.data.Part;
@@ -90,4 +92,60 @@ public class Track {
             songPart.addPhraseList(end.getPhraseArray());
         }
     }
-} 
+     
+
+    /**
+     * Returns a new Track containing all notes from parameter "from" 
+     * to from+length
+     * 
+     * @param from, start value of segment
+     * @param length, length of segment
+     * @return
+     */
+    public Track getSegment(double from, double length){
+        Part part = new Part();
+        Phrase[] phrases = getPart().getPhraseArray();
+        
+        if (from < 0 || from >= getPart().getEndTime() || phrases.length < 1){
+            System.err.println("nope");
+        }
+        
+        for (Phrase phrase : phrases){
+            Phrase newPhrase = new Phrase();
+            double[] rythms = phrase.getRhythmArray();
+            double totalRythm = 0;
+            int noteIndex = 0;
+            
+            while (totalRythm < from && noteIndex < rythms.length){
+                totalRythm += rythms[noteIndex++];
+            }
+            
+            while (totalRythm < (from + length) && noteIndex < rythms.length){
+                totalRythm += rythms[noteIndex];
+                newPhrase.add(phrase.getNote(noteIndex++));
+            }
+            
+            part.add(newPhrase);
+        }
+        
+        return new Track(part);
+    }
+    
+    /**
+     * Returns a list of the tracks split into segments of the 
+     * length of the parameter bars
+     * 
+     * @param bars
+     * @return list of all segments
+     */
+    public List<Track> getSegments(double bars){
+        List<Track> tracks = new ArrayList<Track>();
+        int i = 0;
+        
+        while(i < getPart().getEndTime()){
+            tracks.add(getSegment(i,bars));
+            i+=bars;
+        }
+        return tracks;
+    }
+}
