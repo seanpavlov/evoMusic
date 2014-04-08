@@ -208,7 +208,7 @@ public class SongCommand extends AbstractCommand {
             @Override
             public boolean execute(String[] args) {
                 System.out.println(args[0]);
-                Translator.INSTANCE.playSong(songs.get(Integer
+                Translator.INSTANCE.play(songs.get(Integer
                         .parseInt(args[0])));
                 return true;
             }
@@ -297,7 +297,7 @@ public class SongCommand extends AbstractCommand {
        
         for(int i = 0; i < song.getNbrOfTracks(); i++) {
             System.out.print("Please Tag track "+i+": ");
-            Translator.INSTANCE.showPart(song.getTrack(i).getPart());
+            Translator.INSTANCE.show(song.getTrack(i).getPart());
             trackIndexes = sc.nextLine().split(" ");
             for (String index : trackIndexes) {
                 song.addTagToTrack(i, trackTags[Integer.parseInt(index)]);

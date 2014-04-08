@@ -77,7 +77,7 @@ public class GenerateCommand extends AbstractCommand {
         finished.acquireUninterruptibly();
         
         //Translator.INSTANCE.saveSongToMidi(ga.getBest(), "best");
-        Translator.INSTANCE.playSong(ga.getBest());
+        Translator.INSTANCE.play(ga.getBest());
         return true;
     }
     
