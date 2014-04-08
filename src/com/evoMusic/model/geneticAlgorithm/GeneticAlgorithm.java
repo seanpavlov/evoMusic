@@ -213,7 +213,6 @@ public class GeneticAlgorithm {
                 || iterationsDone < minimumIterations) {
             currentRating = nextGeneration();            
             if (currentRating > highestRating) {
-                System.out.println("Best songs rating is : "+ currentRating);
                 highestRating = currentRating;
             }
         }
