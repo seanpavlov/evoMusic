@@ -19,6 +19,7 @@ import com.evoMusic.model.geneticAlgorithm.mutation.ScaleOfFifthMutator;
 import com.evoMusic.model.geneticAlgorithm.mutation.SimplifyMutator;
 import com.evoMusic.model.geneticAlgorithm.rating.BeatRepetitionRater;
 import com.evoMusic.model.geneticAlgorithm.rating.ChordRepetitionRater;
+import com.evoMusic.model.geneticAlgorithm.rating.CrazyNoteOctaveRater;
 import com.evoMusic.model.geneticAlgorithm.rating.MelodyRepetionRater;
 import com.evoMusic.model.geneticAlgorithm.rating.Rater;
 import com.evoMusic.model.geneticAlgorithm.rating.ScaleWhizz;
@@ -59,6 +60,7 @@ public class GenerateCommand extends AbstractCommand {
         subRaters.add(new ScaleWhizz(c.RATER_SCALE_WEIGHT));
         subRaters.add(new BeatRepetitionRater(c.RATER_BEAT_REPETITION_WEIGHT));
         subRaters.add(new ChordRepetitionRater(c.RATER_CHORD_REPETITION_WEIGHT));
+        subRaters.add(new CrazyNoteOctaveRater(1));
         Crossover crossover = new Crossover(c.CROSSOVER_NBR_OF_INTERSECTS);
         crossover.setMinDuration(c.CROSSOVER_MIN_DURATION);
         crossover.setMaxDuration(c.CROSSOVER_MAX_DURATION);
@@ -72,7 +74,8 @@ public class GenerateCommand extends AbstractCommand {
         ga.iterate();
         finished.acquireUninterruptibly();
         
-        Translator.INSTANCE.saveSongToMidi(ga.getBest(), "best");
+        //Translator.INSTANCE.saveSongToMidi(ga.getBest(), "best");
+        Translator.INSTANCE.playSong(ga.getBest());
         return true;
     }
     

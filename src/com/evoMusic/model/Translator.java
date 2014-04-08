@@ -97,13 +97,8 @@ public enum Translator  {
      * 
      * @param song
      * @param trackIndex
-     */
-    /*public void playPart(Song song, int trackIndex) {
-        Play.midi(new Score(song.getTrack(trackIndex), "part " + trackIndex, song.getTempo()));
-    }*/
-    
+     */    
     public void playPart(Part part){
-        part.setInstrument(Instrument.BASS);
         Play.midi(part);
     }
 
