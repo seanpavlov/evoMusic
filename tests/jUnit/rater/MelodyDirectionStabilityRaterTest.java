@@ -10,17 +10,17 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.evoMusic.model.Song;
-import com.evoMusic.model.geneticAlgorithm.rating.MelodyDirectionRater;
+import com.evoMusic.model.geneticAlgorithm.rating.MelodyDirectionStabilityRater;
 import com.evoMusic.model.geneticAlgorithm.rating.SubRater;
 import com.evoMusic.util.TrackTag;
 
-public class MelodyDirectionRaterTest {
+public class MelodyDirectionStabilityRaterTest {
     private static Song testSongWorst, testSongPerfect, testSong, testSongRestNotes;
     private static SubRater rater;
     
     @BeforeClass
     public static void setUp(){
-        rater = new MelodyDirectionRater(1);
+        rater = new MelodyDirectionStabilityRater(1);
         
         Phrase phrase = new Phrase(0.0);
         Phrase phrase2 = new Phrase(0.0);

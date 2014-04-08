@@ -10,10 +10,10 @@ import com.evoMusic.model.Song;
 import com.evoMusic.model.Track;
 import com.evoMusic.util.TrackTag;
 
-public class MelodyDirectionRater extends SubRater{
+public class MelodyDirectionStabilityRater extends SubRater{
     /**Rater that likes more pitch direction changes in melody tracks*/
     
-    public MelodyDirectionRater(double weight){
+    public MelodyDirectionStabilityRater(double weight){
         super.setWeight(weight);
     }
 
