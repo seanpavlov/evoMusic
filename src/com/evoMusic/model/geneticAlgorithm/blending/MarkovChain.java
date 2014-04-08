@@ -26,8 +26,6 @@ public class MarkovChain {
     private List<ProbabilityMatrix<Integer, Double>> rythmValueProbabilityMatrices;
     private List<ProbabilityMatrix<Integer, Double>> durationProbabilityMatrices;
     private List<IntervalSong> intervalledSongs;
-    // private Song realSong;
-    // private List<Song> originalSongs;
     private int numberOfTracks;
 
     public MarkovChain(int lookbacks, List<Song> songs) {
@@ -42,7 +40,7 @@ public class MarkovChain {
         for (Song currentSong : trimmedSongs) {
             intervalledSongs.add(new IntervalSong(currentSong));
         }
-        numberOfTracks = intervalledSongs.get(0).getIntervals().size();
+        numberOfTracks = intervalledSongs.get(0).getTracks().size();
         this.intervalProbabilityMatrices = new ArrayList<ProbabilityMatrix<Integer, Integer>>(
                 numberOfTracks);
         this.rythmValueProbabilityMatrices = new ArrayList<ProbabilityMatrix<Integer, Double>>(
@@ -104,9 +102,9 @@ public class MarkovChain {
         double longestDuration = 0;
         double currentDuration;
         for (IntervalSong currentIntervalSong : intervalledSongs) {
-            for (double[] durations : currentIntervalSong.getDurations()) {
+            for (IntervalTrack track : currentIntervalSong.getTracks()) {
                 currentDuration = 0;
-                for (double duration : durations) {
+                for (double duration : track.getDurations()) {
                     currentDuration += duration;
                 }
                 if (currentDuration > longestDuration) {
@@ -119,10 +117,6 @@ public class MarkovChain {
 
     public Song generateNew(double maxSongDuration) {
         double trackLength = 0;
-
-        List<int[]> intervals = new ArrayList<int[]>();
-        List<double[]> rythmValues = new ArrayList<double[]>();
-        List<double[]> durations = new ArrayList<double[]>();
 
         List<Integer> trackIntervals;
         List<Double> trackRythmValues;
@@ -137,6 +131,10 @@ public class MarkovChain {
         double nextRythmValue;
         double nextDuration;
         Vector<Integer> currentSequence;
+
+        IntervalSong newSong = new IntervalSong(getRandomTempo());
+        List<int[]> instrumentsAndChannels = getRandomInstrumentsAndChannels();
+        int[] firstNotes = getFirstNotes();
 
         // For each track.
         for (int trackIndex = 0; trackIndex < numberOfTracks; trackIndex++) {
@@ -210,25 +208,26 @@ public class MarkovChain {
             trackRythmValues.add(nextRythmValue);
             trackDurations.add(nextDuration);
 
-            intervals.add(Ints.toArray(trackIntervals));
-            rythmValues.add(Doubles.toArray(trackRythmValues));
-            durations.add(Doubles.toArray(trackDurations));
-
-            // Adding the first notes.
-            // TODO Find better (any) way to get first notes.
-            // firstNotes[trackIndex] = getPseudoRandomNote(intervalledSongs);
+            IntervalTrack iTrack = new IntervalTrack(firstNotes[trackIndex],
+                    instrumentsAndChannels.get(0)[trackIndex],
+                    instrumentsAndChannels.get(1)[trackIndex],
+                    Ints.toArray(trackIntervals),
+                    Doubles.toArray(trackRythmValues),
+                    Doubles.toArray(trackDurations));
+            newSong.addTrack(iTrack);
         }
-        List<int[]> instrumentsAndChannels = getRandomInstrumentsAndChannels();
-        IntervalSong newSong = new IntervalSong(intervals, rythmValues,
-                durations, instrumentsAndChannels.get(0),
-                instrumentsAndChannels.get(1), getRandomTempo(),
-                getFirstNotes());
         return newSong.toSong();
     }
 
     // TODO implement for real...
     private int[] getFirstNotes() {
-        return intervalledSongs.get(0).getFirstNotes();
+        int[] firstNotes = new int[numberOfTracks];
+        for (int i = 0; i < numberOfTracks; i++) {
+            firstNotes[i] = 60;
+            // firstNotes[i] = intervalledSongs.get(0).getTracks().get(i)
+            // .getFirstNote();
+        }
+        return firstNotes;
     }
 
     // First index is instrument, second is channel. because instrument and
@@ -238,13 +237,13 @@ public class MarkovChain {
         int[] channels = new int[numberOfTracks];
         List<int[]> instrumentsAndChannels = new ArrayList<int[]>(2);
         double nextRand;
+        IntervalTrack track;
         int numberOfSongs = intervalledSongs.size();
         for (int trackIndex = 0; trackIndex < numberOfTracks; trackIndex++) {
             nextRand = rand.nextDouble() * numberOfSongs;
-            instruments[trackIndex] = intervalledSongs.get((int) nextRand)
-                    .getInstruments()[trackIndex];
-            channels[trackIndex] = intervalledSongs.get((int) nextRand)
-                    .getChannels()[trackIndex];
+            track = intervalledSongs.get((int) nextRand).getTrack(trackIndex);
+            instruments[trackIndex] = track.getInstrument();
+            channels[trackIndex] = track.getChannel();
         }
         instrumentsAndChannels.add(instruments);
         instrumentsAndChannels.add(channels);
@@ -300,6 +299,7 @@ public class MarkovChain {
         int[] currentIntervals;
         double[] currentRythmValues;
         double[] currentDurations;
+        IntervalTrack currentTrack;
 
         ProbabilityMatrix<Integer, Integer> currentIntervalMatrix;
         ProbabilityMatrix<Integer, Double> currentRythmValueMatrix;
@@ -310,14 +310,11 @@ public class MarkovChain {
 
         for (IntervalSong currentIntervalSong : intervalledSongs) {
             // for each part
-            for (int partIndex = 0; partIndex < currentIntervalSong
-                    .getIntervals().size(); partIndex++) {
-                currentIntervals = currentIntervalSong.getIntervals().get(
-                        partIndex);
-                currentRythmValues = currentIntervalSong.getRythmValues().get(
-                        partIndex);
-                currentDurations = currentIntervalSong.getDurations().get(
-                        partIndex);
+            for (int partIndex = 0; partIndex < numberOfTracks; partIndex++) {
+                currentTrack = currentIntervalSong.getTrack(partIndex);
+                currentIntervals = currentTrack.getIntervals();
+                currentRythmValues = currentTrack.getRythmValues();
+                currentDurations = currentTrack.getDurations();
 
                 if (intervalProbabilityMatrices.size() == partIndex) {
                     intervalProbabilityMatrices
