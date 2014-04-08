@@ -12,6 +12,7 @@ import com.evoMusic.model.Song;
 import com.evoMusic.model.Translator;
 import com.evoMusic.model.geneticAlgorithm.blending.IntervalSong;
 import com.evoMusic.model.geneticAlgorithm.blending.MarkovChain;
+import com.evoMusic.util.TrackTag;
 
 public class MarkovChainTest {
     
@@ -29,11 +30,15 @@ public class MarkovChainTest {
         flutes.add(Translator.INSTANCE.loadMidiToSong("midifiles/fp-2cou.mid"));
         flutes.add(Translator.INSTANCE.loadMidiToSong("midifiles/fp-3sar.mid"));
         flutes.add(Translator.INSTANCE.loadMidiToSong("midifiles/fp-4bou.mid"));
+        for(Song song : flutes) {
+            song.addTagToTrack(0, TrackTag.MELODY);
+        }
         
         marioSong = Translator.INSTANCE.loadMidiToSong("midifiles/super_mario_world_overworld.mid");
         marioTheme = Translator.INSTANCE.loadMidiToSong("midifiles/super_mario_bros_theme.mid");
         moonlight = Translator.INSTANCE.loadMidiToSong("midifiles/mond_3.mid");
         nyanCat = Translator.INSTANCE.loadMidiToSong("midifiles/nyan_cat_cut.mid");
+        nyanCat.addTagToTrack(0, TrackTag.MELODY);
         
     }
 

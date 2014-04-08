@@ -2,14 +2,17 @@ package com.evoMusic.model.geneticAlgorithm.blending;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import java.util.Vector;
 
 import jm.music.data.Part;
+import jm.music.data.Score;
 
 import com.evoMusic.model.Song;
+import com.evoMusic.model.Track;
 import com.evoMusic.util.TrackTag;
 import com.google.common.primitives.Doubles;
 import com.google.common.primitives.Ints;
@@ -52,13 +55,48 @@ public class MarkovChain {
     // TODO Implement and make sure all tracks match each other.
     private List<Song> trimSongParts(List<Song> songList) {
         Set<TrackTag> allTrackTags = new HashSet<TrackTag>();
+        List<Song> trimmedSongs = new ArrayList<Song>();
+        Iterator<TrackTag> tagIterator;
+        TrackTag currentTag;
         // Finding all track tags.
         for (Song song : songList) {
-            for (Part part : song.getScore().getPartArray()) {
-                
+            for (Track track : song.getTracks()) {
+                tagIterator = track.getTags().iterator();
+                while (tagIterator.hasNext()) {
+                    currentTag = tagIterator.next();
+                    if (currentTag != TrackTag.NONE) {
+                        allTrackTags.add(currentTag);
+                    }
+                }
             }
         }
-        return songList;
+
+        // Adding empty songs.
+        for (int i = 0; i < songList.size(); i++) {
+            trimmedSongs.add(new Song(new Score()));
+        }
+
+        tagIterator = allTrackTags.iterator();
+        while (tagIterator.hasNext()) {
+            currentTag = tagIterator.next();
+            for (int songIndex = 0; songIndex < songList.size(); songIndex++) {
+                Song song = songList.get(songIndex);
+                boolean foundTrack = false;
+                for (Track track : song.getTracks()) {
+                    if (track.getTags().contains(currentTag)) {
+                        trimmedSongs.get(songIndex).addTrack(track);
+                        foundTrack = true;
+                    }
+                }
+                if (!foundTrack) {
+                    trimmedSongs.get(songIndex).addTrack(
+                            new Track(new Part(), currentTag));
+                } else {
+                    foundTrack = false;
+                }
+            }
+        }
+        return trimmedSongs;
 
     }
 
