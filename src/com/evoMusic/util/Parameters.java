@@ -50,6 +50,7 @@ public class Parameters {
     public double RATER_CRAZY_OCTAVE_WEIGHT = 1;
     public double RATER_MELODY_DIRECTION_WEIGHT = 1;
     public double RATER_PITCH_VARIETY_WEIGHT = 1;
+    public double RATER_PITCH_DIRECTION_WEIGHT = 1;
 
     /*
      * CROSSOVER PARAMETERS
