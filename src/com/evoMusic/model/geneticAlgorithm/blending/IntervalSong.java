@@ -12,49 +12,79 @@ public class IntervalSong {
 
     private double tempo;
     private List<IntervalTrack> intervalTracks;
-    
+
+    /**
+     * Creates a new interval song with no tracks.
+     * 
+     * @param tempo
+     *            The tempo that the song should have.
+     */
     public IntervalSong(double tempo) {
         this.tempo = tempo;
         this.intervalTracks = new ArrayList<IntervalTrack>();
     }
 
-    public IntervalSong(List<int[]> intervals, List<double[]> rythmValues,
-            List<double[]> durations, int[] instruments, int[] channels,
-            double tempo, int[] firstNotes) {
-        this.intervalTracks = new ArrayList<IntervalTrack>();
-        for(int i = 0; i < intervals.size(); i++) {
-            this.intervalTracks.add(new IntervalTrack(firstNotes[i], instruments[i],
-                    channels[i], intervals.get(i), rythmValues.get(i), durations.get(i)));
-        }
-    }
-
+    /**
+     * Creates a new interval song from the given song.
+     * 
+     * @param song
+     *            The song that will be used in creating this interval song.
+     */
     public IntervalSong(Song song) {
         this.intervalTracks = new ArrayList<IntervalTrack>();
         Part[] allParts = song.getScore().getPartArray();
         this.tempo = song.getTempo();
 
         for (int partIndex = 0; partIndex < allParts.length; partIndex++) {
-            
+
             intervalTracks.add(new IntervalTrack(song.getTrack(partIndex)));
         }
     }
-    
+
+    /**
+     * Adds an interval track to this interval song.
+     * 
+     * @param track
+     *            The track that will be added.
+     */
     public void addTrack(IntervalTrack track) {
         this.intervalTracks.add(track);
     }
-    
+
+    /**
+     * Gets a list of all the interval tracks in this interval song.
+     * 
+     * @return A list containing all interval tracks in this interval song.
+     */
     public List<IntervalTrack> getTracks() {
         return intervalTracks;
     }
-    
+
+    /**
+     * Gets a specific interval track from this interval song.
+     * 
+     * @param trackIndex
+     *            The index of the requested interval track.
+     * @return The interval track at the given index.
+     */
     public IntervalTrack getTrack(int trackIndex) {
         return intervalTracks.get(trackIndex);
     }
-    
+
+    /**
+     * Gets the tempo of this interval song.
+     * 
+     * @return The tempo of this interval song.
+     */
     public double getTempo() {
         return tempo;
     }
 
+    /**
+     * Creates a Song object converted from this interval song.
+     * 
+     * @return A Song object with the properties of this interval song.
+     */
     public Song toSong() {
         Song song = new Song(new Score());
         for (int i = 0; i < intervalTracks.size(); i++) {
