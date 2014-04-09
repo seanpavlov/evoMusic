@@ -17,6 +17,7 @@ public class MelodyDirectionRater extends SubRater{
     public MelodyDirectionRater(double weight){
         super.setWeight(weight);
     }
+    
 
     @Override
     public double rate(Song song) {
@@ -49,7 +50,7 @@ public class MelodyDirectionRater extends SubRater{
         /**Iterate through every phrase of part*/
         for(Phrase phrase : part.getPhraseArray()){
             /**Declare variable to keep track of where to start iteration
-             * after finding first note not with rest pitch value*/
+             * after finding first note whose pitch value is not rest*/
             int startNote = 0;
             Note[] notes = phrase.getNoteArray();
             int nbrOfNotesInPhrase = notes.length;
@@ -58,6 +59,7 @@ public class MelodyDirectionRater extends SubRater{
             if(nbrOfNotesInPhrase < 2)
                 continue;
             
+            /**Find first note whose pitch values is not rest*/
             do{
                 lastPitch = notes[startNote].getPitch();
                 startNote++;
@@ -86,7 +88,8 @@ public class MelodyDirectionRater extends SubRater{
         }     
         
         /**If upCount is 0, return part rating 0,
-         * Or if upCount is 1 less than nbr of total notes return part rating 1
+         * Or if upCount is 1 less than nbr of total notes return part rating 1.0
+         * because that is best result it can receive
          * otherwise return upCount divided by nbr of total notes*/
         return (upCount == 0) ? 0 : 
                (nbrOfNotes - upCount == 1) ? 1 : 
