@@ -10,6 +10,7 @@ import jUnit.rater.ChordRepetitionRaterTest;
 import jUnit.rater.CrazyNoteOctaveRaterTest;
 import jUnit.rater.MelodyDirectionRaterTest;
 import jUnit.rater.MelodyDirectionStabilityRaterTest;
+import jUnit.rater.MelodyNoteDensityRaterTest;
 import jUnit.rater.MelodyRepetitionRaterTest;
 import jUnit.rater.NoSilenceRaterTest;
 import jUnit.rater.PitchVarietyRaterTest;
@@ -41,6 +42,7 @@ import org.junit.runners.Suite.SuiteClasses;
     MelodyDirectionStabilityRaterTest.class,
     PitchVarietyRaterTest.class,
     MelodyDirectionRaterTest.class,
+    MelodyNoteDensityRaterTest.class,
     
     /*
      * Mutators
