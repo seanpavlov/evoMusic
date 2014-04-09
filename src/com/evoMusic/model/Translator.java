@@ -100,7 +100,13 @@ public enum Translator {
      * @param song
      */
     public void play(Part part) {
-        Play.midi(part);
+        Score score = new Score(part.copy());
+        if(part.getMyScore() == null) {
+            Play.midi(part);
+        } else {
+            score.setTempo(part.getMyScore().getTempo());
+            Play.midi(score);
+        }
     }
 
     /**
