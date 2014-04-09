@@ -36,7 +36,6 @@ public class RhythmicVarietyRater extends SubRater{
                 }
             }
         }
-        System.out.println(rhythmDistribution);
         rating = (rhythmDistribution.size() / numberOfNotes);
         return rating;
     }
