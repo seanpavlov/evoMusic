@@ -30,7 +30,7 @@ public class DrCross {
             for (int i = 0; i < nrOfTracks; i++){
                 Track t = parent.getTrack(i);
                 Part part = t.getPart();
-                List<List<Note>> massmördare = Sort.getSortedNoteList(part);
+                List<List<Note>> massmordare = Sort.getSortedNoteList(part);
             }
         }
         
