@@ -30,9 +30,18 @@ public class IntervalTrack {
      *            The track from which this instance will be based on.
      */
     public IntervalTrack(Track track) {
+        Part part = track.getPart();
+        instrument = part.getInstrument();
+        channel = part.getChannel();
+        if(part.size() == 0) {
+            firstNote = Note.REST;
+            intervals = new int[0];
+            rhythmValues = new double[0];
+            durations = new double[0];
+            return;
+        }
         Map<Double, List<ComparableNote>> noteMap;
         List<ComparableNote> sortedNoteList = new ArrayList<ComparableNote>();
-        Part part = track.getPart();
         noteMap = new HashMap<Double, List<ComparableNote>>();
         double partLength = 0;
         for (Phrase phrase : part.getPhraseArray()) {
@@ -55,8 +64,6 @@ public class IntervalTrack {
         Collections.sort(sortedNoteList);
 
         firstNote = sortedNoteList.get(0).note.getPitch();
-        instrument = part.getInstrument();
-        channel = part.getChannel();
         int numberOfNotes = sortedNoteList.size();
         intervals = new int[numberOfNotes - 1];
         rhythmValues = new double[numberOfNotes];

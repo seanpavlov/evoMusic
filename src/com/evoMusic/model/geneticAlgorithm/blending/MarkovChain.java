@@ -87,8 +87,10 @@ public class MarkovChain {
         }
 
         // Adding empty songs.
-        for (int i = 0; i < songList.size(); i++) {
-            trimmedSongs.add(new Song(new Score()));
+        Score newScore;
+        for (Song song : songList) {
+            newScore = new Score(song.getTempo());
+            trimmedSongs.add(new Song(newScore));
         }
 
         tagIterator = allTrackTags.iterator();
@@ -163,6 +165,7 @@ public class MarkovChain {
             randomTrack = intervalledSongs.get(
                     (int) (rand.nextDouble() * numberOfSongs)).getTrack(
                     trackIndex);
+            
             newSong.addTrack(markovTracks.get(trackIndex).generateNew(
                     songDuration, randomTrack.getInstrument(),
                     randomTrack.getChannel(), randomTrack.getFirstNote()));
@@ -209,6 +212,9 @@ public class MarkovChain {
                 currentIntervalTrack = currentIntervalSong.getTrack(partIndex);
                 currentMarkovTrack = markovTracks.get(partIndex);
                 currentIntervals = currentIntervalTrack.getIntervals();
+                if(currentIntervals.length == 0) {
+                    continue;
+                }
                 currentRythmValues = currentIntervalTrack.getRythmValues();
                 currentDurations = currentIntervalTrack.getDurations();
 
@@ -224,6 +230,9 @@ public class MarkovChain {
                             currentRythmValues[i]);
                     currentMarkovTrack.addCountToDuration(sequence,
                             currentDurations[i]);
+                    
+                    //System.out.println("Part: " + partIndex + ", Seq: " + sequence);
+                    //TODO remove
 
                     // Adding for longer sequences.
                     for (int j = i; j < i + numberOfLookbacks; j++) {

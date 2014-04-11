@@ -36,7 +36,6 @@ public class IntervalSong {
         this.tempo = song.getTempo();
 
         for (int partIndex = 0; partIndex < allParts.length; partIndex++) {
-
             intervalTracks.add(new IntervalTrack(song.getTrack(partIndex)));
         }
     }
