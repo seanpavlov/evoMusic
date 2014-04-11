@@ -25,6 +25,7 @@ public class MarkovChainTest {
     private MarkovChain markov;
     private Song nyanCat;
     private Song zelda;
+    private Song wilyStage;
     private List<Song> multiSongTestList;
 
     @Before
@@ -45,6 +46,9 @@ public class MarkovChainTest {
         zelda.addTagToTrack(1, TrackTag.CHORDS);
         zelda.addTagToTrack(3, TrackTag.MELODY);
         
+        wilyStage = Translator.INSTANCE.loadMidiToSong("midifiles/mm2wily1.mid");
+        wilyStage.addTagToTrack(0, TrackTag.MELODY);
+        
         marioSong = Translator.INSTANCE.loadMidiToSong("midifiles/super_mario_world_overworld.mid");
         marioSong.addTagToTrack(0, TrackTag.MELODY);
         marioTheme = Translator.INSTANCE.loadMidiToSong("midifiles/super_mario_bros_theme.mid");
@@ -53,6 +57,7 @@ public class MarkovChainTest {
         moonlight.addTagToTrack(0, TrackTag.MELODY);
         nyanCat = Translator.INSTANCE.loadMidiToSong("midifiles/nyan_cat_cut.mid");
         nyanCat.addTagToTrack(0, TrackTag.MELODY);
+        
         
     }
 
@@ -64,11 +69,13 @@ public class MarkovChainTest {
         
         //markov = new MarkovChain(flutes.get(2));
         List<Song> nyanList = new ArrayList<Song>(1);
-        nyanList.add(nyanCat);
+        //nyanList.add(nyanCat);
         nyanList.add(flutes.get(2));
-        nyanList.add(marioSong);
+        //nyanList.add(zelda);
+        //nyanList.add(wilyStage);
+        nyanList.add(moonlight);
         //nyanList.add(marioTheme);
-        markov = new MarkovChain(2, nyanList);
+        markov = new MarkovChain(3, nyanList);
         Song newSong = markov.generateNew(100);
         //Translator.INSTANCE.saveSongToMidi(newSong, "TestSaveNatan");
         Translator.INSTANCE.play(newSong);

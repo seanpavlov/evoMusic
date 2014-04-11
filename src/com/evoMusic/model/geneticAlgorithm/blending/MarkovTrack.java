@@ -70,7 +70,7 @@ public class MarkovTrack {
                 }
                 // Make sure the first interval isn't a restback (high
                 // positive number) or rest.
-                if (intervalIndex == 0 && (nextInterval > 127 || nextInterval < 0)) {
+                if (intervalIndex == 0 && (nextInterval > 127 || nextInterval < 0) && trackLength > 0) {
                     isResting = true;
                 } else {
                     // Make sure no dubbel rest/restback is added.

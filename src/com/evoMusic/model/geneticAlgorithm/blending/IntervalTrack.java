@@ -34,7 +34,7 @@ public class IntervalTrack {
         instrument = part.getInstrument();
         channel = part.getChannel();
         if(part.size() == 0) {
-            firstNote = Note.REST;
+            firstNote = 60;
             intervals = new int[0];
             rhythmValues = new double[0];
             durations = new double[0];
