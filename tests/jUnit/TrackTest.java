@@ -28,7 +28,7 @@ public class TrackTest {
         fail("Not yet implemented");
     }
     
-    @Test
+//    @Test
     public void testGetSegments() {
         List<Track> t = testTrack.getSegments(20);
         
@@ -56,6 +56,8 @@ public class TrackTest {
         
         newTrack.merge(trackOriginal, 4);
         newTrack.merge(trackInsert, 0);
+        newTrack.insert(trackInsert, 4);
         newTrack.printRoll();
+        newTrack.getSegment(2, 4).printRoll();;
     }
 }

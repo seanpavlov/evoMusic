@@ -9,7 +9,6 @@ import jm.music.data.Score;
 
 import com.evoMusic.model.Song;
 import com.evoMusic.model.Track;
-import com.evoMusic.model.Translator;
 import com.evoMusic.util.TrackTag;
 
 public class DrCross {
@@ -42,7 +41,7 @@ public class DrCross {
     public List<Song> crossIndividuals() {
         this.children = initChildren();
         occupiedSegmentSpots = new boolean[children.get(0).getNbrOfTracks()]
-                [(int) (childLen / segLen)]
+                [(int) (childLen / segLen)+1]
                         [children.size()];
         this.children = populateChildren();
         return children;

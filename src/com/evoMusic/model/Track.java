@@ -113,14 +113,15 @@ public class Track {
     }
     
     public static void printRoll(Part part) {
-        char restChar = '.';
+        char restChar = '-';
+        char emptyChar = '.';
         char noteChar = 'x';
         char useChar = 0;
         double gridSize = part.getShortestRhythmValue();
         for (Phrase p : part.getPhraseArray()) {
             
             for (double pos = 0; pos < p.getStartTime(); pos+=gridSize ) {
-                System.out.print(restChar);
+                System.out.print(emptyChar);
             }
             for (Note n : p.getNoteArray()) {
                 if (n.getPitch() == JMC.REST) {
@@ -133,7 +134,7 @@ public class Track {
                 }
             }
             for(double pos = p.getEndTime(); pos < part.getEndTime(); pos += gridSize) {
-                System.out.print(restChar);
+                System.out.print(emptyChar);
             }
             System.out.println();
         }
@@ -155,11 +156,23 @@ public class Track {
             System.err.println("nope");
         }
        
-        for (Phrase phrase : phrases){
-            part.add(phrase.copy(from, from + length, true, true, true));
-        }
-        
-        return new Track(part);
+//        for (Phrase phrase : phrases) {
+//            double start = from;
+//            double end = from + length;
+//            if (phrase.getStartTime() > 0) {
+//                start = Math.max(0, from - phrase.getStartTime());
+//                end = from + length - phrase.getStartTime();
+//            } 
+//            Phrase newPhrase = phrase.copy(start, end);
+//            System.out.println("start: "+ start +"\tend: "+end);
+//            System.out.println(phrase);
+//            if(phrase.getStartTime() > from) {
+//                newPhrase.setStartTime(from);
+//            }
+//            part.add(newPhrase);
+//        }
+
+        return new Track(getPart().copy(from, from+length, true,true,false));
     }
     
     /**
