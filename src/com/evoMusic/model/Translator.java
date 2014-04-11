@@ -92,6 +92,12 @@ public enum Translator  {
         Play.midi(song.getScore());
     }
     
+    public void playSong(Song song, int tempo) {
+        Score sc = song.getScore().copy();
+        sc.setTempo(tempo);
+        Play.midi(sc);
+    }
+    
     /**
      * Play a single track of a song
      * 

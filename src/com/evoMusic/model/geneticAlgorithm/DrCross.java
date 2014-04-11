@@ -2,6 +2,7 @@ package com.evoMusic.model.geneticAlgorithm;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import jm.music.data.Part;
@@ -22,7 +23,7 @@ public class DrCross {
     // y is segment
     // z children
     boolean[][][] occupiedSegmentSpots;
-  
+
     public DrCross(double segLen) {
         this.segLen = segLen;
     }
@@ -34,15 +35,24 @@ public class DrCross {
     }
 
     public void setParents(List<Song> parents) {
+        for (Song parent : parents) {
+            for (Iterator<Track> it = parent.getTracks().iterator(); 
+                    it.hasNext(); ) {
+                Track t = it.next();
+                if (t.getTags().contains(TrackTag.NONE)
+                        || t.getTags().size() == 0) {
+                    it.remove();
+                }
+            }
+        }
         this.parents = parents;
         this.childLen = findChildEndTime();
     }
 
     public List<Song> crossIndividuals() {
         this.children = initChildren();
-        occupiedSegmentSpots = new boolean[children.get(0).getNbrOfTracks()]
-                [(int) (childLen / segLen)+1]
-                        [children.size()];
+        occupiedSegmentSpots = new boolean[children.get(0).getNbrOfTracks()][(int) (childLen / segLen) + 1][children
+                .size()];
         this.children = populateChildren();
         return children;
     }
@@ -60,12 +70,14 @@ public class DrCross {
                         if (parentTaggedTracks.size() == 1) {
                             parent.removeTrack(parentTaggedTracks.get(0));
                         } else {
-                            parentTaggedTracks.get(0).merge(parentTaggedTracks.get(1), 0);
+                            parentTaggedTracks.get(0).merge(
+                                    parentTaggedTracks.get(1), 0);
                             parent.removeTrack(parentTaggedTracks.get(1));
                         }
                     }
                 }
             }
+            System.out.println(parent.getNbrOfTracks());
             distributeParentInChildren(parent);
         }
 
@@ -79,13 +91,14 @@ public class DrCross {
             for (int j = 0; j < children.size(); j++) {
                 childrenTracks.add(children.get(j).getTrack(i));
             }
-            distributeParentTrackInChildrenTracks(parent.getTrack(i), childrenTracks, occupiedSegmentSpots[i]);
+            distributeParentTrackInChildrenTracks(parent.getTrack(i),
+                    childrenTracks, occupiedSegmentSpots[i]);
         }
     }
 
-
     /**
      * Distributes a track from a parent into the given childen's tracks
+     * 
      * @param parentTrack
      * @param childrenTracks
      * @param trackOccupiedSegmentSpots
