@@ -189,4 +189,12 @@ public class Song {
         tracks.add(newTagPart);
     }
 
+    public Track removeTrack(int i) {
+        return tracks.remove(i);
+    }
+
+    public boolean removeTrack(Track track) {
+        return tracks.remove(track);
+    }
+
 }
