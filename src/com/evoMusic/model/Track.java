@@ -4,8 +4,12 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import jm.JMC;
+import jm.music.data.Note;
 import jm.music.data.Part;
 import jm.music.data.Phrase;
+
 import com.evoMusic.util.TrackTag;
 
 /**
@@ -14,8 +18,7 @@ import com.evoMusic.util.TrackTag;
  *
  */
 public class Track {
-    
-    private final Part songPart;
+    private Part songPart;
     private Set<TrackTag> ttags = new HashSet<>();
     
     /**
@@ -60,6 +63,83 @@ public class Track {
     }
     
     /**
+     * Merges other track into this track
+     * @param other track to mutate into this track
+     * @param rhythmVal where to merge
+     */
+    public void merge(Track other, double rhythmVal) {
+        Part otherP = other.getPart();
+        for (Phrase p : otherP.getPhraseArray()) {
+            p.setStartTime(p.getStartTime() + rhythmVal);
+        }
+        songPart.addPhraseList(otherP.getPhraseArray());
+    }
+    
+    /**
+     * Inserts a track into this track
+     * Existing notes in this track will be will be shifted so that notes
+     * 
+     * @param other Track to be inserted into this track
+     * @param rhythmVal position where the first note should be inserted
+     */
+    public void insert(Track other, double rhythmVal) {
+        Part otherPart = other.getPart();
+        if (songPart.getEndTime() <= rhythmVal) {
+            
+            for (Phrase p : otherPart.getPhraseArray()) {
+                p.setStartTime(p.getStartTime() + rhythmVal);
+            }
+            songPart.addPhraseList(otherPart.getPhraseArray());
+        } else {
+//            Part start = songPart.copy(0, rhythmVal);
+            Part start = songPart.copy(0, rhythmVal, true, true, false);
+            Part end = songPart.copy(rhythmVal, songPart.getEndTime(), true, true, false);
+//            Part end = songPart.copy(rhythmVal, songPart.getEndTime());
+            songPart = start;
+            appendPhraseList(otherPart.getPhraseArray(), start.getEndTime());
+            appendPhraseList(end.getPhraseArray(), songPart.getEndTime());
+        }
+    }
+    
+    private void appendPhraseList(Phrase[] phrases, double start) {
+        for (Phrase p : phrases) {
+            p.setStartTime(start + p.getStartTime());
+            songPart.add(p);
+        }
+    }
+    
+    public void printRoll() {
+        printRoll(songPart);
+    }
+    
+    public static void printRoll(Part part) {
+        char restChar = '.';
+        char noteChar = 'x';
+        char useChar = 0;
+        double gridSize = part.getShortestRhythmValue();
+        for (Phrase p : part.getPhraseArray()) {
+            
+            for (double pos = 0; pos < p.getStartTime(); pos+=gridSize ) {
+                System.out.print(restChar);
+            }
+            for (Note n : p.getNoteArray()) {
+                if (n.getPitch() == JMC.REST) {
+                    useChar = restChar;
+                } else {
+                    useChar = noteChar;
+                }
+                for(double len = 0; len < n.getRhythmValue(); len += gridSize) {
+                    System.out.print(useChar);
+                }
+            }
+            for(double pos = p.getEndTime(); pos < part.getEndTime(); pos += gridSize) {
+                System.out.print(restChar);
+            }
+            System.out.println();
+        }
+    }
+
+    /**
      * Returns a new Track containing all notes from parameter "from" 
      * to from+length
      * 
@@ -87,7 +167,7 @@ public class Track {
      * length of the parameter bars
      * 
      * @param bars
-     * @return list of all segements
+     * @return list of all segments
      */
     public List<Track> getSegments(double bars){
         List<Track> tracks = new ArrayList<Track>();
@@ -99,5 +179,4 @@ public class Track {
         }
         return tracks;
     }
-    
 }

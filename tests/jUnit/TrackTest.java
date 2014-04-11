@@ -1,16 +1,10 @@
 package jUnit;
 
 import static org.junit.Assert.*;
-
 import java.util.List;
-
-import jm.music.data.Note;
 import jm.music.data.Part;
-import jm.music.data.Phrase;
-
 import org.junit.Before;
 import org.junit.Test;
-
 import com.evoMusic.model.Song;
 import com.evoMusic.model.Track;
 import com.evoMusic.model.Translator;
@@ -48,5 +42,20 @@ public class TrackTest {
         
         fail("Not yet implemented");
     }
+    
+    @Test
+    public void test() {
+        Track trackOriginal = Helpers.createSongWithMelody(
+                new int[] { 8 + 12 * 4, 8 + 12 * 4, 8 + 12 * 4, 8 + 12 * 4 })
+                .getTrack(0);
+        Track trackInsert = Helpers.createSongWithMelody(
+                new int[] { 0 + 12 * 4, 1 + 12 * 4, 2 + 12 * 4, 3 + 12 * 4 })
+                .getTrack(0);
 
+        Track newTrack = new Track(new Part());
+        
+        newTrack.merge(trackOriginal, 4);
+        newTrack.merge(trackInsert, 0);
+        newTrack.printRoll();
+    }
 }
