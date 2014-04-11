@@ -14,7 +14,7 @@ import com.evoMusic.util.TrackTag;
  *
  */
 public class Track {
-
+    
     private final Part songPart;
     private Set<TrackTag> ttags = new HashSet<>();
     
@@ -74,23 +74,9 @@ public class Track {
         if (from < 0 || from >= getPart().getEndTime() || phrases.length < 1){
             System.err.println("nope");
         }
-        
+       
         for (Phrase phrase : phrases){
-            Phrase newPhrase = new Phrase();
-            double[] rythms = phrase.getRhythmArray();
-            double totalRythm = 0;
-            int noteIndex = 0;
-            
-            while (totalRythm < from && noteIndex < rythms.length){
-                totalRythm += rythms[noteIndex++];
-            }
-            
-            while (totalRythm < (from + length) && noteIndex < rythms.length){
-                totalRythm += rythms[noteIndex];
-                newPhrase.add(phrase.getNote(noteIndex++));
-            }
-            
-            part.add(newPhrase);
+            part.add(phrase.copy(from, from + length, true, true, true));
         }
         
         return new Track(part);
