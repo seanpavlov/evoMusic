@@ -4,9 +4,7 @@ import java.util.List;
 
 import jm.constants.Instruments;
 import jm.music.data.Note;
-import jm.music.data.Part;
 import jm.music.data.Phrase;
-
 import com.evoMusic.model.Song;
 import com.evoMusic.model.Track;
 import com.evoMusic.util.ScalePattern;

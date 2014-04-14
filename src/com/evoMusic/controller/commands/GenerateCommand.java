@@ -24,8 +24,10 @@ import com.evoMusic.model.geneticAlgorithm.rating.MelodyDirectionRater;
 import com.evoMusic.model.geneticAlgorithm.rating.MelodyDirectionStabilityRater;
 import com.evoMusic.model.geneticAlgorithm.rating.MelodyNoteDensityRater;
 import com.evoMusic.model.geneticAlgorithm.rating.MelodyRepetionRater;
+import com.evoMusic.model.geneticAlgorithm.rating.NoSilenceRater;
 import com.evoMusic.model.geneticAlgorithm.rating.PitchVarietyRater;
 import com.evoMusic.model.geneticAlgorithm.rating.Rater;
+import com.evoMusic.model.geneticAlgorithm.rating.RhythmicVarietyRater;
 import com.evoMusic.model.geneticAlgorithm.rating.ScaleWhizz;
 import com.evoMusic.model.geneticAlgorithm.rating.SubRater;
 import com.evoMusic.util.Parameters;
@@ -60,6 +62,7 @@ public class GenerateCommand extends AbstractCommand {
         allMut.add(new ScaleOfFifthMutator(c.MUTATOR_SCALE_OF_FIFTH_PROBABILITY, c.MUTATOR_SCALE_OF_FIFTH_RANGE));
         allMut.add(new SimplifyMutator(c.MUTATOR_SIMPLIFY_PROBABILITY, c.MUTATOR_SIMPLIFY_NBR_OF_NEIGHBORS, c.MUTATOR_SIMPLIFY_PROBABILITY));
         List<SubRater> subRaters = new LinkedList<SubRater>();
+        
         subRaters.add(new MelodyRepetionRater(c.RATER_MELODY_REPETITION_WEIGHT));
         subRaters.add(new ScaleWhizz(c.RATER_SCALE_WEIGHT));
         subRaters.add(new BeatRepetitionRater(c.RATER_BEAT_REPETITION_WEIGHT));
@@ -69,6 +72,9 @@ public class GenerateCommand extends AbstractCommand {
         subRaters.add(new PitchVarietyRater(c.RATER_PITCH_VARIETY_WEIGHT));
         subRaters.add(new MelodyDirectionRater(c.RATER_PITCH_DIRECTION_WEIGHT));
         subRaters.add(new MelodyNoteDensityRater(c.RATER_MELODY_NOTE_DENSITY_WEIGHT));
+        subRaters.add(new RhythmicVarietyRater(c.RATER_RHYTHMIC_VARIETY_WEIGHT));
+        subRaters.add(new NoSilenceRater(c.RATER_NO_SILENCE_WEIGHT));
+        
         Crossover crossover = new Crossover(c.CROSSOVER_NBR_OF_INTERSECTS);
         crossover.setMinDuration(c.CROSSOVER_MIN_DURATION);
         crossover.setMaxDuration(c.CROSSOVER_MAX_DURATION);

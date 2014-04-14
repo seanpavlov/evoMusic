@@ -1,12 +1,8 @@
 package com.evoMusic.model.geneticAlgorithm.rating;
-import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import jm.music.data.Note;
 import jm.music.data.Phrase;
-
 import com.evoMusic.model.Song;
 import com.evoMusic.model.Track;
 

@@ -13,7 +13,6 @@ import com.evoMusic.model.Song;
 import com.evoMusic.model.Track;
 import com.evoMusic.util.TrackTag;
 
-//heii
 public class Crossover {
     private int intersections;
     private Integer maxDuration = null;
