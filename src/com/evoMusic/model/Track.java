@@ -91,10 +91,8 @@ public class Track {
             }
             songPart.addPhraseList(otherPart.getPhraseArray());
         } else {
-//            Part start = songPart.copy(0, rhythmVal);
             Part start = songPart.copy(0, rhythmVal, true, true, false);
             Part end = songPart.copy(rhythmVal, songPart.getEndTime(), true, true, false);
-//            Part end = songPart.copy(rhythmVal, songPart.getEndTime());
             songPart = start;
             appendPhraseList(otherPart.getPhraseArray(), start.getEndTime());
             appendPhraseList(end.getPhraseArray(), songPart.getEndTime());
@@ -149,29 +147,7 @@ public class Track {
      * @return
      */
     public Track getSegment(double from, double length){
-        Part part = new Part();
-        Phrase[] phrases = getPart().getPhraseArray();
-        
-        if (from < 0 || from >= getPart().getEndTime() || phrases.length < 1){
-            System.err.println("nope");
-        }
-       
-//        for (Phrase phrase : phrases) {
-//            double start = from;
-//            double end = from + length;
-//            if (phrase.getStartTime() > 0) {
-//                start = Math.max(0, from - phrase.getStartTime());
-//                end = from + length - phrase.getStartTime();
-//            } 
-//            Phrase newPhrase = phrase.copy(start, end);
-//            System.out.println("start: "+ start +"\tend: "+end);
-//            System.out.println(phrase);
-//            if(phrase.getStartTime() > from) {
-//                newPhrase.setStartTime(from);
-//            }
-//            part.add(newPhrase);
-//        }
-
+        //might change something
         return new Track(getPart().copy(from, from+length, true,true,false));
     }
     
