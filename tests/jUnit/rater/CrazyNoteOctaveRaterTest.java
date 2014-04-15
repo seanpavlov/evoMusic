@@ -11,6 +11,7 @@ import org.junit.Test;
 import com.evoMusic.model.Song;
 import com.evoMusic.model.geneticAlgorithm.rating.CrazyNoteOctaveRater;
 import com.evoMusic.model.geneticAlgorithm.rating.SubRater;
+import com.evoMusic.util.TrackTag;
 
 public class CrazyNoteOctaveRaterTest {
     private static Song testSong, perfectSong, worstSong;
@@ -38,8 +39,11 @@ public class CrazyNoteOctaveRaterTest {
             phrase2.addNote(i, 1.0);
         }
         testSong  = new Song(new Score(new Part(phrase))); 
+        testSong.addTagToTrack(0, TrackTag.MELODY);
         perfectSong = new Song(new Score(new Part(phrase2)));
+        perfectSong.addTagToTrack(0, TrackTag.MELODY);
         worstSong = new Song(new Score(new Part(phrase3)));
+        worstSong.addTagToTrack(0, TrackTag.MELODY);
     }
     
     @Test
