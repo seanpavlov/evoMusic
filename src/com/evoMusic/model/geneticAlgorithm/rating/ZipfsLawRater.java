@@ -4,7 +4,6 @@ import java.util.*;
 
 import jm.music.data.Note;
 
-
 import com.evoMusic.model.Song;
 import com.evoMusic.model.Track;
 import com.evoMusic.util.Sort;
@@ -23,9 +22,9 @@ public class ZipfsLawRater extends SubRater {
     
     @Override
     public double rate(Song song) {
-        Track t = song.getTaggedTracks(TrackTag.MELODY).get(0);
+       // Track t = song.getTaggedTracks(TrackTag.MELODY).get(0);
 
-        List<List<Note>> sortedNoteList = Sort.getSortedNoteList(t.getPart());
+        List<List<Note>> sortedNoteList = Sort.getSortedNoteList(song);
         Map<Integer, Integer> pitchOccurances = new HashMap<Integer, Integer>(); 
         
         for (List<Note> notes : sortedNoteList){
@@ -37,7 +36,10 @@ public class ZipfsLawRater extends SubRater {
                 }
             }
         }
-        System.out.println(pitchOccurances);
+        Collection<Integer> values = pitchOccurances.values();
+        List<Integer> valuesAsList = new ArrayList<Integer>(values);
+        Collections.sort(valuesAsList);
+        System.out.println(valuesAsList);
         
         return 0;
     }
