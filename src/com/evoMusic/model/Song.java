@@ -127,16 +127,16 @@ public class Song {
     }
 
     /**
-     * Given a track index, returns the tag(a) of that track.
+     * Given a track index, returns the tag of that track.
      * 
      * @param trackIndex
      *            The index of the track from which the tag is requested.
-     * @return A set with the corresponding tags for the given track. Returns
-     *         an empty list if track has no tags.
+     * @return A tag for the given track. Returns
+     *         an null if track has no tag.
      */
-    public Set<TrackTag> getTrackTags(int trackIndex)
-            throws IndexOutOfBoundsException {
-        return tracks.get(trackIndex).getTags();
+    public TrackTag getTrackTag(int trackIndex)
+            throws IndexOutOfBoundsException{
+        return tracks.get(trackIndex).getTag();
     }
 
     /**

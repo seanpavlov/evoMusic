@@ -1,8 +1,7 @@
 package jUnit;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-
-import java.util.Set;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -27,11 +26,11 @@ public class SongTest {
         testSong.addTagToTrack(1, TrackTag.BASELINE);
         testSong.addTagToTrack(1, TrackTag.MELODY);
 
-        Set<TrackTag> ttags = testSong.getTrackTags(1);
+        TrackTag tag = testSong.getTrackTag(1);
 
-        assertTrue("Only two tags should exist", ttags.size() == 2);
-        assertTrue(ttags.contains(TrackTag.MELODY));
-        assertTrue(ttags.contains(TrackTag.BASELINE));
+        assertTrue("Tag should not be null", tag != null);
+        assertTrue(tag.equals(TrackTag.MELODY));
+        assertFalse(tag.equals(TrackTag.BASELINE));
     }
 
     @Test
