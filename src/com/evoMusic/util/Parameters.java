@@ -52,6 +52,7 @@ public class Parameters {
     public double RATER_PITCH_VARIETY_WEIGHT = 1;
     public double RATER_PITCH_DIRECTION_WEIGHT = 1;
     public double RATER_MELODY_NOTE_DENSITY_WEIGHT = 1;
+    public double RATER_MELODY_PITCH_RANGE_WEIGHT = 1;
 
     /*
      * CROSSOVER PARAMETERS
