@@ -289,16 +289,13 @@ public class SongCommand extends AbstractCommand {
         }
         System.out.println();
         System.out.println("--------------------------");
-        System.out.println("Add multiple tags by separating them with space");
-        String[] trackIndexes = new String[0];
+        String trackIndex;
        
         for(int i = 0; i < song.getNbrOfTracks(); i++) {
             System.out.print("Please Tag track "+i+": ");
             Translator.INSTANCE.show(song.getTrack(i).getPart());
-            trackIndexes = sc.nextLine().split(" ");
-            for (String index : trackIndexes) {
-                song.addTagToTrack(i, trackTags[Integer.parseInt(index)]);
-            }
+            trackIndex = sc.nextLine();
+            song.addTagToTrack(i, trackTags[Integer.parseInt(trackIndex)]);
         }
     }
 

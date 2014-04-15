@@ -149,6 +149,7 @@ public class MongoDatabase implements IDatabase {
                 final BasicDBList trackTag = (BasicDBList)tag;
                 song.addTagToTrack(i, DBEnum.to(TrackTag.class,trackTag.get(0)));
             }else if(tag instanceof BasicDBObject){
+                /**Newer version only have one tracktag per track*/
                 final BasicDBObject trackTag = (BasicDBObject)tag;
                 song.addTagToTrack(i, DBEnum.to(TrackTag.class, trackTag));
             }     
