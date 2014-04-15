@@ -160,11 +160,18 @@ public class MarkovChain {
 
         // For each track.
         int numberOfSongs = intervalledSongs.size();
-        IntervalTrack randomTrack;
+        IntervalTrack randomTrack = null;
+        boolean chosenTrackIsEmpty;
         for (int trackIndex = 0; trackIndex < numberOfTracks; trackIndex++) {
-            randomTrack = intervalledSongs.get(
-                    (int) (rand.nextDouble() * numberOfSongs)).getTrack(
-                    trackIndex);
+            // make sure an empty track doesn't give their instruments etc.
+            chosenTrackIsEmpty = true;
+            while (chosenTrackIsEmpty) {
+                randomTrack = intervalledSongs.get(
+                        (int) (rand.nextDouble() * numberOfSongs)).getTrack(
+                        trackIndex);
+                chosenTrackIsEmpty = randomTrack.getIntervals().length == 0;
+                System.out.println(chosenTrackIsEmpty);
+            }
             
             newSong.addTrack(markovTracks.get(trackIndex).generateNew(
                     songDuration, randomTrack.getInstrument(),

@@ -69,13 +69,13 @@ public class MarkovChainTest {
         
         //markov = new MarkovChain(flutes.get(2));
         List<Song> nyanList = new ArrayList<Song>(1);
-        //nyanList.add(nyanCat);
+        nyanList.add(nyanCat);
         nyanList.add(flutes.get(2));
         nyanList.add(zelda);
         //nyanList.add(wilyStage);
         //nyanList.add(moonlight);
         //nyanList.add(marioTheme);
-        markov = new MarkovChain(3, nyanList);
+        markov = new MarkovChain(2, nyanList);
         Song newSong = markov.generateNew(100);
         //Translator.INSTANCE.saveSongToMidi(newSong, "TestSaveNatan");
         Translator.INSTANCE.play(newSong);
