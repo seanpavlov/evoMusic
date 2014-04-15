@@ -15,6 +15,8 @@ import com.evoMusic.model.Track;
 
 public class IntervalTrack {
 
+    private static final int REST_PITCH = -1000000;
+
     private int firstNote;
     private int instrument;
     private int channel;
@@ -33,7 +35,7 @@ public class IntervalTrack {
         Part part = track.getPart();
         instrument = part.getInstrument();
         channel = part.getChannel();
-        if(part.size() == 0) {
+        if (part.size() == 0) {
             firstNote = 60;
             intervals = new int[0];
             rhythmValues = new double[0];
@@ -74,7 +76,7 @@ public class IntervalTrack {
             currentNote = sortedNoteList.get(i).note;
             nextNote = sortedNoteList.get(i + 1).note;
             // adding to intervals
-            intervals[i] = nextNote.getPitch() - currentNote.getPitch();
+            intervals[i] = formatNote(nextNote.getPitch()) - formatNote(currentNote.getPitch());
 
             // adding to rythmValues.
             rhythmValues[i] = currentNote.getRhythmValue();
@@ -82,8 +84,23 @@ public class IntervalTrack {
             // adding to duration
             durations[i] = currentNote.getDuration();
         }
-        rhythmValues[numberOfNotes - 1] = sortedNoteList.get(numberOfNotes - 1).note
-                .getRhythmValue();
+        currentNote = sortedNoteList.get(numberOfNotes - 1).note;
+        rhythmValues[numberOfNotes - 1] = currentNote.getRhythmValue();
+        durations[numberOfNotes - 1] = currentNote.getDuration();
+    }
+
+    /**
+     * Changes the value of a pitch if it is a rest. This is to avoid the
+     * interval int to flip.
+     * 
+     * @param inputNote
+     * @return REST_PITCH if note is rest, inputNote otherwise.
+     */
+    private int formatNote(int inputNote) {
+        if (inputNote == Note.REST) {
+            return REST_PITCH;
+        }
+        return inputNote;
     }
 
     /**
@@ -127,7 +144,7 @@ public class IntervalTrack {
         phrase.add(newNote);
         for (int j = 0; j < intervals.length; j++) {
             currentPitch += intervals[j];
-            if (currentPitch < 0 || currentPitch > 127) {
+            if (currentPitch < 0) {// || currentPitch > 127) {
                 newNote = new Note(Note.REST, rhythmValues[j + 1]);
 
             } else {
@@ -209,8 +226,10 @@ public class IntervalTrack {
         /**
          * Creates a new comparable note with the given note and its start time.
          * 
-         * @param note The given note.
-         * @param startTime The start time of the given note.
+         * @param note
+         *            The given note.
+         * @param startTime
+         *            The start time of the given note.
          */
         public ComparableNote(Note note, double startTime) {
             this.note = note;

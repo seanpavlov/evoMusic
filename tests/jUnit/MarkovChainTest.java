@@ -71,9 +71,9 @@ public class MarkovChainTest {
         List<Song> nyanList = new ArrayList<Song>(1);
         //nyanList.add(nyanCat);
         nyanList.add(flutes.get(2));
-        //nyanList.add(zelda);
+        nyanList.add(zelda);
         //nyanList.add(wilyStage);
-        nyanList.add(moonlight);
+        //nyanList.add(moonlight);
         //nyanList.add(marioTheme);
         markov = new MarkovChain(3, nyanList);
         Song newSong = markov.generateNew(100);

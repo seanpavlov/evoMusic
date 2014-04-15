@@ -231,8 +231,6 @@ public class MarkovChain {
                     currentMarkovTrack.addCountToDuration(sequence,
                             currentDurations[i]);
                     
-                    //System.out.println("Part: " + partIndex + ", Seq: " + sequence);
-                    //TODO remove
 
                     // Adding for longer sequences.
                     for (int j = i; j < i + numberOfLookbacks; j++) {
@@ -249,7 +247,7 @@ public class MarkovChain {
                 }
                 sequence = new Vector<Integer>();
                 for (int i = numberOfLookbacks; i > 0; i--) {
-                    sequence.add(currentIntervalsLength - i);
+                    sequence.add(currentIntervals[currentIntervalsLength - i]);
                 }
                 currentMarkovTrack.addCountToRhythmValue(sequence,
                         currentRythmValues[currentRythmValues.length - 1]);

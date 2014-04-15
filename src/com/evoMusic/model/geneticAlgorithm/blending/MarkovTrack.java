@@ -69,18 +69,21 @@ public class MarkovTrack {
                            // over.
                 }
                 // Make sure the first interval isn't a restback (high
-                // positive number) or rest.
-                if (intervalIndex == 0 && (nextInterval > 127 || nextInterval < 0) && trackLength > 0) {
+                // positive number)
+                if (nextInterval < -127 && trackLength == 0) {
                     isResting = true;
                 } else {
                     // Make sure no dubbel rest/restback is added.
                     while (true) {
-                        if (nextInterval <= 127 || nextInterval >= 0) {
+                        if (Math.abs(nextInterval) < 127) {
                             break;
                         }
-                        if ((isResting && nextInterval > 127) || !isResting
-                                && nextInterval < 0) {
-                            isResting = !isResting;
+                        if (isResting && nextInterval > 127) {
+                            isResting = false;
+                            break;
+                        }
+                        if ((!isResting) && nextInterval < -127) {
+                            isResting = true;
                             break;
                         }
                         nextInterval = intervalMatrix.getNext(currentSequence);
