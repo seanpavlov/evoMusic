@@ -15,6 +15,7 @@ import jm.music.data.Part;
 import jm.music.data.Phrase;
 
 import com.evoMusic.model.Song;
+import com.evoMusic.model.Track;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 
@@ -90,6 +91,27 @@ public abstract class Sort {
                 startTimeList.add(songLength);
                 songLength += note.getRhythmValue();
             }
+        }
+        for(Double startTime : startTimeList) {
+            sortedNoteList.add(noteMap.get(startTime));
+        }
+        return sortedNoteList;
+    }
+    
+    public static List<List<Note>> getSortedNoteList(Song song) {
+        ListMultimap<Double, Note> noteMap = ArrayListMultimap.create();
+        SortedSet<Double> startTimeList = new TreeSet<Double>();
+        List<List<Note>> sortedNoteList = new ArrayList<List<Note>>();
+        double songLength;
+        for(Track track : song.getTracks()){
+        for (Phrase phrase : track.getPart().getPhraseArray()) {
+            songLength = phrase.getStartTime();
+            for (Note note : phrase.getNoteArray()) {
+                noteMap.put(songLength, note);
+                startTimeList.add(songLength);
+                songLength += note.getRhythmValue();
+            }
+        }
         }
         for(Double startTime : startTimeList) {
             sortedNoteList.add(noteMap.get(startTime));

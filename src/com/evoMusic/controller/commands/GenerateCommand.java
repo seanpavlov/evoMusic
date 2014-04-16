@@ -14,9 +14,7 @@ import com.evoMusic.model.geneticAlgorithm.mutation.ISubMutator;
 import com.evoMusic.model.geneticAlgorithm.mutation.Mutator;
 import com.evoMusic.model.geneticAlgorithm.mutation.OctaveMutator;
 import com.evoMusic.model.geneticAlgorithm.mutation.RandomNoteMutator;
-import com.evoMusic.model.geneticAlgorithm.mutation.ReverseMutator;
 import com.evoMusic.model.geneticAlgorithm.mutation.ScaleOfFifthMutator;
-import com.evoMusic.model.geneticAlgorithm.mutation.SimplifyMutator;
 import com.evoMusic.model.geneticAlgorithm.rating.BeatRepetitionRater;
 import com.evoMusic.model.geneticAlgorithm.rating.ChordRepetitionRater;
 import com.evoMusic.model.geneticAlgorithm.rating.CrazyNoteOctaveRater;
@@ -33,6 +31,7 @@ import com.evoMusic.model.geneticAlgorithm.rating.RepeatedPitchDensityRater;
 import com.evoMusic.model.geneticAlgorithm.rating.RhythmicVarietyRater;
 import com.evoMusic.model.geneticAlgorithm.rating.ScaleWhizz;
 import com.evoMusic.model.geneticAlgorithm.rating.SubRater;
+import com.evoMusic.model.geneticAlgorithm.rating.ZipfsLawRater;
 import com.evoMusic.util.Parameters;
 import com.google.common.collect.Sets;
 
@@ -80,6 +79,7 @@ public class GenerateCommand extends AbstractCommand {
         subRaters.add(new MelodyPitchRangeRater(c.RATER_MELODY_PITCH_RANGE_WEIGHT));
         subRaters.add(new RepeatedPitchDensityRater(c.RATER_REPEATED_PITCH_DENSITY_WEIGTH));
         subRaters.add(new MelodyRestDensityRater(c.RATER_MELODY_REST_DENSITY_WEIGHT));
+        subRaters.add(new ZipfsLawRater(c.RATER_ZIPFS_LAW_WEIGHT));
         Crossover crossover = new Crossover(c.CROSSOVER_NBR_OF_INTERSECTS);
         crossover.setMinDuration(c.CROSSOVER_MIN_DURATION);
         crossover.setMaxDuration(c.CROSSOVER_MAX_DURATION);
