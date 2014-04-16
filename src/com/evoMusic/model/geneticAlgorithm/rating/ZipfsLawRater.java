@@ -3,11 +3,8 @@ package com.evoMusic.model.geneticAlgorithm.rating;
 import java.util.*;
 
 import jm.music.data.Note;
-
 import com.evoMusic.model.Song;
-import com.evoMusic.model.Track;
 import com.evoMusic.util.Sort;
-import com.evoMusic.util.TrackTag;
 
 public class ZipfsLawRater extends SubRater {
 
@@ -22,8 +19,6 @@ public class ZipfsLawRater extends SubRater {
     
     @Override
     public double rate(Song song) {
-       // Track t = song.getTaggedTracks(TrackTag.MELODY).get(0);
-
         List<List<Note>> sortedNoteList = Sort.getSortedNoteList(song);
         Map<Integer, Integer> pitchOccurances = new HashMap<Integer, Integer>(); 
         
@@ -41,12 +36,17 @@ public class ZipfsLawRater extends SubRater {
         Collection<Integer> values = pitchOccurances.values();
         List<Integer> valuesAsList = new ArrayList<Integer>(values);
         Collections.sort(valuesAsList, Collections.reverseOrder());
-        System.out.println(valuesAsList);
-        plot(valuesAsList);
-        return 0;
+        return calcMedianDiffs(valuesAsList);
     }
-    
-    private void plot(List<Integer> values){
+
+    /**
+     * Calculates the differences in medians between the optimal and our own
+     * Zipf's values.
+     * 
+     * @param values
+     * @return 
+     */
+    private double calcMedianDiffs(List<Integer> values){
         List<Integer> perfValues = new ArrayList<Integer>();
         Integer perfTot = 0;
         Integer tempTot = 0;
@@ -65,17 +65,10 @@ public class ZipfsLawRater extends SubRater {
             tempTot += v;
             perfTot += vPerf;
         }
+        
         tempTot = tempTot / values.size();
         perfTot = perfTot / perfValues.size();
-        System.out.println(perfValues);
-        System.out.println();
-        System.out.println(temp);       
-        System.out.println(perf);
-        System.out.println((double)Math.min(tempTot, perfTot) / (double)Math.max(tempTot, perfTot));
-        
-        System.out.println();
-        System.out.println();
-        System.out.println();
+        return (double) Math.min(tempTot, perfTot) / (double)Math.max(tempTot, perfTot);
     }
 
 }
