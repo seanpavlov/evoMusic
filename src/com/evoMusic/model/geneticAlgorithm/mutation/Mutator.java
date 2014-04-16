@@ -62,22 +62,10 @@ public class Mutator {
      * @param individual
      */
     public void mutate(Song individual) {
-        int nbrOfNotes = 0;
-        try {
-            nbrOfNotes = individual.getTrack(0).getPart().getPhrase(0)
-                    .getNoteArray().length;
-        } catch (Exception e) {
-            System.out.println("Could not mutate " + individual.getTitle());
-        }
-        for (int i = 0; i < nbrOfNotes; i++) {
-            if (!mu.isBlank(individual.getTrack(0).getPart().getPhrase(0)
-                    .getNote(i).getPitch())) {
-                if (Math.random() < currentMutationProbability) {
-                    for (ISubMutator subMutator : subMutators) {
-                        if (Math.random() < subMutator.getProbability()) {
-                            subMutator.mutate(individual, i);
-                        }
-                    }
+        if (Math.random() < currentMutationProbability) {
+            for (ISubMutator subMutator : subMutators) {
+                if (Math.random() < subMutator.getProbability()) {
+                    subMutator.mutate(individual);
                 }
             }
         }

@@ -39,8 +39,7 @@ public class DrCross {
             for (Iterator<Track> it = parent.getTracks().iterator(); 
                     it.hasNext(); ) {
                 Track t = it.next();
-                if (t.getTags().contains(TrackTag.NONE)
-                        || t.getTags().size() == 0) {
+                if (t.getTag() == TrackTag.NONE) {
                     it.remove();
                 }
             }

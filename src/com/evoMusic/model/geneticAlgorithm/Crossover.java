@@ -13,7 +13,6 @@ import com.evoMusic.model.Song;
 import com.evoMusic.model.Track;
 import com.evoMusic.util.TrackTag;
 
-//heii
 public class Crossover {
     private int intersections;
     private Integer maxDuration = null;
@@ -79,8 +78,7 @@ public class Crossover {
      * @return child
      */
     public Song makeCrossover(List<Individual> parents){
-        this.setMaxSilenceLength(randomGen.nextInt(40)+1);
-        this.intersections = randomGen.nextInt(16) + 4;
+        this.setMaxSilenceLength(randomGen.nextInt(20)+1);
         this.setSimplicityLevel(randomGen.nextInt(100)+2);
         
         Score finalScore = new Score();

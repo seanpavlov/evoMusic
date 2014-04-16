@@ -1,9 +1,7 @@
 package com.evoMusic.model;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import jm.JMC;
 import jm.music.data.Note;
@@ -19,7 +17,7 @@ import com.evoMusic.util.TrackTag;
  */
 public class Track {
     private Part songPart;
-    private Set<TrackTag> ttags = new HashSet<>();
+    private TrackTag tag;
     
     /**
      * @param part The tracks Part class
@@ -30,19 +28,18 @@ public class Track {
 
     /**
      * 
-     * @return The set of tags that this track has been tagged with
+     * @return The tag that this track has been tagged with
      */
-    public Set<TrackTag> getTags() {
-        return ttags;
+    public TrackTag getTag(){
+        return tag;
     }
     
     /**
-     * Adds a tag to the set if it doesn't already exist
+     * Adds a tag to this track
      * @param tag Tag to be added
-     * @return true if the tag was added, false otherwise
      */
-    public boolean addTag(TrackTag tag) {
-        return ttags.add(tag);
+    public void addTag(TrackTag tag){
+        this.tag = tag;  
     }
 
     /**
@@ -50,8 +47,9 @@ public class Track {
      * @param tag The tag to look for
      * @return true if it the track has the given tag, false otherwise
      */
-    public boolean hasTag(TrackTag tag) {
-        return ttags.contains(tag);
+    public boolean hasTag(TrackTag tag){
+        return (this.tag == null) ? false :
+                                    this.tag.equals(tag);
     }
     
     /**

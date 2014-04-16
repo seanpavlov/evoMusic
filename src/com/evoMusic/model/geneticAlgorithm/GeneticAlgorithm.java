@@ -56,7 +56,7 @@ public class GeneticAlgorithm {
         addIndividuals(parents, this.firstParents);
         generation = new Generation(firstParents);
         
-//        initiate sub raters weights.
+        //initiate sub raters weights.
         rater.initSubRaterWeights(parents);
 
 

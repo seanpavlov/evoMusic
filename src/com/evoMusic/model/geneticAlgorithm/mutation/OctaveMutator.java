@@ -1,13 +1,16 @@
 package com.evoMusic.model.geneticAlgorithm.mutation;
 
+import java.util.List;
+import java.util.Random;
+
 import jm.music.data.Note;
 
 import com.evoMusic.model.Song;
 import com.evoMusic.util.MidiUtil;
+import com.evoMusic.util.Sort;
 
 public class OctaveMutator extends ISubMutator {
     private int octaveRange;
-    private int nbrOfSteps = 0;
 
     /**
      * Raises or lower the note pitch in steps of octaves.
@@ -26,33 +29,43 @@ public class OctaveMutator extends ISubMutator {
      * Mutate the note with noteIndex of song.
      */
     @Override
-    public void mutate(Song song, int noteIndex) {
-        if (Math.random() < this.getProbability()) {
-            MidiUtil mu = new MidiUtil();
-            Note note = song.getTrack(0).getPart().getPhrase(0)
-                    .getNote(noteIndex);
-            nbrOfSteps = (int) ((Math.random() * octaveRange) + 1);
-            int pitchNbr = note.getPitch();
-            if (mu.canRaiseNote(pitchNbr, MidiUtil.NBR_OF_NOTES * nbrOfSteps)) {
-                if (mu.canLowerNote(pitchNbr, MidiUtil.NBR_OF_NOTES * nbrOfSteps)) {
-                    if (Math.random() < 0.5) {
-                        note.setPitch(pitchNbr - (MidiUtil.NBR_OF_NOTES * nbrOfSteps));
-                    } else {
-                        note.setPitch(pitchNbr + (MidiUtil.NBR_OF_NOTES * nbrOfSteps));
-                    }
-                } else {
-                    note.setPitch(pitchNbr + (MidiUtil.NBR_OF_NOTES * nbrOfSteps));
-                }
-            } else if (mu.canLowerNote(pitchNbr, MidiUtil.NBR_OF_NOTES * nbrOfSteps)) {
-                note.setPitch(pitchNbr - (MidiUtil.NBR_OF_NOTES * nbrOfSteps));
-            }
-            song.getTrack(0).getPart().getPhrase(0).setNote(note, noteIndex);
+    public void mutate(Song individual) {
+        MidiUtil mu = new MidiUtil();
+        Random ra = new Random();
 
+        int nbrOfTracks = individual.getScore().getPartArray().length;
+        for (int track = 0; track < nbrOfTracks; track++) {
+            List<List<Note>> noteList = Sort.getSortedNoteList(individual
+                    .getScore().getPart(track));
+            int nbrOfNotes = noteList.size();
+            for (int currentNoteId = 0; currentNoteId < nbrOfNotes; currentNoteId++) {
+                if (Math.random() < getProbability()) {
+                    List<Note> paralellList = noteList.get(currentNoteId);
+                    int nbrOfParalellNotes = paralellList.size();
+                    int selectedPhrase = ra.nextInt(nbrOfParalellNotes);
+                    Note currentNote = paralellList.get(selectedPhrase);
+                    if (!mu.isBlank(currentNote.getPitch())) {
+                        int nbrOfSteps = mu.NBR_OF_NOTES*((int)(Math.random()*octaveRange));
+                        int pitchNbr = currentNote.getPitch();
+                        if (mu.canRaiseNote(pitchNbr, nbrOfSteps)) {
+                            if (mu.canLowerNote(pitchNbr, nbrOfSteps)) {
+                                if (Math.random() < 0.5) {
+                                    currentNote.setPitch(pitchNbr
+                                            - nbrOfSteps);
+                                } else {
+                                    currentNote.setPitch(pitchNbr
+                                            + nbrOfSteps);
+                                }
+                            } else {
+                                currentNote.setPitch(pitchNbr + nbrOfSteps);
+                            }
+                        } else if (mu.canLowerNote(pitchNbr, nbrOfSteps)) {
+                            currentNote.setPitch(pitchNbr - nbrOfSteps);
+                        }
+                    }
+                }
+            }
         }
-    }
-    
-    public int getNbrOfSteps(){
-        return nbrOfSteps;
     }
     
     public int getOctaveRange(){
