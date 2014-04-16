@@ -35,9 +35,8 @@ public class SimplifyMutatorTest {
     }
     
     @Test
-    public void mutationsWithinRange(){
+    public void simplifyTest(){
         boolean testIsOkay = true;
-        int stepRange = 2;
         SimplifyMutator sm = new SimplifyMutator(1);
         sm.mutate(mutatedSong);
         int nbrOfTracks = originSong.getScore().getSize();
