@@ -6,12 +6,10 @@ import java.util.Random;
 import jm.music.data.Note;
 
 import com.evoMusic.model.Song;
-import com.evoMusic.model.Translator;
 import com.evoMusic.util.MidiUtil;
 import com.evoMusic.util.Sort;
 
 public class RandomNoteMutator extends ISubMutator {
-    private int halfStepRange;
     private double[] probabilityList;
 
     /**
@@ -25,7 +23,6 @@ public class RandomNoteMutator extends ISubMutator {
      */
     public RandomNoteMutator(double mutationProbability, int halfStepRange) {
         super(mutationProbability);
-        this.halfStepRange = halfStepRange;
         probabilityList = new double[halfStepRange];
         double sum = 0;
         double temp = 0;
