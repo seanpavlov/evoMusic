@@ -6,6 +6,7 @@ import java.util.Random;
 import jm.music.data.Note;
 
 import com.evoMusic.model.Song;
+import com.evoMusic.model.Translator;
 import com.evoMusic.util.MidiUtil;
 import com.evoMusic.util.Sort;
 
