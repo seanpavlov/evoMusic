@@ -1,14 +1,14 @@
 package com.evoMusic.model.geneticAlgorithm.mutation;
 
+import java.util.List;
+import java.util.Random;
+
 import jm.music.data.Note;
 import com.evoMusic.model.*;
 import com.evoMusic.util.MidiUtil;
+import com.evoMusic.util.Sort;
 
 public class SimplifyMutator extends ISubMutator {
-
-    private int nbrOfPastNeighbours;
-    private double neighbourProbability;
-    
 
     /**
      * Mutate so that past neighboring notes will have the same pitch as the
@@ -21,34 +21,27 @@ public class SimplifyMutator extends ISubMutator {
      * @param neighbourProbability
      *            is the probability of the specific neighbor to the mutated.
      */
-    public SimplifyMutator(double mutationProbability, int nbrOfPastNeighbours,
-            double neighbourProbability) {
+    public SimplifyMutator(double mutationProbability) {
         super(mutationProbability);
-        this.nbrOfPastNeighbours = nbrOfPastNeighbours;
-        this.neighbourProbability = neighbourProbability;
     }
 
     /**
      * Mutate the note with noteIndex of song.
      */
     @Override
-    public void mutate(Song song, int noteIndex) {
-        if (Math.random() < this.getProbability()) {
-            Note note = song.getTrack(0).getPart().getPhrase(0).getNote(noteIndex);
-            MidiUtil mu = new MidiUtil();
-            int currentNoteIndex = noteIndex - 1;
-            if(currentNoteIndex >= 0){
-                noteIteration: for (int i = 0; i < nbrOfPastNeighbours; i++) {
-                    while (mu.isBlank(song.getTrack(0).getPart().getPhrase(0).getNote(currentNoteIndex).getPitch()) && currentNoteIndex > 0) {
-                        currentNoteIndex--;
-                    }
-                    if (currentNoteIndex < 0) {
-                        break noteIteration;
-                    } else {
-                        if (Math.random() < neighbourProbability) {
-                            song.getTrack(0).getPart().getPhrase(0)
-                                    .getNote(currentNoteIndex)
-                                    .setPitch(note.getPitch());
+    public void mutate(Song individual) {
+        MidiUtil mu = new MidiUtil();
+
+        int nbrOfTracks = individual.getScore().getPartArray().length;
+        for (int track = 0; track < nbrOfTracks; track++) {
+            int nbrOfPhrases = individual.getScore().getPart(track).getPhraseArray().length;
+            for(int phrase = 0; phrase < nbrOfPhrases; phrase++){
+                int nbrOfNotes = individual.getScore().getPart(track).getPhrase(phrase).getNoteArray().length;
+                for(int note = 1; note < nbrOfNotes; note++){
+                    if(Math.random() < getProbability()){
+                        Note currentNote = individual.getScore().getPart(track).getPhrase(phrase).getNote(note);
+                        if(!mu.isBlank(currentNote.getPitch())){
+                            individual.getScore().getPart(track).getPhrase(phrase).getNote(note-1).setPitch(currentNote.getPitch());
                         }
                     }
                 }

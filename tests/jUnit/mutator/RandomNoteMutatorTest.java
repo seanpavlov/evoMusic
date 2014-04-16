@@ -1,29 +1,19 @@
 package jUnit.mutator;
 
-import static org.junit.Assert.assertTrue;
-import jUnit.Helpers;
-import jm.music.data.Note;
-import jm.music.data.Part;
-
-import org.junit.Before;
 import org.junit.Test;
 
-import com.evoMusic.model.Song;
-import com.evoMusic.model.Translator;
-import com.evoMusic.model.geneticAlgorithm.mutation.RandomNoteMutator;
-import com.evoMusic.util.MidiUtil;
-import com.evoMusic.util.TrackTag;
+
 
 public class RandomNoteMutatorTest {
 
-    Song testSong;
+    //Song testSong;
 
     /**
      * Make sure that we always have a fresh working song instance to work with
      * before each test.
      * 
      */
-    @Before
+    /*@Before
     public void setUpSong() {
         testSong = Helpers.createTestSong();
     }
@@ -51,8 +41,9 @@ public class RandomNoteMutatorTest {
         assertTrue("Old Pitch: " + oldPitch + "\nNewPitch: " + newPitch,
                 newPitch <= oldPitch + testRange
                         && newPitch >= oldPitch - testRange);
-    }
+    }*/
 
+    @Test
     public void testDecreasingProbability() {
 
     }

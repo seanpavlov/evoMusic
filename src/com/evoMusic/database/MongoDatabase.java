@@ -110,13 +110,9 @@ public class MongoDatabase implements IDatabase {
         // array index is the same as track index
         // the tracks that are not used are stores as well
         for (int i = 0; i < nbrOfTracks; i++) {
-            //Build tag list for track
-            BasicDBList tags = new BasicDBList();
-            for(TrackTag tag : song.getTrackTags(i)){
-                tags.add(DBEnum.of(tag));
-                
-            }
-            tracks.add(tags);
+            TrackTag tag = song.getTrackTag(i);
+            if(tag != null)
+                tracks.add(DBEnum.of(tag));
         }
         return tracks;
     }
@@ -145,12 +141,18 @@ public class MongoDatabase implements IDatabase {
         int i = 0;
         for (Iterator<Object> trackTagIt = mongoTrackTags.iterator(); trackTagIt
                 .hasNext(); i++) {
-            //Mongo basicdblist containing tracktags for track
-            final BasicDBList trackTags = (BasicDBList) trackTagIt.next();
-            //Add every tracktag to trackindex i in song
-            for(Object enumT : trackTags){
-                song.addTagToTrack(i, DBEnum.to(TrackTag.class, enumT));
-            }
+      
+            final DBObject tag = (DBObject)trackTagIt.next();
+            
+            /**Handle older version of database where tracks had a list of tracktags*/
+            if(tag instanceof BasicDBList){
+                final BasicDBList trackTag = (BasicDBList)tag;
+                song.addTagToTrack(i, DBEnum.to(TrackTag.class,trackTag.get(0)));
+            }else if(tag instanceof BasicDBObject){
+                /**Newer version only have one tracktag per track*/
+                final BasicDBObject trackTag = (BasicDBObject)tag;
+                song.addTagToTrack(i, DBEnum.to(TrackTag.class, trackTag));
+            }     
         }
         // set all user tags
         final List<String> userTags = new ArrayList<String>();

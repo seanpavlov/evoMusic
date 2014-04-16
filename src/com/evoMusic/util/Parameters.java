@@ -18,12 +18,12 @@ public class Parameters {
     /*
      * MUTATION PARAMETERS
      */
-    public double MUTATION_INITIAL_PROBABILITY = 0.3;
-    public double MUTATION_MINIMUM_PROBABILITY = 0.05;
-    public double MUTATION_PROBABILITY_RATIO = 0.01;
+    public double MUTATION_INITIAL_PROBABILITY = 0.05;
+    public double MUTATION_MINIMUM_PROBABILITY = 0.0001;
+    public double MUTATION_PROBABILITY_RATIO = 0.0005;
 
-    public double MUTATOR_RANDOM_NOTE_PROBABILITY = 1;
-    public int MUTATOR_RANDOM_NOTE_STEP_RANGE = 12;
+    public double MUTATOR_RANDOM_NOTE_PROBABILITY = 0.1;
+    public int MUTATOR_RANDOM_NOTE_STEP_RANGE = 6;
 
     public double MUTATOR_OCTAVE_PROBABILITY = 0;
     public int MUTATOR_OCTAVE_RANGE = 1;
@@ -36,24 +36,32 @@ public class Parameters {
     public double MUTATOR_SCALE_OF_FIFTH_PROBABILITY = 0;
     public int MUTATOR_SCALE_OF_FIFTH_RANGE = 3;
 
-    public double MUTATOR_SIMPLIFY_PROBABILITY = 0;
+    public double MUTATOR_SIMPLIFY_PROBABILITY = 0.1;
     public int MUTATOR_SIMPLIFY_NBR_OF_NEIGHBORS = 4;
-    public double MUTATOR_SIMPLIFY_NEIGHBOR_PROBABILITY = 0.1;
+    public double MUTATOR_SIMPLIFY_NEIGHBOR_PROBABILITY = 0.5;
 
     /*
      * RATING PARAMETERS
      */
-    public double RATER_MELODY_REPETITION_WEIGHT = 1;
-    public double RATER_BEAT_REPETITION_WEIGHT = 1;
-    public double RATER_CHORD_REPETITION_WEIGHT = 1;
+    public double RATER_MELODY_REPETITION_WEIGHT = 0.5;
+    public double RATER_BEAT_REPETITION_WEIGHT = 0.5;
+    public double RATER_CHORD_REPETITION_WEIGHT = 0.5;
     public double RATER_SCALE_WEIGHT = 1;
     public double RATER_CRAZY_OCTAVE_WEIGHT = 1;
     public double RATER_MELODY_DIRECTION_WEIGHT = 1;
+    public double RATER_PITCH_VARIETY_WEIGHT = 1;
+    public double RATER_PITCH_DIRECTION_WEIGHT = 1;
+    public double RATER_MELODY_NOTE_DENSITY_WEIGHT = 1;
+    public double RATER_RHYTHMIC_VARIETY_WEIGHT = 1;
+    public double RATER_NO_SILENCE_WEIGHT = 1;
+    public double RATER_MELODY_PITCH_RANGE_WEIGHT = 1;
+    public double RATER_REPEATED_PITCH_DENSITY_WEIGTH = 1;
+    public double RATER_MELODY_REST_DENSITY_WEIGHT = 1;
 
     /*
      * CROSSOVER PARAMETERS
      */
-    public int CROSSOVER_NBR_OF_INTERSECTS = 4;
+    public int CROSSOVER_NBR_OF_INTERSECTS = 1;
     public int CROSSOVER_MIN_DURATION = 50;
     public int CROSSOVER_MAX_DURATION = 200;
 

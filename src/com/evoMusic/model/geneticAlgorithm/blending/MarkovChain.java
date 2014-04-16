@@ -76,12 +76,8 @@ public class MarkovChain {
         // Finding all track tags.
         for (Song song : songList) {
             for (Track track : song.getTracks()) {
-                tagIterator = track.getTags().iterator();
-                while (tagIterator.hasNext()) {
-                    currentTag = tagIterator.next();
-                    if (currentTag != TrackTag.NONE) {
-                        allTrackTags.add(currentTag);
-                    }
+                if (track.getTag() == TrackTag.NONE) {
+                    allTrackTags.add(track.getTag());
                 }
             }
         }
@@ -100,7 +96,7 @@ public class MarkovChain {
                 Song song = songList.get(songIndex);
                 boolean foundTrack = false;
                 for (Track track : song.getTracks()) {
-                    if (track.getTags().contains(currentTag)) {
+                    if (track.getTag() == currentTag) {
                         trimmedSongs.get(songIndex).addTrack(track);
                         foundTrack = true;
                     }
