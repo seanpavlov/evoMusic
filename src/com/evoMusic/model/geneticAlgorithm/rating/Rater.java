@@ -87,6 +87,7 @@ public class Rater {
                 rating += subRater.rate(s);
             }
             rating = rating / songs.size();
+            System.out.println(subRater.toString() + ": " + rating);
             subRater.setWeight(rating);
         }
     }
