@@ -1,5 +1,8 @@
 package jUnit.rater;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.BeforeClass;
 import org.junit.Test;
 import com.evoMusic.database.MongoDatabase;
@@ -14,14 +17,17 @@ public class ZipfsLawRaterTest {
     @BeforeClass
     public static void setUp(){
         rater = new ZipfsLawRater(1.0);
-        goodSong = MongoDatabase.getInstance().retrieveSongs().get(4);
+        goodSong = MongoDatabase.getInstance().retrieveSongs().get(0);
         badSong = MongoDatabase.getInstance().retrieveSongs().get(5);
         
     }
     
     @Test
     public void test() {
-        rater.rate(goodSong);
+        List<Song> songs = MongoDatabase.getInstance().retrieveSongs();
+        for (int x = 0; x < songs.size(); x++){
+            rater.rate(songs.get(x));
+        }
     }
 
 }

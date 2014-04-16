@@ -40,18 +40,19 @@ public class ZipfsLawRater extends SubRater {
         
         Collection<Integer> values = pitchOccurances.values();
         List<Integer> valuesAsList = new ArrayList<Integer>(values);
-        Collections.sort(valuesAsList);
+        Collections.sort(valuesAsList, Collections.reverseOrder());
         System.out.println(valuesAsList);
-        plot(valuesAsList.get(valuesAsList.size()-1), valuesAsList.size());
+        plot(valuesAsList);
         return 0;
     }
     
-    private void plot(int largest, int length){
-        List<Integer> values = new ArrayList<Integer>();
-        for (int x = length; x >= 1; x--){
-            values.add(largest / x);
+    private void plot(List<Integer> values){
+        List<Integer> temp = new ArrayList<Integer>();
+        for (int x = 0; x < values.size(); x++){
+            temp.add((x+1) * values.get(x));
         }
-        System.out.println(values);
+        System.out.println(temp);
+        System.out.println();
     }
 
 }
