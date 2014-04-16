@@ -22,9 +22,10 @@ public class ZipfsLawRater extends SubRater {
         List<List<Note>> sortedNoteList = Sort.getSortedNoteList(song);
         Map<Integer, Integer> pitchOccurances = new HashMap<Integer, Integer>(); 
         
+        /**Sort note pitches by which octave they belong to*/
         for (List<Note> notes : sortedNoteList){
             for (Note n : notes){
-                int pitchModOctave = n.getPitch() % 12;
+                int pitchModOctave = n.getPitch()% 12;
                 if (pitchOccurances.containsKey(pitchModOctave)){
                     pitchOccurances.put(pitchModOctave, pitchOccurances.get(pitchModOctave)+1);
                 } else {
@@ -32,9 +33,8 @@ public class ZipfsLawRater extends SubRater {
                 }
             }
         }
-        
-        Collection<Integer> values = pitchOccurances.values();
-        List<Integer> valuesAsList = new ArrayList<Integer>(values);
+        /**Sort pitch occurences in descending order*/
+        List<Integer> valuesAsList = new ArrayList<Integer>(pitchOccurances.values());
         Collections.sort(valuesAsList, Collections.reverseOrder());
         return calcMedianDiffs(valuesAsList);
     }
@@ -47,28 +47,33 @@ public class ZipfsLawRater extends SubRater {
      * @return 
      */
     private double calcMedianDiffs(List<Integer> values){
-        List<Integer> perfValues = new ArrayList<Integer>();
-        Integer perfTot = 0;
-        Integer tempTot = 0;
-        List<Integer> temp = new ArrayList<Integer>();
-        List<Integer> perf = new ArrayList<Integer>();
+        /**Zipf values calculated from highest ranking pitch*/
+        List<Integer> perfectZipfValues = new ArrayList<Integer>();
+        /**Variables to hold total of all Zipf values*/
+        double perfectZipfTotal = 0;
+        double zipfTotal = 0;
+        /**List to hold calculated C variable from Zipf's law*/
+        List<Integer> zipfVariableValues = new ArrayList<Integer>();
+        List<Integer> zipfPerfectVariableValues = new ArrayList<Integer>();
         
+        /*Calculate perfect zipf values from highest ranking value**/
         for (int x = 0; x < values.size(); x++){
-            perfValues.add(values.get(0) / (x+1));
+            perfectZipfValues.add(values.get(0) / (x+1));
         }
         
+        /**Calculate C variable from Zipf's law and total amount*/
         for (int x = 0; x < values.size(); x++){
             Integer v = (x+1) * values.get(x);
-            Integer vPerf = (x+1) * perfValues.get(x);
-            temp.add(v);
-            perf.add(vPerf);
-            tempTot += v;
-            perfTot += vPerf;
+            Integer vPerf = (x+1) * perfectZipfValues.get(x);
+            zipfVariableValues.add(v);
+            zipfPerfectVariableValues.add(vPerf);
+            zipfTotal += v;
+            perfectZipfTotal += vPerf;
         }
-        
-        tempTot = tempTot / values.size();
-        perfTot = perfTot / perfValues.size();
-        return (double) Math.min(tempTot, perfTot) / (double)Math.max(tempTot, perfTot);
+        /**Calculate median for perfect and current zipf values*/
+        double medianZipf = zipfTotal / values.size();
+        double medianPerfectzipf = perfectZipfTotal / perfectZipfValues.size();
+        return Math.min(medianZipf, medianPerfectzipf) / Math.max(medianZipf, medianPerfectzipf);
     }
 
 }
