@@ -17,6 +17,7 @@ import jUnit.rater.NoSilenceRaterTest;
 import jUnit.rater.PitchVarietyRaterTest;
 import jUnit.rater.RhythmVarietyRaterTest;
 import jUnit.rater.ScaleWhizzTest;
+import jUnit.rater.ZipfsLawRaterTest;
 import jUnit.translator.TranslatorTest;
 
 import org.junit.runner.RunWith;
@@ -47,6 +48,7 @@ import org.junit.runners.Suite.SuiteClasses;
     RhythmVarietyRaterTest.class,
     MelodyNoteDensityRaterTest.class,
     MelodyPitchRangeRaterTest.class,
+    ZipfsLawRaterTest.class,
     
     /*
      * Mutators

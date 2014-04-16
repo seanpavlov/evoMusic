@@ -31,6 +31,7 @@ import com.evoMusic.model.geneticAlgorithm.rating.Rater;
 import com.evoMusic.model.geneticAlgorithm.rating.RhythmicVarietyRater;
 import com.evoMusic.model.geneticAlgorithm.rating.ScaleWhizz;
 import com.evoMusic.model.geneticAlgorithm.rating.SubRater;
+import com.evoMusic.model.geneticAlgorithm.rating.ZipfsLawRater;
 import com.evoMusic.util.Parameters;
 import com.google.common.collect.Sets;
 
@@ -76,6 +77,7 @@ public class GenerateCommand extends AbstractCommand {
         subRaters.add(new RhythmicVarietyRater(c.RATER_RHYTHMIC_VARIETY_WEIGHT));
         subRaters.add(new NoSilenceRater(c.RATER_NO_SILENCE_WEIGHT));
         subRaters.add(new MelodyPitchRangeRater(c.RATER_MELODY_PITCH_RANGE_WEIGHT));
+        subRaters.add(new ZipfsLawRater(c.RATER_ZIPFS_LAW_WEIGHT));
         Crossover crossover = new Crossover(c.CROSSOVER_NBR_OF_INTERSECTS);
         crossover.setMinDuration(c.CROSSOVER_MIN_DURATION);
         crossover.setMaxDuration(c.CROSSOVER_MAX_DURATION);
