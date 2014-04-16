@@ -167,7 +167,6 @@ public class MarkovChain {
                         (int) (rand.nextDouble() * numberOfSongs)).getTrack(
                         trackIndex);
                 chosenTrackIsEmpty = randomTrack.getIntervals().length == 0;
-                System.out.println(chosenTrackIsEmpty);
             }
             
             newSong.addTrack(markovTracks.get(trackIndex).generateNew(
