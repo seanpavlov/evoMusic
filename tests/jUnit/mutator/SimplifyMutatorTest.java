@@ -1,66 +1,64 @@
 package jUnit.mutator;
 
+import static org.junit.Assert.assertTrue;
+
+import org.junit.Before;
 import org.junit.Test;
+
+import com.evoMusic.model.Song;
+import com.evoMusic.model.Translator;
+import com.evoMusic.model.geneticAlgorithm.mutation.SimplifyMutator;
+import com.evoMusic.util.MidiUtil;
 
 
 
 public class SimplifyMutatorTest {
 
-    //Song testSong;
+    Song originSong;
+    Song mutatedSong;
+    MidiUtil mu;
 
     /**
      * Make sure that we always have a fresh working song instance to work with
      * before each test.
      * 
      */
-    /* @Before
+    @Before
     public void setUpSong() {
-        testSong = Helpers.createTestSong();
-    }*/
+        originSong = Translator.INSTANCE.loadMidiToSong("midifiles/test_piano.mid");
+        mutatedSong = Translator.INSTANCE.loadMidiToSong("midifiles/test_piano.mid");
+    }
+    
+    @Before
+    public void setUpUtil(){
+        mu = new MidiUtil();
+    }
     
     @Test
-    public void testSimplify(){
-       /* MidiUtil mu = new MidiUtil();
-        int testRange = 2;
-        int nbrOfTestings = 1000;
-        Note[] notes = testSong.getTrack(0).getPart().getPhrase(0).getNoteArray();
-        int nbrOfNotes = notes.length;
-        int nbrOfNeighbours = 0;
-        int candidateIndex = 0;
-        int breakedIndex = 0;
-        boolean breakedRule = false;
-        boolean reachedEnd = false;
-        for(int i = 0; i < nbrOfTestings; i++){
-            breakedRule = false;
-            reachedEnd = false;
-            nbrOfNeighbours = (int)(Math.random()*4)+1;
-            SimplifyMutator sm = new SimplifyMutator(1, nbrOfNeighbours, 1);
-            findCandidate: for(int j = 0; j < nbrOfNotes; j++){
-                if(notes[j].getPitch() >= 0){
-                    candidateIndex = j;
-                    sm.mutate(testSong, j);
-                    break findCandidate;
-                }
-            }
-            int nbrOfPassed = 0;
-            untilBreak: for(int k = candidateIndex; k >= 0; k--){
-                if(notes[k].getPitch() == notes[candidateIndex].getPitch()){
-                    nbrOfPassed++;
-                }else if(!mu.isBlank(notes[k].getPitch())){
-                    breakedRule = true;
-                    breakedIndex = k;
-                    break untilBreak;
-                }
-                if(k == 0){
-                    reachedEnd = true;
-                }
-            }
-            if(!reachedEnd){
-                if(nbrOfPassed == nbrOfNeighbours){
-                    breakedRule = true;
+    public void mutationsWithinRange(){
+        boolean testIsOkay = true;
+        int stepRange = 2;
+        SimplifyMutator sm = new SimplifyMutator(1);
+        sm.mutate(mutatedSong);
+        int nbrOfTracks = originSong.getScore().getSize();
+        int originPitch = 0;
+        int mutatedPitch = 0;
+        for(int track = 0; track < nbrOfTracks; track++){
+            int nbrOfPhrases = originSong.getScore().getPart(track).getSize();
+            for(int phrase = 0; phrase < nbrOfPhrases; phrase++){
+                int nbrOfNotes = originSong.getScore().getPart(track).getPhrase(phrase).getSize();
+                for(int note = 0; note < nbrOfNotes-1; note++){
+                    originPitch = originSong.getScore().getPart(track).getPhrase(phrase).getNote(note).getPitch();
+                    mutatedPitch = mutatedSong.getScore().getPart(track).getPhrase(phrase).getNote(note).getPitch();
+                    if(originPitch != mutatedPitch){
+                        int nextNotePitch = originSong.getScore().getPart(track).getPhrase(phrase).getNote(note+1).getPitch(); 
+                        if(nextNotePitch != mutatedPitch){
+                            testIsOkay = false;
+                        }
+                    }
                 }
             }
         }
-        assertTrue("Note to be copied: " + notes[candidateIndex] + "\tPitch: " + notes[candidateIndex].getPitch() + "\nNote that differed: " + notes[breakedIndex] + "\tPitch: " + notes[breakedIndex].getPitch(), !breakedRule);*/
+        assertTrue("Original pitch:\t" + originPitch + "\nMutated Pitch:\t" + mutatedPitch, testIsOkay);
     }
 }
