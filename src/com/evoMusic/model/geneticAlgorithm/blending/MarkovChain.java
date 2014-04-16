@@ -76,7 +76,7 @@ public class MarkovChain {
         // Finding all track tags.
         for (Song song : songList) {
             for (Track track : song.getTracks()) {
-                if (track.getTag() == TrackTag.NONE) {
+                if (!(track.getTag() == TrackTag.NONE)) {
                     allTrackTags.add(track.getTag());
                 }
             }
@@ -109,6 +109,7 @@ public class MarkovChain {
                 }
             }
         }
+        System.out.println(trimmedSongs.get(0).getNbrOfTracks());
         return trimmedSongs;
 
     }
