@@ -56,6 +56,7 @@ public class Parameters {
     public double RATER_NO_SILENCE_WEIGHT = 1;
     public double RATER_MELODY_PITCH_RANGE_WEIGHT = 1;
     public double RATER_REPEATED_PITCH_DENSITY_WEIGTH = 1;
+    public double RATER_MELODY_REST_DENSITY_WEIGHT = 1;
 
     /*
      * CROSSOVER PARAMETERS

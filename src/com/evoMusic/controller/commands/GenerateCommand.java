@@ -25,6 +25,7 @@ import com.evoMusic.model.geneticAlgorithm.rating.MelodyDirectionStabilityRater;
 import com.evoMusic.model.geneticAlgorithm.rating.MelodyNoteDensityRater;
 import com.evoMusic.model.geneticAlgorithm.rating.MelodyPitchRangeRater;
 import com.evoMusic.model.geneticAlgorithm.rating.MelodyRepetionRater;
+import com.evoMusic.model.geneticAlgorithm.rating.MelodyRestDensityRater;
 import com.evoMusic.model.geneticAlgorithm.rating.NoSilenceRater;
 import com.evoMusic.model.geneticAlgorithm.rating.PitchVarietyRater;
 import com.evoMusic.model.geneticAlgorithm.rating.Rater;
@@ -78,6 +79,7 @@ public class GenerateCommand extends AbstractCommand {
         subRaters.add(new NoSilenceRater(c.RATER_NO_SILENCE_WEIGHT));
         subRaters.add(new MelodyPitchRangeRater(c.RATER_MELODY_PITCH_RANGE_WEIGHT));
         subRaters.add(new RepeatedPitchDensityRater(c.RATER_REPEATED_PITCH_DENSITY_WEIGTH));
+        subRaters.add(new MelodyRestDensityRater(c.RATER_MELODY_REST_DENSITY_WEIGHT));
         Crossover crossover = new Crossover(c.CROSSOVER_NBR_OF_INTERSECTS);
         crossover.setMinDuration(c.CROSSOVER_MIN_DURATION);
         crossover.setMaxDuration(c.CROSSOVER_MAX_DURATION);
