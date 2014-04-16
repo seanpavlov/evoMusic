@@ -1,64 +1,67 @@
 package jUnit.mutator;
 
+import static org.junit.Assert.*;
+
+import org.junit.Before;
 import org.junit.Test;
+
+import com.evoMusic.model.Song;
+import com.evoMusic.model.Translator;
+import com.evoMusic.model.geneticAlgorithm.mutation.OctaveMutator;
+import com.evoMusic.util.MidiUtil;
 
 
 
 public class OctaveMutatorTest {
 
-    //Song testSong;
+    Song originSong;
+    Song mutatedSong;
+    MidiUtil mu;
 
     /**
      * Make sure that we always have a fresh working song instance to work with
      * before each test.
      * 
      */
-    /*@Before
+    @Before
     public void setUpSong() {
-        testSong = Helpers.createTestSong();
-    }*/
-    
-    @Test
-    public void testRangeWithinRange(){
-       /* int testRange = 2;
-        Note[] notes = testSong.getTrack(0).getPart().getPhrase(0).getNoteArray();
-        boolean breakedRule = false;
-        int thisStep = 0;
-        repeatedTest: for(int j = 0; j < 1000; j++){
-            int nbrOfNotes = notes.length;
-            OctaveMutator om = new OctaveMutator(1, testRange);
-            findCandidate: for(int i = 0; i < nbrOfNotes; i++){
-                if(notes[i].getPitch() >= 0){
-                    om.mutate(testSong, i);
-                    break findCandidate;
-                }
-            }
-            thisStep = om.getNbrOfSteps();
-            if(om.getNbrOfSteps() > testRange || om.getNbrOfSteps() <= 0){
-                breakedRule = true;
-                break repeatedTest;
-            }
-        }
-        assertTrue("Given range: " + testRange + "\nGenerated Range: " + thisStep, !breakedRule);*/
+        originSong = Translator.INSTANCE.loadMidiToSong("midifiles/test_piano.mid");
+        mutatedSong = Translator.INSTANCE.loadMidiToSong("midifiles/test_piano.mid");
     }
     
-   /* @Test
-    public void testOctave(){
-        Note[] notes = testSong.getTrack(0).getPart().getPhrase(0).getNoteArray();
-        int nbrOfNotes = notes.length;
-        OctaveMutator om = new OctaveMutator(1, 2);
-        int oldPitch = 0;
-        int newPitch = 0;
-        findCandidate: for(int i = 0; i < nbrOfNotes; i++){
-            if(notes[i].getPitch() >= 0){
-                oldPitch = notes[i].getPitch();
-                om.mutate(testSong, i);
-                newPitch = testSong.getTrack(0).getPart().getPhrase(0).getNoteArray()[i].getPitch();
-                break findCandidate;
+    @Before
+    public void setUpUtil(){
+        mu = new MidiUtil();
+    }
+    
+    @Test
+    public void mutationsWithinRange(){
+        boolean testIsOkay = true;
+        int stepRange = 2;
+        OctaveMutator om = new OctaveMutator(1, stepRange);
+        om.mutate(mutatedSong);
+        int nbrOfTracks = originSong.getScore().getSize();
+        int originPitch = 0;
+        int mutatedPitch = 0;
+        for(int track = 0; track < nbrOfTracks; track++){
+            int nbrOfPhrases = originSong.getScore().getPart(track).getSize();
+            for(int phrase = 0; phrase < nbrOfPhrases; phrase++){
+                int nbrOfNotes = originSong.getScore().getPart(track).getPhrase(phrase).getSize();
+                for(int note = 0; note < nbrOfNotes; note++){
+                    originPitch = originSong.getScore().getPart(track).getPhrase(phrase).getNote(note).getPitch();
+                    mutatedPitch = mutatedSong.getScore().getPart(track).getPhrase(phrase).getNote(note).getPitch();
+                    if(originPitch%12 == mutatedPitch%12){
+                        if(mu.getNotePitch(mutatedPitch) <= mu.getNotePitch(originPitch)+stepRange && mu.getNotePitch(mutatedPitch) >= mu.getNotePitch(originPitch)-stepRange){
+                            
+                        }else{
+                            testIsOkay = false;
+                        }
+                    }else{
+                        testIsOkay = false;
+                    }
+                }
             }
         }
-        assertTrue("Old Pitch:\t" + oldPitch + "\nOld Pitch(mod12):\t" + oldPitch%12 +
-                "\nNew Pitch:\t" + newPitch + "\nNew Pitch(mod12):\t" + newPitch%12, oldPitch%12 == newPitch%12);
-    }*/
-
+        assertTrue("Original pitch:\t" + originPitch + "\nMutated Pitch:\t" + mutatedPitch, testIsOkay);
+    }
 }
