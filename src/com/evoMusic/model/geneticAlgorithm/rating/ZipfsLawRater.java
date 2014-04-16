@@ -29,19 +29,29 @@ public class ZipfsLawRater extends SubRater {
         
         for (List<Note> notes : sortedNoteList){
             for (Note n : notes){
-                if (pitchOccurances.containsKey(n.getPitch())){
-                    pitchOccurances.put(n.getPitch(), pitchOccurances.get(n.getPitch())+1);
+                int pitchModOctave = n.getPitch() % 12;
+                if (pitchOccurances.containsKey(pitchModOctave)){
+                    pitchOccurances.put(pitchModOctave, pitchOccurances.get(pitchModOctave)+1);
                 } else {
-                    pitchOccurances.put(n.getPitch(), 1);
+                    pitchOccurances.put(pitchModOctave, 1);
                 }
             }
         }
+        
         Collection<Integer> values = pitchOccurances.values();
         List<Integer> valuesAsList = new ArrayList<Integer>(values);
         Collections.sort(valuesAsList);
         System.out.println(valuesAsList);
-        
+        plot(valuesAsList.get(valuesAsList.size()-1), valuesAsList.size());
         return 0;
+    }
+    
+    private void plot(int largest, int length){
+        List<Integer> values = new ArrayList<Integer>();
+        for (int x = length; x >= 1; x--){
+            values.add(largest / x);
+        }
+        System.out.println(values);
     }
 
 }

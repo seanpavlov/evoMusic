@@ -14,15 +14,14 @@ public class ZipfsLawRaterTest {
     @BeforeClass
     public static void setUp(){
         rater = new ZipfsLawRater(1.0);
-        goodSong = MongoDatabase.getInstance().retrieveSongs().get(0);
-        badSong = MongoDatabase.getInstance().retrieveSongs().get(1);
+        goodSong = MongoDatabase.getInstance().retrieveSongs().get(4);
+        badSong = MongoDatabase.getInstance().retrieveSongs().get(5);
         
     }
     
     @Test
     public void test() {
         rater.rate(goodSong);
-        rater.rate(badSong);
     }
 
 }
