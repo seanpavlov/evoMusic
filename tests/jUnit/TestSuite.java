@@ -24,7 +24,8 @@ import org.junit.runners.Suite.SuiteClasses;
     CrossoverTest.class, 
     GenerationTest.class,
     SongTest.class,
-//    GeneticAlgorithmTest.class,
+    TrackTest.class,
+    GeneticAlgorithmTest.class,
     
     /*
      * Raters

@@ -1,13 +1,16 @@
 package jUnit;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.util.List;
-import jm.music.data.Part;
+
 import org.junit.Before;
 import org.junit.Test;
+
 import com.evoMusic.model.Song;
 import com.evoMusic.model.Track;
-import com.evoMusic.model.Translator;
+import com.evoMusic.util.TrackTag;
 
 public class TrackTest {
     Song testSong;
@@ -19,45 +22,37 @@ public class TrackTest {
         testTrack = testSong.getTrack(0);
     }
     
-//    @Test
-    public void testGetSegment() {
-        Track t = testTrack.getSegment(12, 4);
-        Translator.INSTANCE.showPart(t.getPart());
-        Translator.INSTANCE.playPart(t.getPart());
-        System.out.println(t.getPart().getEndTime());
-        fail("Not yet implemented");
-    }
-    
-//    @Test
-    public void testGetSegments() {
-        List<Track> t = testTrack.getSegments(20);
-        
-        for (Track tr : t){
-            Translator.INSTANCE.showPart(tr.getPart());
-        }
-       
-        int i = 16;
-        Translator.INSTANCE.showPart(t.get(8).getPart());
-        Translator.INSTANCE.playPart(t.get(8).getPart());
-        
-        fail("Not yet implemented");
-    }
-    
-    @Test
-    public void test() {
-        Track trackOriginal = Helpers.createSongWithMelody(
-                new int[] { 8 + 12 * 4, 8 + 12 * 4, 8 + 12 * 4, 8 + 12 * 4 })
-                .getTrack(0);
-        Track trackInsert = Helpers.createSongWithMelody(
-                new int[] { 0 + 12 * 4, 1 + 12 * 4, 2 + 12 * 4, 3 + 12 * 4 })
-                .getTrack(0);
 
-        Track newTrack = new Track(new Part());
+    @Test
+    public void testGetSegment() {
+        Track t1 = testTrack.getSegment(0, 4);
+        Track t2 = testTrack.getSegment(4, 8);
+
+        assertTrue("Track segment must be of length 4", t1.getPart().getEndTime()  == 4.0);
+        assertTrue("Track segment must be of length 4", t2.getPart().getEndTime()  == 8.0);
+    }
+
+    @Test
+    public void testAddTag() {
+        testTrack.addTag(TrackTag.BASELINE);
+        assertTrue("Track must have tracktag", testTrack.hasTag(TrackTag.BASELINE));
+    }
+
+    @Test
+    public void testInsertLength() {
+        Track t1 = testTrack.getSegment(0, 4);
+        Track t2 = testTrack.getSegment(4, 8);
+        t2.insert(t1, 4);
+
+        assertEquals(12.0, t2.getPart().getEndTime(), 0.00001);
+    }
+
+    @Test
+    public void testGetSegmentsLength() {
+        List<Track> segments = testTrack.getSegments(4);
         
-        newTrack.merge(trackOriginal, 4);
-        newTrack.merge(trackInsert, 0);
-        newTrack.insert(trackInsert, 4);
-        newTrack.printRoll();
-        newTrack.getSegment(2, 4).printRoll();;
+        for (Track track : segments){
+            assertEquals(4.0, track.getPart().getEndTime(), 0.00001);
+        }
     }
 }

@@ -91,10 +91,8 @@ public class Track {
             }
             songPart.addPhraseList(otherPart.getPhraseArray());
         } else {
-//            Part start = songPart.copy(0, rhythmVal);
             Part start = songPart.copy(0, rhythmVal, true, true, false);
             Part end = songPart.copy(rhythmVal, songPart.getEndTime(), true, true, false);
-//            Part end = songPart.copy(rhythmVal, songPart.getEndTime());
             songPart = start;
             appendPhraseList(otherPart.getPhraseArray(), start.getEndTime());
             appendPhraseList(end.getPhraseArray(), songPart.getEndTime());
