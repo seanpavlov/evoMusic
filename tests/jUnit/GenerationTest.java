@@ -68,7 +68,7 @@ public class GenerationTest {
         subRaterList.add(new TestSubRater());
         rater = new Rater(subRaterList);
         crossover = new Crossover(4);
-        mutator = new Mutator(new ArrayList<ISubMutator>(), 0.1);
+        mutator = new Mutator(new ArrayList<ISubMutator>(), 0.1, 0.1, 0);
         rand = new Random();
         parents = new ArrayList<Individual>();
         this.generation = new Generation(parents);

@@ -7,8 +7,15 @@ import jUnit.mutator.RandomNoteMutatorTest;
 import jUnit.mutator.SimplifyMutatorTest;
 import jUnit.rater.BeatRaterTest;
 import jUnit.rater.ChordRepetitionRaterTest;
+import jUnit.rater.CrazyNoteOctaveRaterTest;
+import jUnit.rater.MelodyDirectionRaterTest;
+import jUnit.rater.MelodyDirectionStabilityRaterTest;
+import jUnit.rater.MelodyNoteDensityRaterTest;
+import jUnit.rater.MelodyPitchRangeRaterTest;
 import jUnit.rater.MelodyRepetitionRaterTest;
 import jUnit.rater.NoSilenceRaterTest;
+import jUnit.rater.PitchVarietyRaterTest;
+import jUnit.rater.RhythmVarietyRaterTest;
 import jUnit.rater.ScaleWhizzTest;
 import jUnit.translator.TranslatorTest;
 
@@ -33,6 +40,13 @@ import org.junit.runners.Suite.SuiteClasses;
     BeatRaterTest.class,
     NoSilenceRaterTest.class,
     ChordRepetitionRaterTest.class,
+    CrazyNoteOctaveRaterTest.class,
+    MelodyDirectionStabilityRaterTest.class,
+    PitchVarietyRaterTest.class,
+    MelodyDirectionRaterTest.class,
+    RhythmVarietyRaterTest.class,
+    MelodyNoteDensityRaterTest.class,
+    MelodyPitchRangeRaterTest.class,
     
     /*
      * Mutators

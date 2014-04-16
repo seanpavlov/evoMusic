@@ -9,14 +9,11 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 
-import jm.music.data.Part;
-
 import org.apache.commons.io.FileUtils;
 import org.bson.types.ObjectId;
 
 import com.evoMusic.database.MongoDatabase;
 import com.evoMusic.model.Song;
-import com.evoMusic.model.Track;
 import com.evoMusic.model.Translator;
 import com.evoMusic.util.TrackTag;
 import com.google.common.collect.Sets;
@@ -148,7 +145,7 @@ public class SongCommand extends AbstractCommand {
                             if (songIndex >= 0 && songIndex < songs.size()) {
                                 Song song = showSong(songIndex);
                                 for (int i = 0; i < song.getNbrOfTracks(); i++){
-                                    System.out.println(song.getTrack(i).getTags());
+                                    System.out.println(song.getTrack(i).getTag());
                                 }
                             } else {
                                 System.out.println("Unable to select song "
@@ -208,7 +205,7 @@ public class SongCommand extends AbstractCommand {
             @Override
             public boolean execute(String[] args) {
                 System.out.println(args[0]);
-                Translator.INSTANCE.playSong(songs.get(Integer
+                Translator.INSTANCE.play(songs.get(Integer
                         .parseInt(args[0])));
                 return true;
             }
@@ -292,16 +289,13 @@ public class SongCommand extends AbstractCommand {
         }
         System.out.println();
         System.out.println("--------------------------");
-        System.out.println("Add multiple tags by separating them with space");
-        String[] trackIndexes = new String[0];
+        String trackIndex;
        
         for(int i = 0; i < song.getNbrOfTracks(); i++) {
             System.out.print("Please Tag track "+i+": ");
-            Translator.INSTANCE.showPart(song.getTrack(i).getPart());
-            trackIndexes = sc.nextLine().split(" ");
-            for (String index : trackIndexes) {
-                song.addTagToTrack(i, trackTags[Integer.parseInt(index)]);
-            }
+            Translator.INSTANCE.show(song.getTrack(i).getPart());
+            trackIndex = sc.nextLine();
+            song.addTagToTrack(i, trackTags[Integer.parseInt(trackIndex)]);
         }
     }
 

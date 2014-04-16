@@ -57,7 +57,7 @@ public class GeneticAlgorithm {
         generation = new Generation(firstParents);
         
         //initiate sub raters weights.
-//        rater.initSubRaterWeights(parents);
+        rater.initSubRaterWeights(parents);
 
 
         setParentsPerGeneration(this.firstParents.size());
@@ -213,7 +213,6 @@ public class GeneticAlgorithm {
                 || iterationsDone < minimumIterations) {
             currentRating = nextGeneration();            
             if (currentRating > highestRating) {
-                System.out.println("Best songs rating is : "+ currentRating);
                 highestRating = currentRating;
             }
         }

@@ -26,7 +26,7 @@ public class UserRater extends SubRater {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                Translator.INSTANCE.playSong(song);     
+                Translator.INSTANCE.play(song);     
             }
         }).start();
         System.out.println("Waiting for user rating input : ");

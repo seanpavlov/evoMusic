@@ -109,7 +109,8 @@ public class MongoDatabaseTest {
         assertTrue(result);
         Song dbSong = mDb.retrieveSongs().get(0);
         assertTrue(dbSong.getUserTags().contains("GOOD"));
-        assertTrue(dbSong.getTrack(0).getTags().contains(TrackTag.BEAT));
+        assertTrue(dbSong.getTrack(0).getTag().equals(TrackTag.BEAT));
+
         
     }
     
