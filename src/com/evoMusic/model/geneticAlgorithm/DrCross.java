@@ -22,7 +22,7 @@ public class DrCross {
     // x is track
     // y is segment
     // z children
-    boolean[][][] occupiedSegmentSpots;
+    private boolean[][][] occupiedSegmentSpots;
 
     public DrCross(double segLen) {
         this.segLen = segLen;
@@ -77,7 +77,6 @@ public class DrCross {
                     }
                 }
             }
-            System.out.println(parent.getNbrOfTracks());
             distributeParentInChildren(parent);
         }
 

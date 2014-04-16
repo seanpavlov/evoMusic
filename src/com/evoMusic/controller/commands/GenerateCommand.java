@@ -9,6 +9,7 @@ import java.util.concurrent.Semaphore;
 import com.evoMusic.model.Song;
 import com.evoMusic.model.Translator;
 import com.evoMusic.model.geneticAlgorithm.Crossover;
+import com.evoMusic.model.geneticAlgorithm.DrCross;
 import com.evoMusic.model.geneticAlgorithm.GeneticAlgorithm;
 import com.evoMusic.model.geneticAlgorithm.mutation.ISubMutator;
 import com.evoMusic.model.geneticAlgorithm.mutation.Mutator;
@@ -60,13 +61,11 @@ public class GenerateCommand extends AbstractCommand {
         subRaters.add(new ScaleWhizz(c.RATER_SCALE_WEIGHT));
         subRaters.add(new BeatRepetitionRater(c.RATER_BEAT_REPETITION_WEIGHT));
         subRaters.add(new ChordRepetitionRater(c.RATER_CHORD_REPETITION_WEIGHT));
-        subRaters.add(new CrazyNoteOctaveRater(1));
-        Crossover crossover = new Crossover(c.CROSSOVER_NBR_OF_INTERSECTS);
-        crossover.setMinDuration(c.CROSSOVER_MIN_DURATION);
-        crossover.setMaxDuration(c.CROSSOVER_MAX_DURATION);
-        
-        final GeneticAlgorithm ga = new GeneticAlgorithm(selectedSongs, new Mutator(allMut, c.MUTATION_INITIAL_PROBABILITY, c.MUTATION_MINIMUM_PROBABILITY, c.MUTATION_PROBABILITY_RATIO), crossover, new Rater(subRaters));
-        
+//        Crossover crossover = new Crossover(c.CROSSOVER_NBR_OF_INTERSECTS);
+//        crossover.setMinDuration(c.CROSSOVER_MIN_DURATION);
+//        crossover.setMaxDuration(c.CROSSOVER_MAX_DURATION);
+        DrCross crossover = new DrCross(1);
+        GeneticAlgorithm ga = new GeneticAlgorithm(selectedSongs, new Mutator(allMut, c.MUTATION_INITIAL_PROBABILITY, c.MUTATION_MINIMUM_PROBABILITY, c.MUTATION_PROBABILITY_RATIO), crossover, new Rater(subRaters));
         ga.setMinimumIterations(iterations);
         System.out.println("Start iterating");
         
@@ -110,7 +109,7 @@ public class GenerateCommand extends AbstractCommand {
                 for (; i < width; i++) {
                   System.out.print(" ");
                 }
-                System.out.print("] "+ga.getIterationsDone()*100 / iterations + "%");
+                System.out.print("] "+ga.getIterationsDone()*100 / iterations + "%" + " | " + "Best rating: " + ga.getBestRating());
                 if (ga.getIterationsDone() / iterations == 1) {
                     System.out.println();
                     finished.release();

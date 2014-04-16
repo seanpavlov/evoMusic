@@ -152,26 +152,13 @@ public class Track {
         Part part = new Part();
         Phrase[] phrases = getPart().getPhraseArray();
         
-        if (from < 0 || from >= getPart().getEndTime() || phrases.length < 1){
-            System.err.println("nope");
+        if (from < 0 || from > getPart().getEndTime()){
+            throw new IllegalArgumentException("Requested a segment starting at: " + from + ". The segment must be in in the interval 0 and " + songPart.getEndTime() + "!");
+        }
+        if (phrases.length < 1) {
+            throw new IllegalArgumentException("Can't get segment from an empty Track!");
         }
        
-//        for (Phrase phrase : phrases) {
-//            double start = from;
-//            double end = from + length;
-//            if (phrase.getStartTime() > 0) {
-//                start = Math.max(0, from - phrase.getStartTime());
-//                end = from + length - phrase.getStartTime();
-//            } 
-//            Phrase newPhrase = phrase.copy(start, end);
-//            System.out.println("start: "+ start +"\tend: "+end);
-//            System.out.println(phrase);
-//            if(phrase.getStartTime() > from) {
-//                newPhrase.setStartTime(from);
-//            }
-//            part.add(newPhrase);
-//        }
-
         return new Track(getPart().copy(from, from+length, true,true,false));
     }
     

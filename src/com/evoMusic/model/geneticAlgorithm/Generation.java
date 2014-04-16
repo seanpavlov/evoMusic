@@ -54,13 +54,20 @@ public class Generation {
      * @param numberOfChildren
      *            The desired number of children for this generation.
      */
-    public void makeChildren(Crossover crossover, Mutator mutator, Rater rater,
+    public void makeChildren(DrCross crossover, Mutator mutator, Rater rater,
             int numberOfChildren) {
         this.children = new ArrayList<Individual>(numberOfChildren);
-        for (int i = 0; i < numberOfChildren; i++) {
-            Song song = crossover.makeCrossover(parents);
-            mutator.mutate(song);
-            children.add(new Individual(song, rater.rate(song)));
+        for (int i = 0; i < numberOfChildren / parents.size(); i++) {
+            List<Song> prnts = new ArrayList<Song>();
+            for (Individual ind : parents) {
+                prnts.add(ind.getSong());
+            }
+            crossover.setParents(prnts);
+            List<Song> songs = crossover.crossIndividuals();
+            for (Song song : songs) {
+                mutator.mutate(song);
+                children.add(new Individual(song, rater.rate(song)));
+            }
         }
         // Updating the mutation probability if mutator use decreasing
         // probability ratio.
