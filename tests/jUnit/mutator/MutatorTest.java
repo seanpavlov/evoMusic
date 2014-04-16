@@ -33,12 +33,12 @@ public class MutatorTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void decreasingRatioThresholdTest() {
-        Mutator m = new Mutator(subMutators, 1, 0.5, -1);
+        new Mutator(subMutators, 1, 0.5, -1);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void minimumMutationValueTest() {
-        Mutator m = new Mutator(subMutators, 0.5, 1, 0.6);
+        new Mutator(subMutators, 0.5, 1, 0.6);
     }
 
     @Test
