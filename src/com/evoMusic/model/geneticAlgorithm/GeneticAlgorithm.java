@@ -37,14 +37,14 @@ public class GeneticAlgorithm {
         // TODO: Fix generating first generation
         generateFirstGeneration();
 
-        ratePopulation();
+        ratePopulation(population);
 
-        selectBestIndividuals();
+        selectBestIndividuals(population);
         
         for(int generation = 0; generation < nbrOfGenerations; generation++){
-            // TODO: Fix input into rate, elitism etc for temp population to work
+            // TODO: Fix selection here
+            
         }
-        // TODO: Fix selection here
     }
 
     private void generateFirstGeneration() {
@@ -56,13 +56,13 @@ public class GeneticAlgorithm {
         }
     }
 
-    private void ratePopulation() {
+    private void ratePopulation(Song[] population) {
         for (int individual = 0; individual < populationSize; individual++) {
             populationRating[individual] = rater.rate(population[individual]);
         }
     }
 
-    private void selectBestIndividuals() {
+    private void selectBestIndividuals(Song[] population) {
         for (int individual = 0; individual < populationSize; individual++) {
             check_if_better_loop: for (int bestIndividual = 0; bestIndividual < nbrOfBestIndividuals; bestIndividual++) {
                 if(populationRating[individual] > bestSongsRating[bestIndividual]){
