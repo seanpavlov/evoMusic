@@ -2,7 +2,10 @@ package com.evoMusic.model.geneticAlgorithm.rating;
 
 import java.util.SortedSet;
 import java.util.TreeSet;
+
+import jm.JMC;
 import jm.music.data.Phrase;
+
 import com.evoMusic.model.Song;
 import com.evoMusic.model.Track;
 import com.evoMusic.util.TrackTag;
@@ -20,11 +23,17 @@ public class MelodyPitchRangeRater extends SubRater{
         /**Set sorted set variable to keep unique pitch values*/
         SortedSet<Integer> pitchValues = new TreeSet<Integer>();
         
+        int highestPitch, lowestPitch;
+        
         /**Iterate through every melody track to check pitch values*/
         for(Track track : song.getTaggedTracks(TrackTag.MELODY)){
             for(Phrase phrase : track.getPart().getPhraseArray()){
-                pitchValues.add(phrase.getHighestPitch());
-                pitchValues.add(phrase.getLowestPitch());
+                highestPitch = phrase.getHighestPitch();
+                lowestPitch  = phrase.getLowestPitch();
+                if (highestPitch != -1 )
+                    pitchValues.add(highestPitch);
+                if (lowestPitch == 128) 
+                    pitchValues.add(phrase.getLowestPitch());
             }
         }
   
@@ -35,7 +44,6 @@ public class MelodyPitchRangeRater extends SubRater{
         /**Retrieve highest and lowest pitch values and save them as double*/
         double lowest = pitchValues.first();
         double highest = pitchValues.last();
-        
         /**Worst case is when lowest pitch is 0 and
          * highest pitch is 127 and we return rating 0*/
         if(highest - lowest == 127)
