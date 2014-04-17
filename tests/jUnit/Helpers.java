@@ -19,7 +19,7 @@ public abstract class Helpers {
     public static Song createTestSong() {
         Song testSong = Translator.INSTANCE.loadMidiToSong("midifiles/mm2wily1.mid");
         for(Track track : testSong.getTracks()){
-            track.addTag(TrackTag.MELODY);
+            track.setTag(TrackTag.MELODY);
         }
         return testSong;
     }

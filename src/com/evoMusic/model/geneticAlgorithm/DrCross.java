@@ -12,6 +12,18 @@ import com.evoMusic.model.Song;
 import com.evoMusic.model.Track;
 import com.evoMusic.util.TrackTag;
 
+/**
+ * DrCross crosses children by setting every child's length to the shortest
+ * parents length, giving all the children the same amount of tracks and tags
+ * as the least number of tracks and tags found in the parents.
+ * 
+ * If a parent has more tracks with a tag than the other(s). These tracks will
+ * be merged until the parents have the same number of tracks. 
+ * 
+ * If a parent doesn't have a track with a certain tag, neither of the children
+ * is going to have it, even if other parents may have tracks with that tag.
+ * 
+ */
 public class DrCross {
     private double segLen;
     private double childLen;
@@ -24,18 +36,37 @@ public class DrCross {
     // z children
     private boolean[][][] occupiedSegmentSpots;
 
+    /**
+     * Creates a new instance of the crossover object, before breeding children
+     * setParents must be issued. 
+     * @param segLen lengths of the segments in the children given in 
+     * rhythm values. 
+     */
     public DrCross(double segLen) {
         this.segLen = segLen;
     }
 
+    /**
+     * Creates a new instance of the crossover object.
+     * @param segLen lengths of the segments in the children given in 
+     * rhythm values. 
+     */
     public DrCross(double segLen, List<Song> parents) {
-        this.segLen = segLen;
+        this(segLen);
         setParents(parents);
 
     }
 
+    /**
+     * Set the parents used for breeding children. 
+     * @param parents
+     */
     public void setParents(List<Song> parents) {
+        this.parents = new ArrayList<Song>();
         for (Song parent : parents) {
+            this.parents.add(parent.copy());
+        }
+        for (Song parent : this.parents) {
             for (Iterator<Track> it = parent.getTracks().iterator(); 
                     it.hasNext(); ) {
                 Track t = it.next();
@@ -44,15 +75,21 @@ public class DrCross {
                 }
             }
         }
-        this.parents = parents;
+        // new parents, find the new length for children
         this.childLen = findChildEndTime();
     }
 
+    /**
+     * Crosses the the instance's parents into the same amount of children
+     * The parents are set on instantiation or using the setParents
+     * @return the children created from the parents
+     */
     public List<Song> crossIndividuals() {
         this.children = initChildren();
         occupiedSegmentSpots = new boolean[children.get(0).getNbrOfTracks()][(int) (childLen / segLen) + 1][children
                 .size()];
         this.children = populateChildren();
+        
         return children;
     }
 
@@ -143,10 +180,13 @@ public class DrCross {
 
     /**
      * Creates as many children as there are parents, every child has the same
-     * amount and ordering of tracks with every TrackTag.
+     * amount and ordering of tracks with every TrackTag. For consistency 
+     * reasons, the least number of tracks with the tag found is created for 
+     * the children. If a parent that does not have a track with a certain tag, 
+     * no children will have this tracks with this tag
      * 
-     * @param parents
-     * @return children
+     * @param parents to search through
+     * @return children to be created
      */
     private List<Song> initChildren() {
         List<Song> children = new ArrayList<Song>();
@@ -158,37 +198,26 @@ public class DrCross {
         }
 
         // Create and tag tracks
-        int parentTracksWithTag = 0;
-        int childrenTracksWithTag = 0;
+        int toAdd = 0;
+        int withTag = 0;
         for (TrackTag tag : TrackTag.values()) {
             if (tag != TrackTag.NONE) {
-                childrenTracksWithTag = Integer.MAX_VALUE;
+                toAdd = Integer.MAX_VALUE;
+                withTag = 0;
+                
+                // Find how many tracks of the tag that should be added
                 for (Song parent : parents) {
-                    parentTracksWithTag = parent.getTaggedTracks(tag).size();
-
-                    // The parent with the least number of tracks with the tag
-                    // sets the number of tracks with the that should be
-                    // created for each child
-                    if (parentTracksWithTag < childrenTracksWithTag) {
-                        childrenTracksWithTag = parentTracksWithTag;
-                    }
-
-                    // If there's a parent that has a track with the tag
-                    // but some other parents doesn't have it, we should still
-                    // include one track with this tag.
-                    if (childrenTracksWithTag == 0 && parentTracksWithTag > 0) {
-                        childrenTracksWithTag = 1;
-                        break;
-                    }
+                    withTag = parent.getTaggedTracks(tag).size();
+                    toAdd = Math.min(toAdd, withTag);
                 }
-            }
-
-            // Add the tracks to the children
-            for (Song child : children) {
-                for (int i = 0; i < childrenTracksWithTag; i++) {
-                    Track track = new Track(new Part());
-                    track.addTag(tag);
-                    child.addTrack(track);
+                
+                // Add the tracks to the children
+                for (Song child : children) {
+                    for (int i = 0; i < toAdd; i++) {
+                        Track track = new Track(new Part());
+                        track.setTag(tag);
+                        child.addTrack(track);
+                    }
                 }
             }
         }

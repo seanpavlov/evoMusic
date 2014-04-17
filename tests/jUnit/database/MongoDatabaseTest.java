@@ -102,7 +102,7 @@ public class MongoDatabaseTest {
         mDb.insertSong(testSong);
         Song newSong = Translator.INSTANCE.loadMidiToSong("midifiles/mm2wily1.mid");
         for(Track track : newSong.getTracks()){
-            track.addTag(TrackTag.BEAT);
+            track.setTag(TrackTag.BEAT);
         }
         newSong.addUserTag("GOOD");
         boolean result = mDb.updateSong(testSong, newSong);

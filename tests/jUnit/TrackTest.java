@@ -34,7 +34,7 @@ public class TrackTest {
 
     @Test
     public void testAddTag() {
-        testTrack.addTag(TrackTag.BASELINE);
+        testTrack.setTag(TrackTag.BASELINE);
         assertTrue("Track must have tracktag", testTrack.hasTag(TrackTag.BASELINE));
     }
 
@@ -54,5 +54,14 @@ public class TrackTest {
         for (Track track : segments){
             assertEquals(4.0, track.getPart().getEndTime(), 0.00001);
         }
+    }
+    
+    @Test
+    public void testEquals() {
+        Track t1 = testTrack.getSegment(0, 4);
+        Track t2 = testTrack.getSegment(4, 8);
+        assertTrue(!t1.equals(t2));
+        t2 = testTrack.getSegment(0, 8);
+        assertTrue(t1.equals(t2.getSegment(0, 4)));
     }
 }

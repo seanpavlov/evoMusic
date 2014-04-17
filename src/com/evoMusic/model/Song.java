@@ -40,6 +40,17 @@ public class Song {
         
     }
     
+    public Song copy() {
+        Song copy = new Song(score.copy());
+        for (int i = 0; i < copy.getNbrOfTracks(); i++) {
+            copy.getTrack(i).setTag(tracks.get(i).getTag());
+        }
+        
+        copy.setUserTags(userTags);
+        
+        return copy;
+    }
+    
     /**
      * @return the object's reference id in the database.
      */
@@ -123,7 +134,7 @@ public class Song {
      *            The tag to be applied to the track.
      */
     public void addTagToTrack(int trackIndex, TrackTag tag) {
-        getTrack(trackIndex).addTag(tag);
+        getTrack(trackIndex).setTag(tag);
     }
 
     /**
@@ -161,9 +172,9 @@ public class Song {
      * Clears all user tags for this song and adds the given tags to it.
      * 
      * @param userTags
-     *            The list of user tags to be assigned to this song.
+     *            The set of user tags to be assigned to this song.
      */
-    public void setUserTags(List<String> userTags) {
+    public void setUserTags(Set<String> userTags) {
         this.userTags.clear();
         for (String tag : userTags) {
             this.userTags.add(tag);
