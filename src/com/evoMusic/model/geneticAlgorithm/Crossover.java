@@ -113,7 +113,7 @@ public class Crossover {
             }
 
             Track newTagPart = crossTaggedTracks(tracksWithTag);
-            newTagPart.addTag(t);
+            newTagPart.setTag(t);
             child.addTrack(newTagPart);
             
             tracksWithTag.clear();
