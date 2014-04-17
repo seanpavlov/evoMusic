@@ -1,6 +1,7 @@
 package jUnit;
 
 import jUnit.crossover.CrossoverTest;
+import jUnit.crossover.DrCrossTest;
 import jUnit.database.MongoDatabaseTest;
 import jUnit.mutator.OctaveMutatorTest;
 import jUnit.mutator.RandomNoteMutatorTest;
@@ -33,7 +34,9 @@ import org.junit.runners.Suite.SuiteClasses;
     CrossoverTest.class, 
     GenerationTest.class,
     SongTest.class,
-//    GeneticAlgorithmTest.class,
+    TrackTest.class,
+    GeneticAlgorithmTest.class,
+    DrCrossTest.class,
     
     /*
      * Raters

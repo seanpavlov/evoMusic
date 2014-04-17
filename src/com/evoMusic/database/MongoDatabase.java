@@ -3,13 +3,14 @@ package com.evoMusic.database;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -155,7 +156,7 @@ public class MongoDatabase implements IDatabase {
             }     
         }
         // set all user tags
-        final List<String> userTags = new ArrayList<String>();
+        final Set<String> userTags = new HashSet<String>();
         userTags.addAll(Arrays.asList(((BasicDBList) dbDoc.get(USER_TAGS_KEY))
                 .toArray(new String[0])));
 
