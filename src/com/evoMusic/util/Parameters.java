@@ -24,21 +24,19 @@ public class Parameters {
 
     public double MUTATOR_RANDOM_NOTE_PROBABILITY = 0.05;
     public int MUTATOR_RANDOM_NOTE_STEP_RANGE = 6;
+    
+    public double MUTATOR_RHYTHM_VALUE_PROBABILITY = 0;
+    public double MUTATOR_RHYTHM_VALUE_MOVING_RANGE = 1;
 
     public double MUTATOR_OCTAVE_PROBABILITY = 0;
     public int MUTATOR_OCTAVE_RANGE = 1;
 
     public double MUTATOR_REVERSE_PROBABILITY = 0.01;
-    public int MUTATOR_REVERSE_NBR_OF_NEIGHBORS = 4;
-    public int MUTATOR_REVERSE_RANGE = 4;
-    public boolean MUTATOR_REVERSE_WITH_RHYTHM_VALUE = true;
 
     public double MUTATOR_SCALE_OF_FIFTH_PROBABILITY = 0;
     public int MUTATOR_SCALE_OF_FIFTH_RANGE = 3;
 
-    public double MUTATOR_SIMPLIFY_PROBABILITY = 0.1;
-    public int MUTATOR_SIMPLIFY_NBR_OF_NEIGHBORS = 4;
-    public double MUTATOR_SIMPLIFY_NEIGHBOR_PROBABILITY = 0.5;
+    public double MUTATOR_SIMPLIFY_PROBABILITY = 0.02;
 
     /*
      * RATING PARAMETERS
