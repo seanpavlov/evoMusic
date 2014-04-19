@@ -14,7 +14,10 @@ import com.evoMusic.model.geneticAlgorithm.mutation.ISubMutator;
 import com.evoMusic.model.geneticAlgorithm.mutation.Mutator;
 import com.evoMusic.model.geneticAlgorithm.mutation.OctaveMutator;
 import com.evoMusic.model.geneticAlgorithm.mutation.RandomNoteMutator;
+import com.evoMusic.model.geneticAlgorithm.mutation.ReverseBarNotesMutator;
+import com.evoMusic.model.geneticAlgorithm.mutation.RhythmValueMutator;
 import com.evoMusic.model.geneticAlgorithm.mutation.ScaleOfFifthMutator;
+import com.evoMusic.model.geneticAlgorithm.mutation.SimplifyMutator;
 import com.evoMusic.model.geneticAlgorithm.rating.BeatRepetitionRater;
 import com.evoMusic.model.geneticAlgorithm.rating.ChordRepetitionRater;
 import com.evoMusic.model.geneticAlgorithm.rating.CrazyNoteOctaveRater;
@@ -61,18 +64,16 @@ public class GenerateCommand extends AbstractCommand {
         List<ISubMutator> allMut = new ArrayList<ISubMutator>();
         allMut.add(new RandomNoteMutator(c.MUTATOR_RANDOM_NOTE_PROBABILITY,
                 c.MUTATOR_RANDOM_NOTE_STEP_RANGE));
+        allMut.add(new RhythmValueMutator(c.MUTATOR_RHYTHM_VALUE_PROBABILITY, c.MUTATOR_RHYTHM_VALUE_MOVING_RANGE));
+        allMut.add(new ReverseBarNotesMutator(c.MUTATOR_REVERSE_PROBABILITY));
+        allMut.add(new SimplifyMutator(c.MUTATOR_SIMPLIFY_PROBABILITY));
         allMut.add(new OctaveMutator(c.MUTATOR_OCTAVE_PROBABILITY,
                 c.MUTATOR_OCTAVE_RANGE));
-        // allMut.add(new ReverseMutator(c.MUTATOR_REVERSE_PROBABILITY,
-        // c.MUTATOR_REVERSE_NBR_OF_NEIGHBORS, c.MUTATOR_REVERSE_RANGE, true));
         allMut.add(new ScaleOfFifthMutator(
                 c.MUTATOR_SCALE_OF_FIFTH_PROBABILITY,
                 c.MUTATOR_SCALE_OF_FIFTH_RANGE));
-        // allMut.add(new SimplifyMutator(c.MUTATOR_SIMPLIFY_PROBABILITY,
-        // c.MUTATOR_SIMPLIFY_NBR_OF_NEIGHBORS,
-        // c.MUTATOR_SIMPLIFY_PROBABILITY));
-        List<SubRater> subRaters = new LinkedList<SubRater>();
-
+        
+         List<SubRater> subRaters = new LinkedList<SubRater>();
         subRaters
                 .add(new MelodyRepetionRater(c.RATER_MELODY_REPETITION_WEIGHT));
         subRaters.add(new ScaleWhizz(c.RATER_SCALE_WEIGHT));
@@ -104,15 +105,14 @@ public class GenerateCommand extends AbstractCommand {
                         c.MUTATION_PROBABILITY_RATIO), crossover, new Rater(
                         subRaters), 100, 2, 4);
 
-//        ga.setMinimumIterations(iterations);
         System.out.println("Start iterating");
 
         runProgress(ga, iterations);
-        ga.generateGenerations(iterations);
+        Song bestSong = ga.generateGenerations(iterations);
         finished.acquireUninterruptibly();
 
-        Translator.INSTANCE.saveSongToMidi(ga.getBestSong(), "Bob-Slide64");
-        Translator.INSTANCE.play(ga.getBestSong());
+        Translator.INSTANCE.saveSongToMidi(bestSong, "Bob-Slide64");
+        Translator.INSTANCE.play(bestSong);
         return true;
     }
 
