@@ -16,6 +16,13 @@ package com.evoMusic.util;
 public class Parameters {
 
     /*
+     * GENETIC ALGORITHM PARAMETERS
+     */
+    public int GA_POPULATION_SIZE = 100;
+    public int GA_NBR_OF_ELITISM_SONGS = 2;
+    public int GA_NBR_OF_CROSSOVER_SONGS = 4;
+    
+    /*
      * MUTATION PARAMETERS
      */
     public double MUTATION_INITIAL_PROBABILITY = 0.3;
