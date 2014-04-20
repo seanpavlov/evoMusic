@@ -26,6 +26,7 @@ public class Track {
 
     public Track(Part part, TrackTag trackTag) {
         this.songPart = part;
+        this.tag = trackTag;
     }
 
     /**
