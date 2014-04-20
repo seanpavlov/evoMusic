@@ -15,7 +15,7 @@ import com.evoMusic.model.Song;
 import com.evoMusic.model.Track;
 import com.evoMusic.util.TrackTag;
 
-public class MarkovChain {
+public class MarkovSong {
 
     private int numberOfLookbacks;
 
@@ -42,7 +42,7 @@ public class MarkovChain {
      *            The given songs that will be merged when generateNew is
      *            called. This list may contain only one song.
      */
-    public MarkovChain(int lookbacks, List<Song> songs) {
+    public MarkovSong(int lookbacks, List<Song> songs) {
         if (lookbacks < 0) {
             throw new IllegalArgumentException("Negative lookback value");
         }
@@ -171,7 +171,7 @@ public class MarkovChain {
             
             newSong.addTrack(markovTracks.get(trackIndex).generateNew(
                     songDuration, randomTrack.getInstrument(),
-                    randomTrack.getChannel(), randomTrack.getFirstNote()));
+                    randomTrack.getChannel(), randomTrack.getFirstNote(), randomTrack.getTag()));
         }
         return newSong.toSong();
     }
@@ -199,6 +199,7 @@ public class MarkovChain {
         int[] currentIntervals;
         double[] currentRythmValues;
         double[] currentDurations;
+        int[] currentDynamics;
         IntervalTrack currentIntervalTrack;
         MarkovTrack currentMarkovTrack;
 
@@ -220,6 +221,7 @@ public class MarkovChain {
                 }
                 currentRythmValues = currentIntervalTrack.getRythmValues();
                 currentDurations = currentIntervalTrack.getDurations();
+                currentDynamics = currentIntervalTrack.getDynamics();
 
                 currentIntervalsLength = currentIntervals.length;
 
@@ -233,6 +235,7 @@ public class MarkovChain {
                             currentRythmValues[i]);
                     currentMarkovTrack.addCountToDuration(sequence,
                             currentDurations[i]);
+                    currentMarkovTrack.addCountToDynamic(sequence, currentDynamics[i]);
                     
 
                     // Adding for longer sequences.
@@ -245,6 +248,7 @@ public class MarkovChain {
                                 currentRythmValues[j + 1]);
                         currentMarkovTrack.addCountToDuration(sequence,
                                 currentDurations[j + 1]);
+                        currentMarkovTrack.addCountToDynamic(sequence, currentDynamics[j + 1]);
                     }
 
                 }
@@ -256,6 +260,7 @@ public class MarkovChain {
                         currentRythmValues[currentRythmValues.length - 1]);
                 currentMarkovTrack.addCountToDuration(sequence,
                         currentDurations[currentDurations.length - 1]);
+                currentMarkovTrack.addCountToDynamic(sequence, currentDynamics[currentDynamics.length - 1]);
             }
         }
         for (MarkovTrack track : markovTracks) {

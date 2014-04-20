@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
+import com.evoMusic.util.TrackTag;
 import com.google.common.primitives.Doubles;
 import com.google.common.primitives.Ints;
 
@@ -12,6 +13,7 @@ public class MarkovTrack {
     private ProbabilityMatrix<Integer, Integer> intervalMatrix;
     private ProbabilityMatrix<Integer, Double> rhythmValueMatrix;
     private ProbabilityMatrix<Integer, Double> durationMatrix;
+    private ProbabilityMatrix<Integer, Integer> dynamicMatrix;
     private int numberOfLookbacks;
 
     /**
@@ -25,6 +27,7 @@ public class MarkovTrack {
         this.intervalMatrix = new ProbabilityMatrix<Integer, Integer>();
         this.rhythmValueMatrix = new ProbabilityMatrix<Integer, Double>();
         this.durationMatrix = new ProbabilityMatrix<Integer, Double>();
+        this.dynamicMatrix = new ProbabilityMatrix<Integer, Integer>();
     }
 
     /**
@@ -42,23 +45,26 @@ public class MarkovTrack {
      *         chain.
      */
     public IntervalTrack generateNew(double songDuration, int instrument,
-            int channel, int firstNote) {
+            int channel, int firstNote, TrackTag tag) {
 
         ArrayList<Integer> trackIntervals = new ArrayList<Integer>();
         ArrayList<Double> trackRhythmValues = new ArrayList<Double>();
         ArrayList<Double> trackDurations = new ArrayList<Double>();
+        ArrayList<Integer> trackDynamics = new ArrayList<Integer>();
         double trackLength = 0;
         boolean isResting = false;
         Vector<Integer> currentSequence;
         Integer nextInterval;
         Double nextRhythmValue;
         Double nextDuration;
+        Integer nextDynamic;
 
         while (trackLength < songDuration) {
             // Building the track.
             ArrayList<Integer> currentIntervals = new ArrayList<Integer>();
             ArrayList<Double> currentRhythmValues = new ArrayList<Double>();
             ArrayList<Double> currentDurations = new ArrayList<Double>();
+            ArrayList<Integer> currentDynamics = new ArrayList<Integer>();
 
             for (int intervalIndex = 0; trackLength < songDuration; intervalIndex++) {
                 currentSequence = getNextSequence(intervalIndex,
@@ -92,14 +98,17 @@ public class MarkovTrack {
 
                 nextRhythmValue = rhythmValueMatrix.getNext(currentSequence);
                 nextDuration = durationMatrix.getNext(currentSequence);
+                nextDynamic = dynamicMatrix.getNext(currentSequence);
                 trackLength += nextRhythmValue;
                 currentIntervals.add(nextInterval);
                 currentRhythmValues.add(nextRhythmValue);
                 currentDurations.add(nextDuration);
+                currentDynamics.add(nextDynamic);
             }
             trackIntervals.addAll(currentIntervals);
             trackRhythmValues.addAll(currentRhythmValues);
             trackDurations.addAll(currentDurations);
+            trackDynamics.addAll(currentDynamics);
         }
 
         // Adding the last rythmValues and durations.
@@ -110,14 +119,16 @@ public class MarkovTrack {
         }
         nextRhythmValue = rhythmValueMatrix.getNext(currentSequence);
         nextDuration = durationMatrix.getNext(currentSequence);
+        nextDynamic = dynamicMatrix.getNext(currentSequence);
         trackLength += nextRhythmValue;
         trackRhythmValues.add(nextRhythmValue);
         trackDurations.add(nextDuration);
+        trackDynamics.add(nextDynamic);
 
         IntervalTrack iTrack = new IntervalTrack(firstNote, instrument,
                 channel, Ints.toArray(trackIntervals),
                 Doubles.toArray(trackRhythmValues),
-                Doubles.toArray(trackDurations));
+                Doubles.toArray(trackDurations), Ints.toArray(trackDynamics), tag);
         return iTrack;
     }
 
@@ -155,6 +166,18 @@ public class MarkovTrack {
      */
     public void addCountToDuration(Vector<Integer> sequence, Double value) {
         durationMatrix.addCount(sequence, value);
+    }
+    
+    /**
+     * Adds a count to the dynamic property in this markov track.
+     * 
+     * @param sequence
+     *            The sequence that comes prior to the given dynamic.
+     * @param value
+     *            The dynamic which count will be incremented.
+     */
+    public void addCountToDynamic(Vector<Integer> sequence, Integer value) {
+        dynamicMatrix.addCount(sequence, value);
     }
 
     /**

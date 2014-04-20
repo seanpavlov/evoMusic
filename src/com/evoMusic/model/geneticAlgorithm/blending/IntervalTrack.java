@@ -12,6 +12,7 @@ import jm.music.data.Part;
 import jm.music.data.Phrase;
 
 import com.evoMusic.model.Track;
+import com.evoMusic.util.TrackTag;
 
 public class IntervalTrack {
 
@@ -20,9 +21,11 @@ public class IntervalTrack {
     private int firstNote;
     private int instrument;
     private int channel;
+    private TrackTag tag;
     private int[] intervals;
     private double[] rhythmValues;
     private double[] durations;
+    private int[] dynamics;
 
     /**
      * Creates a new interval track from a given track, maintaining its
@@ -35,11 +38,14 @@ public class IntervalTrack {
         Part part = track.getPart();
         instrument = part.getInstrument();
         channel = part.getChannel();
+        tag = track.getTag();
         if (part.size() == 0) {
             firstNote = 60;
             intervals = new int[0];
             rhythmValues = new double[0];
             durations = new double[0];
+            dynamics = new int[0];
+            tag = TrackTag.NONE;
             return;
         }
         Map<Double, List<ComparableNote>> noteMap;
@@ -70,6 +76,7 @@ public class IntervalTrack {
         intervals = new int[numberOfNotes - 1];
         rhythmValues = new double[numberOfNotes];
         durations = new double[numberOfNotes];
+        dynamics = new int[numberOfNotes];
         Note currentNote = null;
         Note nextNote = null;
         for (int i = 0; i < numberOfNotes - 1; i++) {
@@ -81,12 +88,16 @@ public class IntervalTrack {
             // adding to rythmValues.
             rhythmValues[i] = currentNote.getRhythmValue();
 
-            // adding to duration
+            // adding to duration.
             durations[i] = currentNote.getDuration();
+            
+            // adding to dynamics.
+            dynamics[i] = currentNote.getDynamic();
         }
         currentNote = sortedNoteList.get(numberOfNotes - 1).note;
         rhythmValues[numberOfNotes - 1] = currentNote.getRhythmValue();
         durations[numberOfNotes - 1] = currentNote.getDuration();
+        dynamics[numberOfNotes - 1] = currentNote.getDynamic();
     }
 
     /**
@@ -121,7 +132,7 @@ public class IntervalTrack {
      *            A list of durations which corresponds to the intervals.
      */
     public IntervalTrack(int firstNote, int instrument, int channel,
-            int[] intervals, double[] rhythmValues, double[] durations) {
+            int[] intervals, double[] rhythmValues, double[] durations, int[] dynamics, TrackTag tag) {
 
         this.firstNote = firstNote;
         this.instrument = instrument;
@@ -129,6 +140,8 @@ public class IntervalTrack {
         this.intervals = intervals;
         this.rhythmValues = rhythmValues;
         this.durations = durations;
+        this.dynamics = dynamics;
+        this.tag = tag;
     }
 
     /**
@@ -141,6 +154,7 @@ public class IntervalTrack {
         int currentPitch = getFirstNote();
         Note newNote = new Note(currentPitch, getRythmValues()[0]);
         newNote.setDuration(getDurations()[0]);
+        newNote.setDynamic(getDynamics()[0]);
         phrase.add(newNote);
         for (int j = 0; j < intervals.length; j++) {
             currentPitch += intervals[j];
@@ -151,13 +165,14 @@ public class IntervalTrack {
                 newNote = new Note(currentPitch, rhythmValues[j + 1]);
             }
             newNote.setDuration(durations[j + 1]);
+            newNote.setDynamic(dynamics[j + 1]);
             phrase.add(newNote);
         }
         Part newPart = new Part();
         newPart.add(phrase);
         newPart.setChannel(getChannel());
         newPart.setInstrument(getInstrument());
-        return new Track(newPart);
+        return new Track(newPart, tag);
     }
 
     /**
@@ -213,7 +228,25 @@ public class IntervalTrack {
     public double[] getDurations() {
         return durations;
     }
-
+    
+    /**
+     * Gets the array of dynamics for the notes of this interval track.
+     * 
+     * @return The array of dynamics for the notes of this interval track.
+     */
+    public int[] getDynamics() {
+        return dynamics;
+    }
+    
+    /**
+     * Gets the tag of this interval track.
+     * 
+     * @return The tag of this interval track.
+     */
+    public TrackTag getTag() {
+        return tag;
+    }
+    
     /**
      * A private class containing a note and its start time. The note is
      * comparable by its start time.
