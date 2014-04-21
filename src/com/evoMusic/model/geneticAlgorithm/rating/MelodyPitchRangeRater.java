@@ -33,7 +33,7 @@ public class MelodyPitchRangeRater extends SubRater{
                 if (highestPitch != -1 )
                     pitchValues.add(highestPitch);
                 if (lowestPitch != 128) 
-                    pitchValues.add(phrase.getLowestPitch());
+                    pitchValues.add(lowestPitch);
             }
         }
   
