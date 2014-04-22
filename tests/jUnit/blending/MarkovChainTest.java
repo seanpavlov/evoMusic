@@ -81,7 +81,7 @@ public class MarkovChainTest {
         Song newSong = markov.generateNew(100);
         //Translator.INSTANCE.saveSongToMidi(newSong, "TestSaveNatan");
         System.out.println(newSong.getTrack(1).getTag());
-        Translator.INSTANCE.play(newSong.getTrack(1));
+        Translator.INSTANCE.play(newSong);
         //Translator.INSTANCE.play(zelda.getTrack(3).getPart());
         //assertTrue(true);
         //fail("Not yet implemented");
