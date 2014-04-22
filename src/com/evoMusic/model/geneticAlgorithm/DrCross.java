@@ -144,7 +144,9 @@ public class DrCross {
         Track segment = null;
         boolean[] occupiedChildren = null;
         List<Integer> childrenIndeces = null;
-        for (int i = 0; i < childLen; i += segLen) {
+        
+        double smallestEndTime = Math.min(childLen, parentTrack.getPart().getEndTime());
+        for (int i = 0; i < smallestEndTime ; i += segLen) {
             childrenIndeces = new ArrayList<Integer>();
             segment = parentTrack.getSegment(i, segLen);
             occupiedChildren = trackOccupiedSegmentSpots[(int) (i / segLen)];
