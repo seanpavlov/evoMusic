@@ -1,5 +1,7 @@
 package com.evoMusic.model.geneticAlgorithm.rating;
 
+import java.math.BigDecimal;
+
 import jm.music.data.Note;
 import jm.music.data.Part;
 import jm.music.data.Phrase;
@@ -62,12 +64,18 @@ public class MelodyNoteSustainRater extends SubRater{
                  * it is going to sustain over that beat and we increase sustain count
                  * */
                 
-                ///*** TODO best way to get fractional part of double!!  convert to string and use split, WORKS, BUT UNEFFICENT? 
-                /* USE MODOLO 1, MAY GET A CLOSE REPRESENTATION 
-                /*////
-               //double leftOnBeat = 1.0 - Double.parseDouble("0."+String.valueOf(beatCount).split("\\.")[1]);
+                /***Best way to get fractional part of double!? convert to string and use split, WORKS, BUT UNEFFICENT? 
+                 * MODOLO 1, MAY GET A CLOSE REPRESENTATION BUT NOT EXACT FOR ALL DOUBLE VALUES
+                 * BIG DECIMAL GETS EXACT REPRESENTATION BUT GOES TRHOUGH STRING AS WELL
+                 * BELOW IS DIFFERENT WAYS TO CALCULATE LEFT ON BEAT BY EXTRACTING FRACTIONAL PART. 
+                 * USING BIGDECIMAL FOR NOW
+                 */
+                //double leftOnBeat = 1.0 - Double.parseDouble("0."+String.valueOf(beatCount).split("\\.")[1]);
+                //double leftOnBeat = 1.0 - Math.abs(beatCount - (int) beatCount);
+                //double leftOnBeat = 1.0 - beatCount % 1;
+                //double leftOnBeat = 1.0 - (beatCount - Math.floor(beatCount));
+                double leftOnBeat = 1.0 - BigDecimal.valueOf(beatCount).remainder(BigDecimal.ONE).doubleValue();                                          
                 
-                double leftOnBeat = 1.0 - beatCount % 1;
                 if(leftOnBeat < noteDuration)
                     sustainCount++;
             }
@@ -75,6 +83,6 @@ public class MelodyNoteSustainRater extends SubRater{
         
         /**If note and sustain count is larger than 0 return sustain count divided by note count*/
         return (noteCount == 0 || sustainCount == 0) ? 0
-                                                     :sustainCount / noteCount;
+                                                     : sustainCount / noteCount;
     }
 }
