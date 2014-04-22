@@ -112,15 +112,20 @@ public class MarkovTrack {
         }
 
         // Adding the last rythmValues and durations.
+        
+        double durationLeft = songDuration - trackLength;
+        nextRhythmValue = durationLeft;
+        nextDuration = durationLeft;
+        
         currentSequence = new Vector<Integer>();
         for (int seqIndex = numberOfLookbacks; seqIndex > 0; seqIndex--) {
             currentSequence.add(trackIntervals.get(trackIntervals.size()
                     - seqIndex));
         }
-        nextRhythmValue = rhythmValueMatrix.getNext(currentSequence);
-        nextDuration = durationMatrix.getNext(currentSequence);
+//        nextRhythmValue = rhythmValueMatrix.getNext(currentSequence);
+//        nextDuration = durationMatrix.getNext(currentSequence);
         nextDynamic = dynamicMatrix.getNext(currentSequence);
-        trackLength += nextRhythmValue;
+//        trackLength += nextRhythmValue;
         trackRhythmValues.add(nextRhythmValue);
         trackDurations.add(nextDuration);
         trackDynamics.add(nextDynamic);
