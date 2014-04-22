@@ -9,7 +9,7 @@ import com.evoMusic.model.Track;
 import com.evoMusic.util.TrackTag;
 
 /**Rater that favors song whose melody track has a lot of notes
- * who sustain across beats*/
+ * who sustain across the beats*/
 public class MelodyNoteSustainRater extends SubRater{
 
     public MelodyNoteSustainRater(double weight){
@@ -58,14 +58,14 @@ public class MelodyNoteSustainRater extends SubRater{
                     continue;
                 }
                 
-                /**Calculate amount left of beat, if duration is larger then note is going
-                 * to sustain over beat and we increase sustain count
+                /**Calculate amount left of beat, if duration is larger then amount left on beat
+                 * it is going to sustain over that beat and we increase sustain count
                  * */
                 
                 ///*** TODO best way to get fractional part of double!!  convert to string and use split, WORKS, BUT UNEFFICENT? 
                 /* USE MODOLO 1, MAY GET A CLOSE REPRESENTATION 
                 /*////
-               // double leftOnBeat = 1.0 - Double.parseDouble("0."+String.valueOf(beatCount).split("\\.")[1]);
+               //double leftOnBeat = 1.0 - Double.parseDouble("0."+String.valueOf(beatCount).split("\\.")[1]);
                 
                 double leftOnBeat = 1.0 - beatCount % 1;
                 if(leftOnBeat < noteDuration)

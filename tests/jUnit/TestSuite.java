@@ -11,6 +11,7 @@ import jUnit.rater.CrazyNoteOctaveRaterTest;
 import jUnit.rater.MelodyDirectionRaterTest;
 import jUnit.rater.MelodyDirectionStabilityRaterTest;
 import jUnit.rater.MelodyNoteDensityRaterTest;
+import jUnit.rater.MelodyNoteSustainRaterTest;
 import jUnit.rater.MelodyPitchRangeRaterTest;
 import jUnit.rater.MelodyRepetitionRaterTest;
 import jUnit.rater.MelodyRestDensityRaterTest;
@@ -53,6 +54,7 @@ import org.junit.runners.Suite.SuiteClasses;
     RepeatedPitchDensityRaterTest.class,
     MelodyRestDensityRaterTest.class,
     ZipfsLawRaterTest.class,
+    MelodyNoteSustainRaterTest.class,
     
     /*
      * Mutators

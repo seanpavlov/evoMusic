@@ -27,7 +27,7 @@ public class MelodyNoteSustainRaterTest {
         Phrase phrase4 = new Phrase(1.0);
         
         for(int i = 0; i < 1000; i++){
-            Note note = new Note(1, 0.5);
+            Note note = new Note(1, Math.random());
             note.setDuration(Math.random());
             phrase.addNote(note);
             Note note2 = new Note(1, 0.5);
