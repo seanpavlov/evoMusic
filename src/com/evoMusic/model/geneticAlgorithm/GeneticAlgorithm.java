@@ -17,7 +17,7 @@ public class GeneticAlgorithm {
 
     private ArrayList<Individual> firstParents;
     private Mutator mutator;
-    private Crossover crossover;
+    private DrCross crossover;
     private Rater rater;
     private int parentsPerGeneration;
     private int childrenPerGeneration;
@@ -46,7 +46,7 @@ public class GeneticAlgorithm {
      *            The rater that will rate all individuals for each generation.
      */
     public GeneticAlgorithm(List<Song> parents, Mutator mutator,
-            Crossover crossover, Rater rater) {
+            DrCross crossover, Rater rater) {
         
         setMutator(mutator);
         setRater(rater);
@@ -119,7 +119,7 @@ public class GeneticAlgorithm {
      *            The crossover that will create all the children for each
      *            generation.
      */
-    public void setCrossover(Crossover crossover) {
+    public void setCrossover(DrCross crossover) {
         this.crossover = crossover;
     }
 

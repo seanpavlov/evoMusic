@@ -1,23 +1,16 @@
 package jUnit;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
-import jm.music.data.Part;
-import jm.music.data.Phrase;
-import jm.music.data.Score;
-
-import org.junit.After;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.evoMusic.model.Song;
 import com.evoMusic.model.Translator;
-import com.evoMusic.model.geneticAlgorithm.Crossover;
+import com.evoMusic.model.geneticAlgorithm.DrCross;
 import com.evoMusic.model.geneticAlgorithm.GeneticAlgorithm;
 import com.evoMusic.model.geneticAlgorithm.mutation.ISubMutator;
 import com.evoMusic.model.geneticAlgorithm.mutation.Mutator;
@@ -67,7 +60,7 @@ public class GeneticAlgorithmTest {
         List<ISubMutator> subMutators = new ArrayList<ISubMutator>();
         subMutators.add(new ScaleOfFifthMutator(0.5, 1));
         Mutator mutator = new Mutator(new ArrayList<ISubMutator>(), 0.1, 0.1, 0);
-        Crossover crossover = new Crossover(8);
+        DrCross crossover = new DrCross(8);
         testGA = new GeneticAlgorithm(parents, mutator, crossover, rater);
         testGA.setThrowAwayFirstParents(false);
     }

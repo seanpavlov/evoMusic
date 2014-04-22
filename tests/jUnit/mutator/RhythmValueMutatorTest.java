@@ -1,22 +1,23 @@
 package jUnit.mutator;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import com.evoMusic.model.Song;
 import com.evoMusic.model.Translator;
-import com.evoMusic.model.geneticAlgorithm.mutation.OctaveMutator;
+import com.evoMusic.model.geneticAlgorithm.mutation.RhythmValueMutator;
 import com.evoMusic.util.MidiUtil;
 
 
 
-public class OctaveMutatorTest {
+public class RhythmValueMutatorTest {
 
     Song originSong;
     Song mutatedSong;
     MidiUtil mu;
+    int nbrOfMutatedNotes = 0;
 
     /**
      * Make sure that we always have a fresh working song instance to work with
@@ -35,11 +36,10 @@ public class OctaveMutatorTest {
     }
     
     @Test
-    public void mutationsWithinRange(){
+    public void rhythmValueMutatorTest(){
         boolean testIsOkay = true;
-        int stepRange = 2;
-        OctaveMutator om = new OctaveMutator(1, stepRange);
-        om.mutate(mutatedSong);
+        RhythmValueMutator rvm = new RhythmValueMutator(1, 1);
+        rvm.mutate(mutatedSong);
         int nbrOfTracks = originSong.getScore().getSize();
         int originPitch = 0;
         int mutatedPitch = 0;
@@ -50,18 +50,25 @@ public class OctaveMutatorTest {
                 for(int note = 0; note < nbrOfNotes; note++){
                     originPitch = originSong.getScore().getPart(track).getPhrase(phrase).getNote(note).getPitch();
                     mutatedPitch = mutatedSong.getScore().getPart(track).getPhrase(phrase).getNote(note).getPitch();
-                    if(originPitch%12 == mutatedPitch%12){
-                        if(mu.getNotePitch(mutatedPitch) <= mu.getNotePitch(originPitch)+stepRange && mu.getNotePitch(mutatedPitch) >= mu.getNotePitch(originPitch)-stepRange){
-                            
-                        }else{
-                            testIsOkay = false;
-                        }
-                    }else{
-                        testIsOkay = false;
+                    if(originPitch != mutatedPitch){
+                       if(mu.isBlank(mutatedPitch)){
+                           nbrOfMutatedNotes++;
+                       }else{
+                           testIsOkay = false;
+                       }
                     }
                 }
             }
         }
         assertTrue("Original pitch:\t" + originPitch + "\nMutated Pitch:\t" + mutatedPitch, testIsOkay);
+        int nbrOfMutatedSongPhrases = 0;
+        int nbrOfOriginSongPhrases = 0;
+        for(int track = 0; track < nbrOfTracks; track++){
+            System.out.println("Mu:\t" + track + "\t" + mutatedSong.getScore().getPart(track).getSize());
+            System.out.println("Mu:\t" + track + "\t" + originSong.getScore().getPart(track).getSize());
+            nbrOfMutatedSongPhrases += mutatedSong.getScore().getPart(track).getSize();
+            nbrOfOriginSongPhrases += originSong.getScore().getPart(track).getSize();
+        }
+        assertTrue("Mutations:\t" + nbrOfMutatedNotes + "\nNew phrases:\t" + (nbrOfMutatedSongPhrases-nbrOfOriginSongPhrases), nbrOfMutatedNotes == (nbrOfMutatedSongPhrases-nbrOfOriginSongPhrases));
     }
 }

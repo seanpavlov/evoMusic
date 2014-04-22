@@ -41,12 +41,14 @@ public class RhythmValueMutator extends ISubMutator {
                     // For all parallel notes
                     for (int note = 0; note < nbrOfParallel; note++) {
                         double newStartTime = currentNoteTime[track][individual.getScore().getPart(track).getPhraseList().indexOf(parallelNoteList.get(note).getMyPhrase())] + movingLength;
-                        if(newStartTime >= 0 && newStartTime+parallelNoteList.get(note).getDuration() <= individual.getScore().getEndTime()){
-                            Phrase newPhrase = new Phrase(newStartTime);
-                            newPhrase.addNote(parallelNoteList.get(note).copy());
-                            individual.getScore().getPart(track).addPhrase(newPhrase);
+                        if(!parallelNoteList.get(note).isRest()){
+                            if(newStartTime >= 0 && newStartTime+parallelNoteList.get(note).getDuration() <= individual.getScore().getEndTime()){
+                                Phrase newPhrase = new Phrase(newStartTime);
+                                newPhrase.addNote(parallelNoteList.get(note).copy());
+                                individual.getScore().getPart(track).addPhrase(newPhrase);
+                                parallelNoteList.get(note).setPitch(Integer.MIN_VALUE);
+                            }
                         }
-                        parallelNoteList.get(note).setPitch(Integer.MIN_VALUE);
                     }
                 }
                 //Add rhythm value to the array for each note that play

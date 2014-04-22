@@ -15,7 +15,7 @@ import org.junit.Test;
 
 import com.evoMusic.model.Song;
 import com.evoMusic.model.Translator;
-import com.evoMusic.model.geneticAlgorithm.Crossover;
+import com.evoMusic.model.geneticAlgorithm.DrCross;
 import com.evoMusic.model.geneticAlgorithm.Generation;
 import com.evoMusic.model.geneticAlgorithm.Individual;
 import com.evoMusic.model.geneticAlgorithm.mutation.ISubMutator;
@@ -29,7 +29,7 @@ public class GenerationTest {
     private Rater rater;
     private Random rand;
     private Generation generation;
-    private Crossover crossover;
+    private DrCross crossover;
     private Mutator mutator;
     private List<Individual> parents;
     private Song testSong;
@@ -67,7 +67,7 @@ public class GenerationTest {
         List<SubRater> subRaterList = new ArrayList<SubRater>();
         subRaterList.add(new TestSubRater());
         rater = new Rater(subRaterList);
-        crossover = new Crossover(4);
+        crossover = new DrCross(4);
         mutator = new Mutator(new ArrayList<ISubMutator>(), 0.1, 0.1, 0);
         rand = new Random();
         parents = new ArrayList<Individual>();

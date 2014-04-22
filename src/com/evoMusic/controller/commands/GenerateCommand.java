@@ -8,21 +8,20 @@ import java.util.concurrent.Semaphore;
 
 import com.evoMusic.model.Song;
 import com.evoMusic.model.Translator;
-import com.evoMusic.model.geneticAlgorithm.Crossover;
+import com.evoMusic.model.geneticAlgorithm.DrCross;
 import com.evoMusic.model.geneticAlgorithm.GeneticAlgorithm;
 import com.evoMusic.model.geneticAlgorithm.mutation.ISubMutator;
 import com.evoMusic.model.geneticAlgorithm.mutation.Mutator;
 import com.evoMusic.model.geneticAlgorithm.mutation.OctaveMutator;
 import com.evoMusic.model.geneticAlgorithm.mutation.RandomNoteMutator;
-import com.evoMusic.model.geneticAlgorithm.mutation.ReverseMutator;
 import com.evoMusic.model.geneticAlgorithm.mutation.ScaleOfFifthMutator;
-import com.evoMusic.model.geneticAlgorithm.mutation.SimplifyMutator;
 import com.evoMusic.model.geneticAlgorithm.rating.BeatRepetitionRater;
 import com.evoMusic.model.geneticAlgorithm.rating.ChordRepetitionRater;
 import com.evoMusic.model.geneticAlgorithm.rating.CrazyNoteOctaveRater;
 import com.evoMusic.model.geneticAlgorithm.rating.MelodyDirectionRater;
 import com.evoMusic.model.geneticAlgorithm.rating.MelodyDirectionStabilityRater;
 import com.evoMusic.model.geneticAlgorithm.rating.MelodyNoteDensityRater;
+import com.evoMusic.model.geneticAlgorithm.rating.MelodyNoteSustainRater;
 import com.evoMusic.model.geneticAlgorithm.rating.MelodyPitchRangeRater;
 import com.evoMusic.model.geneticAlgorithm.rating.MelodyRepetionRater;
 import com.evoMusic.model.geneticAlgorithm.rating.MelodyRestDensityRater;
@@ -33,6 +32,7 @@ import com.evoMusic.model.geneticAlgorithm.rating.RepeatedPitchDensityRater;
 import com.evoMusic.model.geneticAlgorithm.rating.RhythmicVarietyRater;
 import com.evoMusic.model.geneticAlgorithm.rating.ScaleWhizz;
 import com.evoMusic.model.geneticAlgorithm.rating.SubRater;
+import com.evoMusic.model.geneticAlgorithm.rating.ZipfsLawRater;
 import com.evoMusic.util.Parameters;
 import com.google.common.collect.Sets;
 
@@ -64,8 +64,9 @@ public class GenerateCommand extends AbstractCommand {
         //allMut.add(new ReverseMutator(c.MUTATOR_REVERSE_PROBABILITY, c.MUTATOR_REVERSE_NBR_OF_NEIGHBORS, c.MUTATOR_REVERSE_RANGE, true));
         allMut.add(new ScaleOfFifthMutator(c.MUTATOR_SCALE_OF_FIFTH_PROBABILITY, c.MUTATOR_SCALE_OF_FIFTH_RANGE));
         //allMut.add(new SimplifyMutator(c.MUTATOR_SIMPLIFY_PROBABILITY, c.MUTATOR_SIMPLIFY_NBR_OF_NEIGHBORS, c.MUTATOR_SIMPLIFY_PROBABILITY));
-        List<SubRater> subRaters = new LinkedList<SubRater>();
+        DrCross crossover = new DrCross(4);
         
+        List<SubRater> subRaters = new LinkedList<SubRater>();        
         subRaters.add(new MelodyRepetionRater(c.RATER_MELODY_REPETITION_WEIGHT));
         subRaters.add(new ScaleWhizz(c.RATER_SCALE_WEIGHT));
         subRaters.add(new BeatRepetitionRater(c.RATER_BEAT_REPETITION_WEIGHT));
@@ -80,9 +81,8 @@ public class GenerateCommand extends AbstractCommand {
         subRaters.add(new MelodyPitchRangeRater(c.RATER_MELODY_PITCH_RANGE_WEIGHT));
         subRaters.add(new RepeatedPitchDensityRater(c.RATER_REPEATED_PITCH_DENSITY_WEIGTH));
         subRaters.add(new MelodyRestDensityRater(c.RATER_MELODY_REST_DENSITY_WEIGHT));
-        Crossover crossover = new Crossover(c.CROSSOVER_NBR_OF_INTERSECTS);
-        crossover.setMinDuration(c.CROSSOVER_MIN_DURATION);
-        crossover.setMaxDuration(c.CROSSOVER_MAX_DURATION);
+        subRaters.add(new ZipfsLawRater(c.RATER_ZIPFS_LAW_WEIGHT));
+        subRaters.add(new MelodyNoteSustainRater(c.RATER_MELODY_NOTE_SUSTAIN_WEIGHT));
         
         final GeneticAlgorithm ga = new GeneticAlgorithm(selectedSongs, new Mutator(allMut, c.MUTATION_INITIAL_PROBABILITY, c.MUTATION_MINIMUM_PROBABILITY, c.MUTATION_PROBABILITY_RATIO), crossover, new Rater(subRaters));
         
@@ -93,7 +93,7 @@ public class GenerateCommand extends AbstractCommand {
         ga.iterate();
         finished.acquireUninterruptibly();
         
-        //Translator.INSTANCE.saveSongToMidi(ga.getBest(), "best");
+        Translator.INSTANCE.saveSongToMidi(ga.getBest(), "the new bests");
         Translator.INSTANCE.play(ga.getBest());
         return true;
     }
@@ -129,7 +129,7 @@ public class GenerateCommand extends AbstractCommand {
                 for (; i < width; i++) {
                   System.out.print(" ");
                 }
-                System.out.print("] "+ga.getIterationsDone()*100 / iterations + "%");
+                System.out.print("] "+ga.getIterationsDone()*100 / iterations + "%" + " | " + "Best rating: " + ga.getBestRating());
                 if (ga.getIterationsDone() / iterations == 1) {
                     System.out.println();
                     finished.release();

@@ -25,7 +25,7 @@ public class IntervalTrackTest {
     public static void setUpBeforeClass() throws Exception {
         testSong = Translator.INSTANCE.loadMidiToSong("midifiles/super_mario_world_overworld.mid");
         testTrack = testSong.getTrack(0);
-        testTrack.addTag(TrackTag.MELODY);
+        testTrack.setTag(TrackTag.MELODY);
     }
 
     @Before

@@ -1,6 +1,7 @@
 package jUnit;
 
 import jUnit.crossover.CrossoverTest;
+import jUnit.crossover.DrCrossTest;
 import jUnit.database.MongoDatabaseTest;
 import jUnit.mutator.OctaveMutatorTest;
 import jUnit.mutator.RandomNoteMutatorTest;
@@ -11,6 +12,7 @@ import jUnit.rater.CrazyNoteOctaveRaterTest;
 import jUnit.rater.MelodyDirectionRaterTest;
 import jUnit.rater.MelodyDirectionStabilityRaterTest;
 import jUnit.rater.MelodyNoteDensityRaterTest;
+import jUnit.rater.MelodyNoteSustainRaterTest;
 import jUnit.rater.MelodyPitchRangeRaterTest;
 import jUnit.rater.MelodyRepetitionRaterTest;
 import jUnit.rater.MelodyRestDensityRaterTest;
@@ -19,6 +21,7 @@ import jUnit.rater.PitchVarietyRaterTest;
 import jUnit.rater.RepeatedPitchDensityRaterTest;
 import jUnit.rater.RhythmVarietyRaterTest;
 import jUnit.rater.ScaleWhizzTest;
+import jUnit.rater.ZipfsLawRaterTest;
 import jUnit.translator.TranslatorTest;
 
 import org.junit.runner.RunWith;
@@ -32,7 +35,9 @@ import org.junit.runners.Suite.SuiteClasses;
     CrossoverTest.class, 
     GenerationTest.class,
     SongTest.class,
-//    GeneticAlgorithmTest.class,
+    TrackTest.class,
+    GeneticAlgorithmTest.class,
+    DrCrossTest.class,
     
     /*
      * Raters
@@ -51,6 +56,8 @@ import org.junit.runners.Suite.SuiteClasses;
     MelodyPitchRangeRaterTest.class,
     RepeatedPitchDensityRaterTest.class,
     MelodyRestDensityRaterTest.class,
+    ZipfsLawRaterTest.class,
+    MelodyNoteSustainRaterTest.class,
     
     /*
      * Mutators

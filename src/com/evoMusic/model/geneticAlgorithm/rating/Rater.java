@@ -43,7 +43,7 @@ public class Rater {
                 if (subRating < 0 || subRating > 1) {
                     System.err.println("WARNING: rater: '"
                             + subRater.getClass().getSimpleName() + "' returned an"
-                            + "invalid rating of: " + subRating);
+                            + " invalid rating of: " + subRating);
                 }
                 rating += subRating * subRater.getWeight();
             }
@@ -87,7 +87,6 @@ public class Rater {
                 rating += subRater.rate(s);
             }
             rating = rating / songs.size();
-            System.out.println(subRater.toString() + ": " + rating);
             subRater.setWeight(rating);
         }
     }

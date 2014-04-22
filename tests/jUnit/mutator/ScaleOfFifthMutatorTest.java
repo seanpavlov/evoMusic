@@ -7,12 +7,12 @@ import org.junit.Test;
 
 import com.evoMusic.model.Song;
 import com.evoMusic.model.Translator;
-import com.evoMusic.model.geneticAlgorithm.mutation.OctaveMutator;
+import com.evoMusic.model.geneticAlgorithm.mutation.ScaleOfFifthMutator;
 import com.evoMusic.util.MidiUtil;
 
 
 
-public class OctaveMutatorTest {
+public class ScaleOfFifthMutatorTest {
 
     Song originSong;
     Song mutatedSong;
@@ -38,8 +38,8 @@ public class OctaveMutatorTest {
     public void mutationsWithinRange(){
         boolean testIsOkay = true;
         int stepRange = 2;
-        OctaveMutator om = new OctaveMutator(1, stepRange);
-        om.mutate(mutatedSong);
+        ScaleOfFifthMutator sofm = new ScaleOfFifthMutator(1, stepRange);
+        sofm.mutate(mutatedSong);
         int nbrOfTracks = originSong.getScore().getSize();
         int originPitch = 0;
         int mutatedPitch = 0;
@@ -50,14 +50,13 @@ public class OctaveMutatorTest {
                 for(int note = 0; note < nbrOfNotes; note++){
                     originPitch = originSong.getScore().getPart(track).getPhrase(phrase).getNote(note).getPitch();
                     mutatedPitch = mutatedSong.getScore().getPart(track).getPhrase(phrase).getNote(note).getPitch();
-                    if(originPitch%12 == mutatedPitch%12){
-                        if(mu.getNotePitch(mutatedPitch) <= mu.getNotePitch(originPitch)+stepRange && mu.getNotePitch(mutatedPitch) >= mu.getNotePitch(originPitch)-stepRange){
-                            
-                        }else{
-                            testIsOkay = false;
-                        }
-                    }else{
+                    if(originPitch != mutatedPitch){
                         testIsOkay = false;
+                        for(int step = 1; step <= stepRange; step++){
+                            if(mutatedPitch == originPitch+(5*step) || mutatedPitch == originPitch-(5*step)){
+                                testIsOkay = true;
+                            }
+                        }
                     }
                 }
             }
