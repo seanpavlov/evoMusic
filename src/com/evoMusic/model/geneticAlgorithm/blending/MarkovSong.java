@@ -76,7 +76,7 @@ public class MarkovSong {
         // Finding all track tags.
         for (Song song : songList) {
             for (Track track : song.getTracks()) {
-                if (!(track.getTag() == TrackTag.NONE)) {
+                if (!(track.getTag() == TrackTag.NONE) && track.getTag() != null) {
                     allTrackTags.add(track.getTag());
                 }
             }
@@ -108,8 +108,7 @@ public class MarkovSong {
                     foundTrack = false;
                 }
             }
-        }
-        System.out.println(trimmedSongs.get(0).getNbrOfTracks());
+        }        
         return trimmedSongs;
 
     }
@@ -172,6 +171,7 @@ public class MarkovSong {
             newSong.addTrack(markovTracks.get(trackIndex).generateNew(
                     songDuration, randomTrack.getInstrument(),
                     randomTrack.getChannel(), randomTrack.getFirstNote(), randomTrack.getTag()));
+//            System.out.println(randomTrack.getTag()); // TODO
         }
         return newSong.toSong();
     }
