@@ -1,5 +1,9 @@
 package jUnit;
 
+import jUnit.blending.IntervalSongTest;
+import jUnit.blending.IntervalTrackTest;
+import jUnit.blending.MarkovSongTest;
+import jUnit.blending.MarkovTrackTest;
 import jUnit.crossover.CrossoverTest;
 import jUnit.crossover.DrCrossTest;
 import jUnit.database.MongoDatabaseTest;
@@ -64,7 +68,16 @@ import org.junit.runners.Suite.SuiteClasses;
      */
     RandomNoteMutatorTest.class,
     OctaveMutatorTest.class,
-    SimplifyMutatorTest.class})
+    SimplifyMutatorTest.class,
+    
+    /*
+     * Markov
+     */
+    IntervalSongTest.class,
+    IntervalTrackTest.class,
+    MarkovTrackTest.class,
+    MarkovSongTest.class
+    })
 
 /**
  * This is our test suite class. This class runs all our test classes. 
