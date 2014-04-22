@@ -64,13 +64,13 @@ public class GenerateCommand extends AbstractCommand {
         //allMut.add(new ReverseMutator(c.MUTATOR_REVERSE_PROBABILITY, c.MUTATOR_REVERSE_NBR_OF_NEIGHBORS, c.MUTATOR_REVERSE_RANGE, true));
         allMut.add(new ScaleOfFifthMutator(c.MUTATOR_SCALE_OF_FIFTH_PROBABILITY, c.MUTATOR_SCALE_OF_FIFTH_RANGE));
         //allMut.add(new SimplifyMutator(c.MUTATOR_SIMPLIFY_PROBABILITY, c.MUTATOR_SIMPLIFY_NBR_OF_NEIGHBORS, c.MUTATOR_SIMPLIFY_PROBABILITY));
-        List<SubRater> subRaters = new LinkedList<SubRater>();
+        DrCross crossover = new DrCross(4);
         
+        List<SubRater> subRaters = new LinkedList<SubRater>();        
         subRaters.add(new MelodyRepetionRater(c.RATER_MELODY_REPETITION_WEIGHT));
         subRaters.add(new ScaleWhizz(c.RATER_SCALE_WEIGHT));
         subRaters.add(new BeatRepetitionRater(c.RATER_BEAT_REPETITION_WEIGHT));
         subRaters.add(new ChordRepetitionRater(c.RATER_CHORD_REPETITION_WEIGHT));
-        DrCross crossover = new DrCross(1);
         subRaters.add(new CrazyNoteOctaveRater(c.RATER_CRAZY_OCTAVE_WEIGHT));
         subRaters.add(new MelodyDirectionStabilityRater(c.RATER_MELODY_DIRECTION_WEIGHT));
         subRaters.add(new PitchVarietyRater(c.RATER_PITCH_VARIETY_WEIGHT));
@@ -93,7 +93,7 @@ public class GenerateCommand extends AbstractCommand {
         ga.iterate();
         finished.acquireUninterruptibly();
         
-        //Translator.INSTANCE.saveSongToMidi(ga.getBest(), "best");
+        Translator.INSTANCE.saveSongToMidi(ga.getBest(), "the new bests");
         Translator.INSTANCE.play(ga.getBest());
         return true;
     }
