@@ -210,6 +210,17 @@ public class SongCommand extends AbstractCommand {
                 return true;
             }
         });
+        
+        /*
+         * Deselect all songs
+         */
+        songArgs.put("deselect", new AbstractCommand() {
+            @Override
+            public boolean execute(String[] args) {
+                selectedSongs.clear();
+                return true;
+            }
+        });
 
         /*
          * translate a midifile to a Song
@@ -298,5 +309,4 @@ public class SongCommand extends AbstractCommand {
             song.addTagToTrack(i, trackTags[Integer.parseInt(trackIndex)]);
         }
     }
-
 }
