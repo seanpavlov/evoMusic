@@ -48,13 +48,12 @@ public class GeneticAlgorithm {
         this.populationSize = populationSize;
         this.nbrOfElitismSongs = nbrOfElitismSongs;
         this.nbrOfCrossoverSongs = nbrOfCrossoverSongs;
-        this.inputSongs = inputSongs;
+        currentIteration = 0;
     }
 
-    public Song generateGenerations(int nbrOfGenerations) {
+    public Individual generateGenerations(int nbrOfGenerations) {
         this.nbrOfGenerations = nbrOfGenerations;
         elitismSongs = new ArrayList<Individual>();
-        currentIteration = 0;
 
         // TODO: Initialize weight based on input songs. Decide how we are going
         // to do this.
@@ -88,7 +87,11 @@ public class GeneticAlgorithm {
             population = ratePopulation(tempPopulation);
             selectElitismSongs(population);
 
-            // Select individuals to be crossovered
+            /*
+             * Select individuals from the new population. Perform crossover on
+             * selected individuals. Mutate each individual in list. Rate each
+             * individual.
+             */
             tempPopulation = new ArrayList<Song>();
             tempList = new ArrayList<Song>();
             rwSelect = new RouletteWheelSelection(population);
@@ -107,14 +110,17 @@ public class GeneticAlgorithm {
             population = ratePopulation(tempPopulation);
             selectElitismSongs(population);
         }
-        return elitismSongs.get(0).getSong().copy();
+        /*
+         * Return the best song.
+         */
+        return getBestIndividual();
     }
-
-    public double getBestRating() {
-        if (elitismSongs.size() == 0) {
-            return 0;
-        } else {
-            return elitismSongs.get(0).getRating();
+    
+    public Individual getBestIndividual() {
+        if (elitismSongs.size() == 0){
+            return null;
+        }else{
+            return elitismSongs.get(0);
         }
     }
 
@@ -152,7 +158,12 @@ public class GeneticAlgorithm {
 
     private void selectElitismSongs(List<Individual> population) {
         int nbrOfIndividuals = population.size();
-        for (int individual = 0; individual < nbrOfIndividuals; individual++) {
+        int startIndividual = 0;
+        if (elitismSongs.size() == 0) {
+            elitismSongs.add(population.get(0));
+            startIndividual = 1;
+        }
+        for (int individual = startIndividual; individual < nbrOfIndividuals; individual++) {
             for (int i = 0; i < elitismSongs.size(); i++) {
                 if (population.get(individual).getRating() > elitismSongs
                         .get(i).getRating()) {
@@ -164,17 +175,14 @@ public class GeneticAlgorithm {
                     }
                 }
             }
-            if (elitismSongs.size() == 0) {
-                elitismSongs.add(population.get(individual));
-            }
         }
     }
 
     private List<Song> individualToSong(List<Individual> individuals) {
-        List<Song> tempList = new ArrayList<Song>();
+        List<Song> songList = new ArrayList<Song>();
         for (int i = 0; i < individuals.size(); i++) {
-            tempList.add(individuals.get(i).getSong());
+            songList.add(individuals.get(i).getSong());
         }
-        return tempList;
+        return songList;
     }
 }

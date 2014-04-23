@@ -10,6 +10,7 @@ import com.evoMusic.model.Song;
 import com.evoMusic.model.Translator;
 import com.evoMusic.model.geneticAlgorithm.DrCross;
 import com.evoMusic.model.geneticAlgorithm.GeneticAlgorithm;
+import com.evoMusic.model.geneticAlgorithm.Individual;
 import com.evoMusic.model.geneticAlgorithm.mutation.ISubMutator;
 import com.evoMusic.model.geneticAlgorithm.mutation.Mutator;
 import com.evoMusic.model.geneticAlgorithm.mutation.OctaveMutator;
@@ -103,16 +104,16 @@ public class GenerateCommand extends AbstractCommand {
                 new Mutator(allMut, c.MUTATION_INITIAL_PROBABILITY,
                         c.MUTATION_MINIMUM_PROBABILITY,
                         c.MUTATION_PROBABILITY_RATIO), crossover, new Rater(
-                        subRaters), c.GA_POPULATION_SIZE, c.GA_NBR_OF_ELITISM_SONGS, c.GA_NBR_OF_CROSSOVER_SONGS);
+                        subRaters), c.GA_POPULATION_SIZE, c.GA_NBR_OF_ELITISM_SONGS, c.GA_NBR_OF_CROSSOVER_SONGS );
 
         System.out.println("Start iterating");
 
         runProgress(ga, iterations);
-        Song bestSong = ga.generateGenerations(iterations);
+        Individual bestIndividual = ga.generateGenerations(iterations);
         finished.acquireUninterruptibly();
 
-        Translator.INSTANCE.saveSongToMidi(bestSong, "Bob-Slide64");
-        Translator.INSTANCE.play(bestSong);
+        Translator.INSTANCE.saveSongToMidi(bestIndividual.getSong(), "Bob-Slide64");
+        Translator.INSTANCE.play(bestIndividual.getSong());
         return true;
     }
 
@@ -150,7 +151,7 @@ public class GenerateCommand extends AbstractCommand {
                 }
                 System.out.print("] " + ga.getCurrentIteration() * 100
                         / iterations + "%" + " | " + "Best rating: "
-                        + ga.getBestRating());
+                        + ga.getBestIndividual().getRating());
                 if (ga.getCurrentIteration() / iterations == 1) {
                     System.out.println();
                     finished.release();
