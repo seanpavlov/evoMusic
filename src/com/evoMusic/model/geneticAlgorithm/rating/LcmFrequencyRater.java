@@ -66,7 +66,11 @@ public class LcmFrequencyRater extends SubRater{
             return 0;
 
         double averageDis = disonance / nbrOfNotes;
-        return averageDis;
+        if (averageDis > 1.0){
+            return 1 / averageDis;
+        } else {
+            return 1 - averageDis;
+        }
     }
     
     private Integer gcdMultiple(List<Integer> values){
