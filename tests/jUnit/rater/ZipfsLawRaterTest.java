@@ -41,8 +41,6 @@ public class ZipfsLawRaterTest {
         goodSong = new Song(new Score(new Part(phrase1)));
         badSong = new Song(new Score(new Part(phrase2)));
         randomSong = new Song(new Score(new Part(phrase3)));
-        
-        
     }
     
     @Test

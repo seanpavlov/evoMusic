@@ -59,6 +59,7 @@ public class Parameters {
     public double RATER_MELODY_REST_DENSITY_WEIGHT = 1;
     public double RATER_ZIPFS_LAW_WEIGHT = 1;
     public double RATER_MELODY_NOTE_SUSTAIN_WEIGHT = 1;
+    public double RATER_LCM_PITCH_WEIGHT = 1;
 
     /*
      * CROSSOVER PARAMETERS

@@ -13,6 +13,7 @@ import jUnit.mutator.SimplifyMutatorTest;
 import jUnit.rater.BeatRaterTest;
 import jUnit.rater.ChordRepetitionRaterTest;
 import jUnit.rater.CrazyNoteOctaveRaterTest;
+import jUnit.rater.LcmPitchRaterTest;
 import jUnit.rater.MelodyDirectionRaterTest;
 import jUnit.rater.MelodyDirectionStabilityRaterTest;
 import jUnit.rater.MelodyNoteDensityRaterTest;
@@ -62,6 +63,7 @@ import org.junit.runners.Suite.SuiteClasses;
     MelodyRestDensityRaterTest.class,
     ZipfsLawRaterTest.class,
     MelodyNoteSyncopationRaterTest.class,
+    LcmPitchRaterTest.class,
     
     /*
      * Mutators
