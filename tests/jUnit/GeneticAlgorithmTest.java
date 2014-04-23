@@ -111,10 +111,17 @@ public class GeneticAlgorithmTest {
     }
 
     @Test
-    public void betterOrEqualSongTest() {
+    public void betterSongTest() {
         Individual individual = ga.generateGenerations(2);
         Individual newIndividual = ga.generateGenerations(100);
         assertTrue("Generation 1:\t" + individual.getRating() + "\nGeneration 1000:\t" + newIndividual.getRating(), individual.getRating() < newIndividual.getRating());
+    }
+    
+    @Test
+    public void rightNumberOfGenerations() {
+        int nbrOfGenerations = 20;
+        ga.generateGenerations(nbrOfGenerations);
+        assertTrue("Inserted nbr of Generation:\t" + nbrOfGenerations + "\nNumber of iterations:t" + ga.getCurrentIteration(), nbrOfGenerations == ga.getCurrentIteration());
     }
 
 }
