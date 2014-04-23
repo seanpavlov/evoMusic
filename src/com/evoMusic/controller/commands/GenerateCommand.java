@@ -18,7 +18,7 @@ import com.evoMusic.model.geneticAlgorithm.mutation.ScaleOfFifthMutator;
 import com.evoMusic.model.geneticAlgorithm.rating.BeatRepetitionRater;
 import com.evoMusic.model.geneticAlgorithm.rating.ChordRepetitionRater;
 import com.evoMusic.model.geneticAlgorithm.rating.CrazyNoteOctaveRater;
-import com.evoMusic.model.geneticAlgorithm.rating.LcmFrequencyRater;
+import com.evoMusic.model.geneticAlgorithm.rating.LcmPitchRater;
 import com.evoMusic.model.geneticAlgorithm.rating.MelodyDirectionRater;
 import com.evoMusic.model.geneticAlgorithm.rating.MelodyDirectionStabilityRater;
 import com.evoMusic.model.geneticAlgorithm.rating.MelodyNoteDensityRater;
@@ -84,7 +84,7 @@ public class GenerateCommand extends AbstractCommand {
         subRaters.add(new MelodyRestDensityRater(c.RATER_MELODY_REST_DENSITY_WEIGHT));
         subRaters.add(new ZipfsLawRater(c.RATER_ZIPFS_LAW_WEIGHT));
         subRaters.add(new MelodyNoteSustainRater(c.RATER_MELODY_NOTE_SUSTAIN_WEIGHT));
-        subRaters.add(new LcmFrequencyRater(c.RATER_LCM_FREQUENCY_WEIGHT));
+        subRaters.add(new LcmPitchRater(c.RATER_LCM_PITCH_WEIGHT));
         
         final GeneticAlgorithm ga = new GeneticAlgorithm(selectedSongs, new Mutator(allMut, c.MUTATION_INITIAL_PROBABILITY, c.MUTATION_MINIMUM_PROBABILITY, c.MUTATION_PROBABILITY_RATIO), crossover, new Rater(subRaters));
         
