@@ -36,8 +36,8 @@ public class LcmFrequencyRater extends SubRater{
     
     private double ratePart(Part part){
         List<List<Note>> sortedNotes = Sort.getSortedNoteList(part);
-        double nbrOfChords = 0;
-        double nbrOfConsonant = 0;
+        double nbrOfNotes = 0;
+        double disonance = 1.0;
         
         for(List<Note> notes : sortedNotes){
             List<Integer> frequencies= new ArrayList<Integer>();
@@ -48,35 +48,25 @@ public class LcmFrequencyRater extends SubRater{
                 }
             }
             
-
+            nbrOfNotes++;
             if (frequencies.size() > 1){
-                //System.out.println(frequencies);
-
                 int gcd = gcdMultiple(frequencies);
                 List<Integer> ratios = new ArrayList<Integer>();
                 for(Integer d : frequencies){
                     ratios.add(d/gcd);
                 }
-                //System.out.println(ratios);
                 int lcm = lcmMultiple(ratios);
-                //System.out.println("LCM: " + lcm);
                 double log = Math.log(lcm)/ Math.log(2);
-                nbrOfChords++;
-                if(log < 5)
-                    nbrOfConsonant ++;
-                //System.out.println(log);
-                //System.out.println();
+                disonance += log;
+            } else {
+                disonance += 0;
             }
         }
-        
-        /*System.out.println("Note: " + nbrOfChords);
-        System.out.println("dissonant: " + nbrOfConsonant);
-        System.out.println("part: " + nbrOfConsonant/nbrOfChords);
-        System.out.println();*/
-        
-        if(nbrOfChords == 0)
+        if(nbrOfNotes == 0)
             return 0;
-        return nbrOfConsonant/nbrOfChords;
+
+        double averageDis = disonance / nbrOfNotes;
+        return averageDis;
     }
     
     private Integer gcdMultiple(List<Integer> values){
