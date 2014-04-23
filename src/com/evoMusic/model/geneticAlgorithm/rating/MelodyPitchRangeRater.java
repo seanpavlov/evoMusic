@@ -2,10 +2,7 @@ package com.evoMusic.model.geneticAlgorithm.rating;
 
 import java.util.SortedSet;
 import java.util.TreeSet;
-
-import jm.JMC;
 import jm.music.data.Phrase;
-
 import com.evoMusic.model.Song;
 import com.evoMusic.model.Track;
 import com.evoMusic.util.TrackTag;
