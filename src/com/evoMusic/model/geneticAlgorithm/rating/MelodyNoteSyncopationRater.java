@@ -12,9 +12,9 @@ import com.evoMusic.util.TrackTag;
 
 /**Rater that favors song whose melody track has a lot of notes
  * who sustain across the beats*/
-public class MelodyNoteSustainRater extends SubRater{
+public class MelodyNoteSyncopationRater extends SubRater{
 
-    public MelodyNoteSustainRater(double weight){
+    public MelodyNoteSyncopationRater(double weight){
         super.setWeight(weight);
     }
     
