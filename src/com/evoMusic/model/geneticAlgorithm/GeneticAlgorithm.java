@@ -1,5 +1,6 @@
 package com.evoMusic.model.geneticAlgorithm;
 
+import java.security.AlgorithmConstraints;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,7 +11,7 @@ import com.evoMusic.model.geneticAlgorithm.selection.RouletteWheelSelection;
 
 public class GeneticAlgorithm {
     private List<Song> inputSongs;
-    private List<Individual> elitismSongs;
+    private List<Individual> elitismSongs, nextPopulation;
     private RouletteWheelSelection rwSelect;
     private DrCross crossover;
     private Mutator mutator;
@@ -20,23 +21,26 @@ public class GeneticAlgorithm {
             currentIteration, nbrOfGenerations;
 
     /**
-     * Initiate the genetic algorithm with the necessary parameters.
+     * Initiate the genetic algorithm with the required objects.
      * 
      * @param inputSongs
-     *            is the songs that the user choose.
+     *            is the songs that is going to be used to initiate first
+     *            generation
      * @param mutator
-     *            is the mutator containing all sub mutators.
+     *            is the mutator class with its sub mutators which are going to
+     *            mutate the individuals
      * @param crossover
-     *            is the crossover used.
+     *            is the crossover class that is used to make crossover
      * @param rater
-     *            is the rater containing all sub raters.
+     *            is the rater class with its sub raters which are going to rate
+     *            the individuals
      * @param populationSize
-     *            is the size of the population in each generation
+     *            is the number of individuals in the population
      * @param nbrOfElitismSongs
-     *            is the number of songs going to next generation through
-     *            elitism.
+     *            is the number of songs going to the next generation through
+     *            elitism
      * @param nbrOfCrossoverSongs
-     *            is the number of individuals used in a crossover.
+     *            is the number of songs selected to make crossover on
      */
     public GeneticAlgorithm(List<Song> inputSongs, Mutator mutator,
             DrCross crossover, Rater rater, int populationSize,
@@ -51,6 +55,13 @@ public class GeneticAlgorithm {
         currentIteration = 0;
     }
 
+    /**
+     * Generation a song through a given number of generation
+     * 
+     * @param nbrOfGenerations
+     *            is the number of generation it is going to generate the song
+     * @return the song as an Individual
+     */
     public Individual generateGenerations(int nbrOfGenerations) {
         this.nbrOfGenerations = nbrOfGenerations;
         elitismSongs = new ArrayList<Individual>();
@@ -62,9 +73,9 @@ public class GeneticAlgorithm {
         // TODO: Change in this method so that markov chain is used.
         List<Song> firstGeneration = generateFirstGeneration();
 
-        List<Individual> ratedFirstGeneration = ratePopulation(firstGeneration);
+        nextPopulation = ratePopulation(firstGeneration);
 
-        selectElitismSongs(ratedFirstGeneration);
+        selectElitismSongs(nextPopulation);
 
         for (int generation = 0; generation < nbrOfGenerations; generation++) {
             generateCurrentGeneration();
@@ -74,7 +85,14 @@ public class GeneticAlgorithm {
          */
         return getBestIndividual();
     }
-    
+
+    /**
+     * Generate a song until a given rating is achieved.
+     * 
+     * @param ratingThreshold
+     *            the rating that the best song should achieve
+     * @return the best song as an Individual
+     */
     public Individual generateUntilRating(double ratingThreshold) {
         this.ratingThreshold = ratingThreshold;
         elitismSongs = new ArrayList<Individual>();
@@ -98,11 +116,15 @@ public class GeneticAlgorithm {
          */
         return getBestIndividual();
     }
-    
+
+    /**
+     * Get the best individual. If there are no songs in 
+     * @return
+     */
     public Individual getBestIndividual() {
-        if (elitismSongs.size() == 0){
+        if (elitismSongs.size() == 0) {
             return new Individual(null, 0);
-        }else{
+        } else {
             return elitismSongs.get(0);
         }
     }
@@ -129,52 +151,35 @@ public class GeneticAlgorithm {
         }
         return population;
     }
-    
-    private void generateCurrentGeneration(){
-        currentIteration++;
-        List<Song> tempPopulation = new ArrayList<Song>();
-        List<Individual> population = new ArrayList<Individual>();
-        for (int i = 0; i < nbrOfElitismSongs; i++) {
-            tempPopulation.add(elitismSongs.get(i).getSong().copy());
-        }
 
-        /*
-         * Generate individuals - crossover on best population
-         * Rate them and put in best population if better 
-         */
-        List<Song> tempList = new ArrayList<Song>();
-        crossover.setParents(individualToSong(elitismSongs));
-        for (int i = 0; i < populationSize - nbrOfElitismSongs; i++) {
-            if (tempList.size() == 0) {
-                tempList = crossover.crossIndividuals();
-            }
-            tempPopulation.add(tempList.remove(0));
+    private void generateCurrentGeneration() {
+        currentIteration++;
+        List<Individual> currentPopulation = nextPopulation;
+        for (int i = 0; i < nbrOfElitismSongs; i++) {
+            currentPopulation.add(new Individual(elitismSongs.get(i).getSong().copy(),elitismSongs.get(i).getRating()));
         }
-        population = ratePopulation(tempPopulation);
-        selectElitismSongs(population);
 
         /*
          * Select individuals from the new population. Perform crossover on
          * selected individuals. Mutate each individual in list. Rate each
          * individual.
          */
-        tempPopulation = new ArrayList<Song>();
-        tempList = new ArrayList<Song>();
-        rwSelect = new RouletteWheelSelection(population);
+        List<Song> unratedPopulation = new ArrayList<Song>();
+        List<Song> tempList = new ArrayList<Song>();
+        rwSelect = new RouletteWheelSelection(nextPopulation);
         for (int i = 0; i < populationSize; i++) {
             if (tempList.size() == 0) {
                 for (int j = 0; j < nbrOfCrossoverSongs; j++) {
-                    tempList.add(population.get(rwSelect.select())
-                            .getSong());
+                    tempList.add(nextPopulation.get(rwSelect.select()).getSong());
                 }
                 crossover.setParents(tempList);
                 tempList = crossover.crossIndividuals();
             }
-            tempPopulation.add(tempList.remove(0));
-            mutator.mutate(tempPopulation.get(i));
+            unratedPopulation.add(tempList.remove(0));
+            mutator.mutate(unratedPopulation.get(i));
         }
-        population = ratePopulation(tempPopulation);
-        selectElitismSongs(population);
+        nextPopulation = ratePopulation(unratedPopulation);
+        selectElitismSongs(nextPopulation);
     }
 
     private List<Individual> ratePopulation(List<Song> population) {
@@ -208,7 +213,7 @@ public class GeneticAlgorithm {
                     }
                 }
             }
-            if(elitismSongs.size() < nbrOfElitismSongs && !isAdded){
+            if (elitismSongs.size() < nbrOfElitismSongs && !isAdded) {
                 elitismSongs.add(population.get(individual));
             }
         }
