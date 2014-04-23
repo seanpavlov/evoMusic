@@ -17,7 +17,7 @@ public class LcmFrequencyRaterTest {
     @BeforeClass
     public static void setUp(){
         rater = new LcmFrequencyRater(1);
-        testSong = Translator.INSTANCE.loadMidiToSong("midifiles/m83.mid");
+        testSong = Translator.INSTANCE.loadMidiToSong("midifiles/mm2wily1.mid");
         testSong.addTagToTrack(1, TrackTag.CHORDS);
         testSong.addTagToTrack(3, TrackTag.CHORDS);
         testSong.addTagToTrack(4, TrackTag.CHORDS);

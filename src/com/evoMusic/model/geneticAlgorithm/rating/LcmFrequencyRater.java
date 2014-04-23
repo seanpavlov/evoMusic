@@ -27,8 +27,8 @@ public class LcmFrequencyRater extends SubRater{
         for(Track track : tracks){
            partRating += ratePart(track.getPart());
         }
-        System.out.println("part rating: " + partRating);
-        System.out.println("nbr of track: " + tracks.size());
+        //System.out.println("part rating: " + partRating);
+        //System.out.println("nbr of track: " + tracks.size());
         if(tracks.size() == 0)
             return 0;
         return partRating / tracks.size();
@@ -69,10 +69,10 @@ public class LcmFrequencyRater extends SubRater{
             }
         }
         
-        System.out.println("Note: " + nbrOfChords);
+        /*System.out.println("Note: " + nbrOfChords);
         System.out.println("dissonant: " + nbrOfConsonant);
         System.out.println("part: " + nbrOfConsonant/nbrOfChords);
-        System.out.println();
+        System.out.println();*/
         
         if(nbrOfChords == 0)
             return 0;
@@ -121,6 +121,4 @@ public class LcmFrequencyRater extends SubRater{
     private Integer lcm(Integer first, Integer second){ 
         return(first * second / (gcd(first, second)));
     }
-    
-
 }
