@@ -1,4 +1,4 @@
-package jUnit.blending;
+package com.evoMusic.model.geneticAlgorithm.blending;
 
 import java.util.ArrayList;
 import java.util.Collections;
