@@ -17,7 +17,7 @@ import com.evoMusic.util.TrackTag;
 public class StateTrack {
 
     private static final int REST_PITCH = -1000000;
-    private static final int RHYTHM_PRECISION = 1000000;
+    public static final int RHYTHM_PRECISION = 1000000;
 
     private int firstNote;
     private int instrument;
@@ -71,45 +71,56 @@ public class StateTrack {
 
         firstNote = formatNote(sortedStateList.get(0).notes.get(0).getPitch());
         int numberOfStates = sortedStateList.size();
-        ComparableState currentState = null;
-        ComparableState nextState = null;
-        int lowestRyV = 0;
+        List<Note> currentState = null;
+        Integer previousHeadInterval = 0;
+        List<Integer> currentInterval;
+        Double currentRhythmValue;
+        List<Double> currentDuration;
+        List<Integer> currentDynamics;
         for (int i = 0; i < numberOfStates - 1; i++) {
-            currentState = sortedStateList.get(i);
-            nextState = sortedStateList.get(i + 1);
+            currentState = formatState(sortedStateList.get(i));
+            currentInterval = new ArrayList<Integer>();
+            currentDuration = new ArrayList<Double>();
+            currentDynamics = new ArrayList<Integer>();
 
-            // if only rests, add 1 rest and lowest RyV.
-            // else, add all notes that are not rests and lowest RyV from those
-            // non-rests.
-            lowestRyV = Integer.MAX_VALUE;
-            if (currentState.containsOnlyRests()) {
-                for (Note note : currentState.notes) {
-                    if (note.getRhythmValue() < lowestRyV) {
-                        lowestRyV = (int)(note.getRhythmValue() * RHYTHM_PRECISION);
-                    }
+            for (Note note : currentState) {
+                currentInterval.add(formatNote(note.getPitch()) - formatNote(previousHeadInterval));
+                currentDuration.add(note.getDuration());
+                currentDynamics.add(note.getDynamic());
+            }
+            currentRhythmValue = currentState.get(0).getRhythmValue();
+            previousHeadInterval = currentState.get(0).getPitch();
+
+            intervals.add(currentInterval);
+            rhythmValues.add(currentRhythmValue);
+            durations.add(currentDuration);
+            dynamics.add(currentDynamics);
+        }
+    }
+    
+    private List<Note> formatState(ComparableState state) {
+        int lowestRyV = 0;
+        // if only rests, add 1 rest and lowest RyV.
+        // else, add all notes that are not rests and lowest RyV from those
+        // non-rests.
+        lowestRyV = Integer.MAX_VALUE;
+        // if not only rests, remove all rests.
+        if (!currentState.containsOnlyRests()) {
+            for (Note note : currentState.notes) {
+                if (note.isRest()) {
+                    currentState.notes.remove(note);
                 }
             }
-            
-
-            currentNote = sortedNoteList.get(i).note;
-            nextNote = sortedNoteList.get(i + 1).note;
-            // adding to intervals
-            intervals[i] = formatNote(nextNote.getPitch())
-                    - formatNote(currentNote.getPitch());
-
-            // adding to rythmValues.
-            rhythmValues[i] = currentNote.getRhythmValue();
-
-            // adding to duration.
-            durations[i] = currentNote.getDuration();
-
-            // adding to dynamics.
-            dynamics[i] = currentNote.getDynamic();
         }
-        currentNote = sortedNoteList.get(numberOfStates - 1).note;
-        rhythmValues[numberOfStates - 1] = currentNote.getRhythmValue();
-        durations[numberOfStates - 1] = currentNote.getDuration();
-        dynamics[numberOfStates - 1] = currentNote.getDynamic();
+        // find lowest rhythm value.
+        for (Note note : currentState.notes) {
+            if (note.getRhythmValue() < lowestRyV) {
+                lowestRyV = (int)(note.getRhythmValue() * RHYTHM_PRECISION);
+            }
+        }
+        if (currentState.containsOnlyRests()) {
+            
+        }
     }
 
     /**
