@@ -1,5 +1,10 @@
 package jUnit.mutator;
 
+import static org.junit.Assert.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import jm.music.data.Note;
 import jm.music.data.Part;
 import jm.music.data.Phrase;
@@ -32,31 +37,37 @@ public class SwapSegmentMutatorTest {
     }
     
     @Test
-    public void test(){
-       // int[] values1 = testSong.getTrack(0).getPart().getPhrase(0).getPitchArray();
-        System.out.println("Before: ");
+    public void testSwapSegment(){
+        int noteCountBefore = 0;
+        List<Integer> beforeValues = new ArrayList<Integer>();
         for(Track track : testSong.getTracks()){
             for(Phrase phrase : track.getPart().getPhraseArray()){
                 for(int v : phrase.getPitchArray()){
-                    if(v != Note.REST)
-                    System.out.print(v + " ");
+                    if(v != Note.REST){
+                        beforeValues.add(v);
+                        noteCountBefore++;
+                    }
                 }
             }
-        }
-        System.out.println();
-        
+        }    
         mutator.mutate(testSong);
-        //int[] values2 = testSong.getTrack(0).getPart().getPhrase(0).getPitchArray();
-        
-        System.out.println("After: ");
+        boolean same = false;
+        int noteCountAfter = 0;
         for(Track track : testSong.getTracks()){
             for(Phrase phrase : track.getPart().getPhraseArray()){
-                for(int v : phrase.getPitchArray()){
-                    //if(v != Note.REST)
-                    System.out.print(v + " ");
+                int[] values = phrase.getPitchArray();
+                for(int i = 0; i < values.length; i++){ 
+                    if(values[i] != Note.REST){
+                        noteCountAfter++;
+                        if(!same && values[i] != beforeValues.get(i)){
+                            same = true;
+                        }
+                    }
                 }
             }
         }
+        assertTrue("Same nbr of non Rest notes before and after mutation", noteCountBefore == noteCountAfter);
+        assertTrue("Every note should not be in same place after mutation",same);     
     }
 
 }
