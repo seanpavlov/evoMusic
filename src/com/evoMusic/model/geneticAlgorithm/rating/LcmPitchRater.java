@@ -86,16 +86,16 @@ public class LcmPitchRater extends SubRater{
      */
     private Integer gcd(Integer first, Integer second){
         int temp;  
-        if(first==second){
-          return first;
+        while (first!=second){
+            if(first < second){ 
+              temp = first;
+              first = second;
+              second = temp;
+            }
+            first -= second;
         }
-        if(first < second){ 
-          temp = first;
-          first = second;
-          second = temp;
-        }
-        return gcd(first - second, second); 
-      }
+        return first;
+    }
     
 
     /**
