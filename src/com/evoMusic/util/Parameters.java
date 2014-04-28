@@ -27,7 +27,7 @@ public class Parameters {
      */
     public double MUTATION_INITIAL_PROBABILITY = 0.3;
     public double MUTATION_MINIMUM_PROBABILITY = 0.2;
-    public double MUTATION_PROBABILITY_RATIO = 0.0005;
+    public double MUTATION_PROBABILITY_RATIO = 0.05;
 
     public double MUTATOR_RANDOM_NOTE_PROBABILITY = 0.05;
     public int MUTATOR_RANDOM_NOTE_STEP_RANGE = 6;
