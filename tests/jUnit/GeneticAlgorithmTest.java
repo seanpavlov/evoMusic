@@ -112,16 +112,25 @@ public class GeneticAlgorithmTest {
 
     @Test
     public void betterSongTest() {
-        Individual individual = ga.generateGenerations(2);
-        Individual newIndividual = ga.generateGenerations(100);
-        assertTrue("Generation 1:\t" + individual.getRating() + "\nGeneration 1000:\t" + newIndividual.getRating(), individual.getRating() < newIndividual.getRating());
+        int lowGenerations = 2;
+        int highGenerations = 100;
+        Individual individual = ga.generateGenerations(lowGenerations);
+        Individual newIndividual = ga.generateGenerations(highGenerations);
+        assertTrue("Generation " + lowGenerations+ ":\t" + individual.getRating() + "\nGeneration " + highGenerations + ":\t" + newIndividual.getRating(), individual.getRating() < newIndividual.getRating());
     }
     
     @Test
-    public void rightNumberOfGenerations() {
+    public void rightNumberOfGenerationsTest() {
         int nbrOfGenerations = 20;
         ga.generateGenerations(nbrOfGenerations);
-        assertTrue("Inserted nbr of Generation:\t" + nbrOfGenerations + "\nNumber of iterations:t" + ga.getCurrentIteration(), nbrOfGenerations == ga.getCurrentIteration());
+        assertTrue("Inserted nbr of Generation:\t" + nbrOfGenerations + "\nNumber of iterations:\t" + ga.getCurrentIteration(), nbrOfGenerations == ga.getCurrentIteration());
+    }
+    
+    @Test
+    public void rightRatingThresholdTest() {
+        double threshold = 0.52;
+        ga.generateUntilRating(threshold);
+        assertTrue("Rating threshold:\t" + threshold + "\nBest song rating:\t" + ga.getBestIndividual().getRating(), threshold <= ga.getBestIndividual().getRating());
     }
 
 }

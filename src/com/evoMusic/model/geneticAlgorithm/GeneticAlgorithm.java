@@ -1,6 +1,5 @@
 package com.evoMusic.model.geneticAlgorithm;
 
-import java.security.AlgorithmConstraints;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,6 +8,14 @@ import com.evoMusic.model.geneticAlgorithm.mutation.Mutator;
 import com.evoMusic.model.geneticAlgorithm.rating.Rater;
 import com.evoMusic.model.geneticAlgorithm.selection.RouletteWheelSelection;
 
+/**
+ * The algorithm that provides the iteration of a genetic algorithm. Initiate
+ * the input songs and parameters that is going to be used with the constructor.
+ * Call either generateGenerations-method or generateUntilRating-method to
+ * generate a song. Worth to notice is that current iteration and the best song
+ * is reset each time generateGenerations or generateUntilRating-methods are
+ * called.
+ */
 public class GeneticAlgorithm {
     private List<Song> inputSongs;
     private List<Individual> elitismSongs, nextPopulation;
@@ -52,6 +59,7 @@ public class GeneticAlgorithm {
         this.populationSize = populationSize;
         this.nbrOfElitismSongs = nbrOfElitismSongs;
         this.nbrOfCrossoverSongs = nbrOfCrossoverSongs;
+        nextPopulation = new ArrayList<Individual>();
         currentIteration = 0;
     }
 
@@ -64,6 +72,7 @@ public class GeneticAlgorithm {
      */
     public Individual generateGenerations(int nbrOfGenerations) {
         this.nbrOfGenerations = nbrOfGenerations;
+        nextPopulation = new ArrayList<Individual>();
         elitismSongs = new ArrayList<Individual>();
         currentIteration = 0;
 
@@ -95,6 +104,7 @@ public class GeneticAlgorithm {
      */
     public Individual generateUntilRating(double ratingThreshold) {
         this.ratingThreshold = ratingThreshold;
+        nextPopulation = new ArrayList<Individual>();
         elitismSongs = new ArrayList<Individual>();
         currentIteration = 0;
 
@@ -118,17 +128,32 @@ public class GeneticAlgorithm {
     }
 
     /**
-     * Get the best individual. If there are no songs in 
-     * @return
+     * Get the best individual.
+     * 
+     * @return the best individual
      */
     public Individual getBestIndividual() {
-        if (elitismSongs.size() == 0) {
+        if (nextPopulation.size() == 0) {
             return new Individual(null, 0);
         } else {
-            return elitismSongs.get(0);
+            int populationSize = nextPopulation.size();
+            int bestIndividualIndex = 0;
+            for (int i = 0; i < populationSize; i++) {
+                if (nextPopulation.get(i).getRating() > nextPopulation.get(
+                        bestIndividualIndex).getRating()) {
+                    bestIndividualIndex = i;
+                }
+            }
+            return nextPopulation.get(bestIndividualIndex);
         }
     }
 
+    /**
+     * Return the current iteration. Resets each time generateUntilRating() and
+     * generateGeneration() is called.
+     * 
+     * @return the current iteration
+     */
     public int getCurrentIteration() {
         return currentIteration;
     }
@@ -156,7 +181,8 @@ public class GeneticAlgorithm {
         currentIteration++;
         List<Individual> currentPopulation = nextPopulation;
         for (int i = 0; i < nbrOfElitismSongs; i++) {
-            currentPopulation.add(new Individual(elitismSongs.get(i).getSong().copy(),elitismSongs.get(i).getRating()));
+            currentPopulation.add(new Individual(elitismSongs.get(i).getSong()
+                    .copy(), elitismSongs.get(i).getRating()));
         }
 
         /*
@@ -170,7 +196,8 @@ public class GeneticAlgorithm {
         for (int i = 0; i < populationSize; i++) {
             if (tempList.size() == 0) {
                 for (int j = 0; j < nbrOfCrossoverSongs; j++) {
-                    tempList.add(nextPopulation.get(rwSelect.select()).getSong());
+                    tempList.add(nextPopulation.get(rwSelect.select())
+                            .getSong());
                 }
                 crossover.setParents(tempList);
                 tempList = crossover.crossIndividuals();
@@ -217,13 +244,5 @@ public class GeneticAlgorithm {
                 elitismSongs.add(population.get(individual));
             }
         }
-    }
-
-    private List<Song> individualToSong(List<Individual> individuals) {
-        List<Song> songList = new ArrayList<Song>();
-        for (int i = 0; i < individuals.size(); i++) {
-            songList.add(individuals.get(i).getSong());
-        }
-        return songList;
     }
 }
