@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.evoMusic.model.Song;
+import com.evoMusic.model.geneticAlgorithm.blending.MarkovSong;
 import com.evoMusic.model.geneticAlgorithm.mutation.Mutator;
 import com.evoMusic.model.geneticAlgorithm.rating.Rater;
 import com.evoMusic.model.geneticAlgorithm.selection.RouletteWheelSelection;
@@ -23,9 +24,10 @@ public class GeneticAlgorithm {
     private DrCross crossover;
     private Mutator mutator;
     private Rater rater;
-    double ratingThreshold;
+    private MarkovSong markovSong;
+    double ratingThreshold, songDuration;
     int populationSize, nbrOfElitismSongs, nbrOfCrossoverSongs,
-            currentIteration, nbrOfGenerations;
+            nbrOfMarkovLookbacks, currentIteration, nbrOfGenerations;
 
     /**
      * Initiate the genetic algorithm with the required objects.
@@ -51,6 +53,7 @@ public class GeneticAlgorithm {
      */
     public GeneticAlgorithm(List<Song> inputSongs, Mutator mutator,
             DrCross crossover, Rater rater, int populationSize,
+            int nbrOfMarkovLookbacks, double songDuration,
             int nbrOfElitismSongs, int nbrOfCrossoverSongs) {
         this.inputSongs = inputSongs;
         this.crossover = crossover;
@@ -59,6 +62,9 @@ public class GeneticAlgorithm {
         this.populationSize = populationSize;
         this.nbrOfElitismSongs = nbrOfElitismSongs;
         this.nbrOfCrossoverSongs = nbrOfCrossoverSongs;
+        this.nbrOfMarkovLookbacks = nbrOfMarkovLookbacks;
+        this.songDuration = songDuration;
+        markovSong = new MarkovSong(nbrOfMarkovLookbacks, inputSongs);
         nextPopulation = new ArrayList<Individual>();
         currentIteration = 0;
     }
@@ -79,7 +85,6 @@ public class GeneticAlgorithm {
         // TODO: Initialize weight based on input songs. Decide how we are going
         // to do this.
 
-        // TODO: Change in this method so that markov chain is used.
         List<Song> firstGeneration = generateFirstGeneration();
 
         nextPopulation = ratePopulation(firstGeneration);
@@ -159,20 +164,9 @@ public class GeneticAlgorithm {
     }
 
     private List<Song> generateFirstGeneration() {
-        // TODO: Insert markov initialization here
-
         List<Song> population = new ArrayList<Song>();
-        // for (int individual = 0; individual < populationSize; individual++) {
-        // TODO: Insert generate individual and put in list here
-        // population[individual] = markov
-        // }
-        crossover.setParents(inputSongs);
-        List<Song> tempList = new ArrayList<Song>();
         for (int i = 0; i < populationSize; i++) {
-            if (tempList.size() == 0) {
-                tempList = crossover.crossIndividuals();
-            }
-            population.add(tempList.remove(0));
+            population.add(markovSong.generateNew(songDuration));
         }
         return population;
     }

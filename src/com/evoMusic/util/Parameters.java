@@ -72,6 +72,12 @@ public class Parameters {
     public int CROSSOVER_NBR_OF_INTERSECTS = 1;
     public int CROSSOVER_MIN_DURATION = 50;
     public int CROSSOVER_MAX_DURATION = 200;
+    
+    /*
+     * MARKOV PARAMETERS
+     */
+    public int MARKOV_LOOKBACKS = 2;
+    public double MARKOV_SONGDURATION = 30;
 
     private static Parameters parameters = new Parameters();
 

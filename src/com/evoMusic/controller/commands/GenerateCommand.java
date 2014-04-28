@@ -118,7 +118,7 @@ public class GenerateCommand extends AbstractCommand {
                 new Mutator(allMut, c.MUTATION_INITIAL_PROBABILITY,
                         c.MUTATION_MINIMUM_PROBABILITY,
                         c.MUTATION_PROBABILITY_RATIO), crossover, new Rater(
-                        subRaters), c.GA_POPULATION_SIZE, c.GA_NBR_OF_ELITISM_SONGS, c.GA_NBR_OF_CROSSOVER_SONGS );
+                        subRaters), c.GA_POPULATION_SIZE, c.MARKOV_LOOKBACKS, c.MARKOV_SONGDURATION, c.GA_NBR_OF_ELITISM_SONGS, c.GA_NBR_OF_CROSSOVER_SONGS );
 
         System.out.println("Start iterating");
 
