@@ -10,11 +10,15 @@ import com.evoMusic.model.Song;
 import com.evoMusic.model.Translator;
 import com.evoMusic.model.geneticAlgorithm.DrCross;
 import com.evoMusic.model.geneticAlgorithm.GeneticAlgorithm;
+import com.evoMusic.model.geneticAlgorithm.Individual;
 import com.evoMusic.model.geneticAlgorithm.mutation.ISubMutator;
 import com.evoMusic.model.geneticAlgorithm.mutation.Mutator;
 import com.evoMusic.model.geneticAlgorithm.mutation.OctaveMutator;
 import com.evoMusic.model.geneticAlgorithm.mutation.RandomNoteMutator;
+import com.evoMusic.model.geneticAlgorithm.mutation.ReverseBarNotesMutator;
+import com.evoMusic.model.geneticAlgorithm.mutation.RhythmValueMutator;
 import com.evoMusic.model.geneticAlgorithm.mutation.ScaleOfFifthMutator;
+import com.evoMusic.model.geneticAlgorithm.mutation.SimplifyMutator;
 import com.evoMusic.model.geneticAlgorithm.rating.BeatRepetitionRater;
 import com.evoMusic.model.geneticAlgorithm.rating.ChordRepetitionRater;
 import com.evoMusic.model.geneticAlgorithm.rating.CrazyNoteOctaveRater;
@@ -42,20 +46,21 @@ public class GenerateCommand extends AbstractCommand {
     private List<Song> selectedSongs;
     private Semaphore finished = new Semaphore(0);
     private Parameters c = Parameters.getInstance();
-    
+
     /**
      * Creates the generate command
+     * 
      * @param selectedSongs
-     *              reference to the songs selected to be used for generating
-     *              individuals
+     *            reference to the songs selected to be used for generating
+     *            individuals
      */
     public GenerateCommand(List<Song> selectedSongs) {
         this.selectedSongs = selectedSongs;
     }
-    
+
     @Override
     public boolean execute(String[] args) {
-        if(selectedSongs.size() < 2) {
+        if (selectedSongs.size() < 2) {
             return false;
         }
         final int iterations = Integer.parseInt(args[0]);
@@ -72,39 +77,66 @@ public class GenerateCommand extends AbstractCommand {
         subRaters.add(new ScaleWhizz(c.RATER_SCALE_WEIGHT));
         subRaters.add(new BeatRepetitionRater(c.RATER_BEAT_REPETITION_WEIGHT));
         subRaters.add(new ChordRepetitionRater(c.RATER_CHORD_REPETITION_WEIGHT));
+        allMut.add(new RandomNoteMutator(c.MUTATOR_RANDOM_NOTE_PROBABILITY,
+                c.MUTATOR_RANDOM_NOTE_STEP_RANGE));
+        allMut.add(new RhythmValueMutator(c.MUTATOR_RHYTHM_VALUE_PROBABILITY, c.MUTATOR_RHYTHM_VALUE_MOVING_RANGE));
+        allMut.add(new ReverseBarNotesMutator(c.MUTATOR_REVERSE_PROBABILITY));
+        allMut.add(new SimplifyMutator(c.MUTATOR_SIMPLIFY_PROBABILITY));
+        allMut.add(new OctaveMutator(c.MUTATOR_OCTAVE_PROBABILITY,
+                c.MUTATOR_OCTAVE_RANGE));
+        allMut.add(new ScaleOfFifthMutator(
+                c.MUTATOR_SCALE_OF_FIFTH_PROBABILITY,
+                c.MUTATOR_SCALE_OF_FIFTH_RANGE));
+        
+        subRaters
+                .add(new MelodyRepetionRater(c.RATER_MELODY_REPETITION_WEIGHT));
+        subRaters.add(new ScaleWhizz(c.RATER_SCALE_WEIGHT));
+        subRaters.add(new BeatRepetitionRater(c.RATER_BEAT_REPETITION_WEIGHT));
+        subRaters
+                .add(new ChordRepetitionRater(c.RATER_CHORD_REPETITION_WEIGHT));
         subRaters.add(new CrazyNoteOctaveRater(c.RATER_CRAZY_OCTAVE_WEIGHT));
-        subRaters.add(new MelodyDirectionStabilityRater(c.RATER_MELODY_DIRECTION_WEIGHT));
+        subRaters.add(new MelodyDirectionStabilityRater(
+                c.RATER_MELODY_DIRECTION_WEIGHT));
         subRaters.add(new PitchVarietyRater(c.RATER_PITCH_VARIETY_WEIGHT));
         subRaters.add(new MelodyDirectionRater(c.RATER_PITCH_DIRECTION_WEIGHT));
-        subRaters.add(new MelodyNoteDensityRater(c.RATER_MELODY_NOTE_DENSITY_WEIGHT));
-        subRaters.add(new RhythmicVarietyRater(c.RATER_RHYTHMIC_VARIETY_WEIGHT));
+        subRaters.add(new MelodyNoteDensityRater(
+                c.RATER_MELODY_NOTE_DENSITY_WEIGHT));
+        subRaters
+                .add(new RhythmicVarietyRater(c.RATER_RHYTHMIC_VARIETY_WEIGHT));
         subRaters.add(new NoSilenceRater(c.RATER_NO_SILENCE_WEIGHT));
-        subRaters.add(new MelodyPitchRangeRater(c.RATER_MELODY_PITCH_RANGE_WEIGHT));
-        subRaters.add(new RepeatedPitchDensityRater(c.RATER_REPEATED_PITCH_DENSITY_WEIGTH));
-        subRaters.add(new MelodyRestDensityRater(c.RATER_MELODY_REST_DENSITY_WEIGHT));
+        subRaters.add(new MelodyPitchRangeRater(
+                c.RATER_MELODY_PITCH_RANGE_WEIGHT));
+        subRaters.add(new RepeatedPitchDensityRater(
+                c.RATER_REPEATED_PITCH_DENSITY_WEIGTH));
+        subRaters.add(new MelodyRestDensityRater(
+                c.RATER_MELODY_REST_DENSITY_WEIGHT));
         subRaters.add(new ZipfsLawRater(c.RATER_ZIPFS_LAW_WEIGHT));
         subRaters.add(new MelodyNoteSyncopationRater(c.RATER_MELODY_NOTE_SUSTAIN_WEIGHT));
         subRaters.add(new LcmPitchRater(c.RATER_LCM_PITCH_WEIGHT));
         
-        final GeneticAlgorithm ga = new GeneticAlgorithm(selectedSongs, new Mutator(allMut, c.MUTATION_INITIAL_PROBABILITY, c.MUTATION_MINIMUM_PROBABILITY, c.MUTATION_PROBABILITY_RATIO), crossover, new Rater(subRaters));
-        
-        ga.setMinimumIterations(iterations);
+        final GeneticAlgorithm ga = new GeneticAlgorithm(selectedSongs,
+                new Mutator(allMut, c.MUTATION_INITIAL_PROBABILITY,
+                        c.MUTATION_MINIMUM_PROBABILITY,
+                        c.MUTATION_PROBABILITY_RATIO), crossover, new Rater(
+                        subRaters), c.GA_POPULATION_SIZE, c.GA_NBR_OF_ELITISM_SONGS, c.GA_NBR_OF_CROSSOVER_SONGS );
+
         System.out.println("Start iterating");
-        
+
         runProgress(ga, iterations);
-        ga.iterate();
+        Individual bestIndividual = ga.generateGenerations(iterations);
         finished.acquireUninterruptibly();
-        
-        Translator.INSTANCE.saveSongToMidi(ga.getBest(), "the new bests");
-        Translator.INSTANCE.play(ga.getBest());
+
+        Translator.INSTANCE.saveSongToMidi(bestIndividual.getSong(), "outputSong");
+        Translator.INSTANCE.play(bestIndividual.getSong());
         return true;
     }
-    
+
     private void runProgress(final GeneticAlgorithm ga, final int iterations) {
         new Thread(new Runnable() {
             final int width = 50;
             final int height = 20;
             final boolean eclipseHack = true;
+
             @Override
             public void run() {
                 try {
@@ -117,22 +149,24 @@ public class GenerateCommand extends AbstractCommand {
                 String newLine = "\r";
                 if (eclipseHack) {
                     StringBuilder newLines = new StringBuilder();
-                    for (; i < height; i ++){
+                    for (; i < height; i++) {
                         newLines.append("\n");
                     }
                     newLine = newLines.toString();
-                } 
-                
+                }
+
                 System.out.print(newLine + "[");
                 i = 0;
-                for (; i < (int)((1.0*ga.getIterationsDone() / iterations )*width); i++) {
-                  System.out.print("#");
+                for (; i < (int) ((1.0 * ga.getCurrentIteration() / iterations) * width); i++) {
+                    System.out.print("#");
                 }
                 for (; i < width; i++) {
-                  System.out.print(" ");
+                    System.out.print(" ");
                 }
-                System.out.print("] "+ga.getIterationsDone()*100 / iterations + "%" + " | " + "Best rating: " + ga.getBestRating());
-                if (ga.getIterationsDone() / iterations == 1) {
+                System.out.print("] " + ga.getCurrentIteration() * 100
+                        / iterations + "%" + " | " + "Best rating: "
+                        + ga.getBestIndividual().getRating());
+                if (ga.getCurrentIteration() / iterations == 1) {
                     System.out.println();
                     finished.release();
                     return;
@@ -142,7 +176,7 @@ public class GenerateCommand extends AbstractCommand {
             }
         }).start();
     }
-    
+
     @Override
     public Set<String> getArgSet() {
         return Sets.newHashSet("numberOfIterations");
