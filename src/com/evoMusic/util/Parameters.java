@@ -16,29 +16,34 @@ package com.evoMusic.util;
 public class Parameters {
 
     /*
+     * GENETIC ALGORITHM PARAMETERS
+     */
+    public int GA_POPULATION_SIZE = 100;
+    public int GA_NBR_OF_ELITISM_SONGS = 2;
+    public int GA_NBR_OF_CROSSOVER_SONGS = 4;
+    
+    /*
      * MUTATION PARAMETERS
      */
-    public double MUTATION_INITIAL_PROBABILITY = 0.05;
-    public double MUTATION_MINIMUM_PROBABILITY = 0.0001;
+    public double MUTATION_INITIAL_PROBABILITY = 0.3;
+    public double MUTATION_MINIMUM_PROBABILITY = 0.2;
     public double MUTATION_PROBABILITY_RATIO = 0.0005;
 
-    public double MUTATOR_RANDOM_NOTE_PROBABILITY = 0.1;
+    public double MUTATOR_RANDOM_NOTE_PROBABILITY = 0.05;
     public int MUTATOR_RANDOM_NOTE_STEP_RANGE = 6;
+    
+    public double MUTATOR_RHYTHM_VALUE_PROBABILITY = 0;
+    public double MUTATOR_RHYTHM_VALUE_MOVING_RANGE = 1;
 
     public double MUTATOR_OCTAVE_PROBABILITY = 0;
     public int MUTATOR_OCTAVE_RANGE = 1;
 
-    public double MUTATOR_REVERSE_PROBABILITY = 0;
-    public int MUTATOR_REVERSE_NBR_OF_NEIGHBORS = 4;
-    public int MUTATOR_REVERSE_RANGE = 4;
-    public boolean MUTATOR_REVERSE_WITH_RHYTHM_VALUE = true;
+    public double MUTATOR_REVERSE_PROBABILITY = 0.01;
 
     public double MUTATOR_SCALE_OF_FIFTH_PROBABILITY = 0;
     public int MUTATOR_SCALE_OF_FIFTH_RANGE = 3;
 
-    public double MUTATOR_SIMPLIFY_PROBABILITY = 0.1;
-    public int MUTATOR_SIMPLIFY_NBR_OF_NEIGHBORS = 4;
-    public double MUTATOR_SIMPLIFY_NEIGHBOR_PROBABILITY = 0.5;
+    public double MUTATOR_SIMPLIFY_PROBABILITY = 0.02;
 
     /*
      * RATING PARAMETERS
@@ -59,6 +64,7 @@ public class Parameters {
     public double RATER_MELODY_REST_DENSITY_WEIGHT = 1;
     public double RATER_ZIPFS_LAW_WEIGHT = 1;
     public double RATER_MELODY_NOTE_SUSTAIN_WEIGHT = 1;
+    public double RATER_LCM_PITCH_WEIGHT = 1;
 
     /*
      * CROSSOVER PARAMETERS

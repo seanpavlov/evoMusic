@@ -4,10 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jm.JMC;
+import jm.music.data.CPhrase;
 import jm.music.data.Note;
 import jm.music.data.Part;
 import jm.music.data.Phrase;
+import jm.music.data.Rest;
 
+import com.evoMusic.util.Sort;
 import com.evoMusic.util.TrackTag;
 
 /**
@@ -258,6 +261,4 @@ public class Track {
     public void setPart(Part p) {
         songPart = p;
     }
-
-    
 }

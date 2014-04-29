@@ -6,276 +6,243 @@ import java.util.List;
 import com.evoMusic.model.Song;
 import com.evoMusic.model.geneticAlgorithm.mutation.Mutator;
 import com.evoMusic.model.geneticAlgorithm.rating.Rater;
-import com.evoMusic.util.Parameters;
+import com.evoMusic.model.geneticAlgorithm.selection.RouletteWheelSelection;
 
 /**
- * 
- * A class responsible for generating each generation of individuals.
- * 
+ * The algorithm that provides the iteration of a genetic algorithm. Initiate
+ * the input songs and parameters that is going to be used with the constructor.
+ * Call either generateGenerations-method or generateUntilRating-method to
+ * generate a song. Worth to notice is that current iteration and the best song
+ * is reset each time generateGenerations or generateUntilRating-methods are
+ * called.
  */
 public class GeneticAlgorithm {
-
-    private ArrayList<Individual> firstParents;
-    private Mutator mutator;
+    private List<Song> inputSongs;
+    private List<Individual> elitismSongs, nextPopulation;
+    private RouletteWheelSelection rwSelect;
     private DrCross crossover;
+    private Mutator mutator;
     private Rater rater;
-    private int parentsPerGeneration;
-    private int childrenPerGeneration;
-    private boolean throwAwayFirstParents;
-    private boolean usingElitism;
-    private double minimumRating;
-    private int minimumIterations;
-    private int iterationsDone;
-
-    private Generation generation;
+    double ratingThreshold;
+    int populationSize, nbrOfElitismSongs, nbrOfCrossoverSongs,
+            currentIteration, nbrOfGenerations;
 
     /**
-     * Creates a new instance of this class. Defaults elitism to true, to throw
-     * away first parents to true, generation size to 3, minimum rating and
-     * iterations both to 0 and the number of parents to choose to the number of
-     * parents given.
+     * Initiate the genetic algorithm with the required objects.
      * 
-     * @param parents
-     *            The individuals to use for generating the first generation.
+     * @param inputSongs
+     *            is the songs that is going to be used to initiate first
+     *            generation
      * @param mutator
-     *            The mutator that will mutate all children in each generation.
+     *            is the mutator class with its sub mutators which are going to
+     *            mutate the individuals
      * @param crossover
-     *            The crossover that will create each generation from a set of
-     *            parents.
+     *            is the crossover class that is used to make crossover
      * @param rater
-     *            The rater that will rate all individuals for each generation.
+     *            is the rater class with its sub raters which are going to rate
+     *            the individuals
+     * @param populationSize
+     *            is the number of individuals in the population
+     * @param nbrOfElitismSongs
+     *            is the number of songs going to the next generation through
+     *            elitism
+     * @param nbrOfCrossoverSongs
+     *            is the number of songs selected to make crossover on
      */
-    public GeneticAlgorithm(List<Song> parents, Mutator mutator,
-            DrCross crossover, Rater rater) {
-        
-        setMutator(mutator);
-        setRater(rater);
-        setCrossover(crossover);
-
-        this.firstParents = new ArrayList<Individual>();
-        addIndividuals(parents, this.firstParents);
-        generation = new Generation(firstParents);
-        
-        //initiate sub raters weights.
-        rater.initSubRaterWeights(parents);
-
-
-        setParentsPerGeneration(this.firstParents.size());
-        setChildrenPerGeneration(this.firstParents.size() * 5);
-        setThrowAwayFirstParents(true);
-        setElitism(true);
-        setMinimumRating(0);
-        setMinimumIterations(0);
-
-    }
-
-    public int getIterationsDone() {
-        return iterationsDone;
+    public GeneticAlgorithm(List<Song> inputSongs, Mutator mutator,
+            DrCross crossover, Rater rater, int populationSize,
+            int nbrOfElitismSongs, int nbrOfCrossoverSongs) {
+        this.inputSongs = inputSongs;
+        this.crossover = crossover;
+        this.mutator = mutator;
+        this.rater = rater;
+        this.populationSize = populationSize;
+        this.nbrOfElitismSongs = nbrOfElitismSongs;
+        this.nbrOfCrossoverSongs = nbrOfCrossoverSongs;
+        nextPopulation = new ArrayList<Individual>();
+        currentIteration = 0;
     }
 
     /**
-     * Gets a list with the parents used for generating the first generation of
-     * children.
+     * Generation a song through a given number of generation
      * 
-     * @return A list with the parents used for generating the first generation
-     *         of children.
+     * @param nbrOfGenerations
+     *            is the number of generation it is going to generate the song
+     * @return the song as an Individual
      */
-    public List<Individual> getFirstParents() {
-        return this.firstParents;
+    public Individual generateGenerations(int nbrOfGenerations) {
+        this.nbrOfGenerations = nbrOfGenerations;
+        nextPopulation = new ArrayList<Individual>();
+        elitismSongs = new ArrayList<Individual>();
+        currentIteration = 0;
+
+        // TODO: Initialize weight based on input songs. Decide how we are going
+        // to do this.
+
+        // TODO: Change in this method so that markov chain is used.
+        List<Song> firstGeneration = generateFirstGeneration();
+
+        nextPopulation = ratePopulation(firstGeneration);
+
+        selectElitismSongs(nextPopulation);
+
+        for (int generation = 0; generation < nbrOfGenerations; generation++) {
+            generateCurrentGeneration();
+        }
+        /*
+         * Return the best song.
+         */
+        return getBestIndividual();
     }
 
     /**
-     * Takes a list of song and add them to a list of individuals while rating
-     * them in the process.
+     * Generate a song until a given rating is achieved.
      * 
-     * @param songList
-     *            The list from where the songs will be taken.
-     * @param individualList
-     *            The list to where the individuals will be added.
+     * @param ratingThreshold
+     *            the rating that the best song should achieve
+     * @return the best song as an Individual
      */
-    private void addIndividuals(List<Song> songList,
-            List<Individual> individualList) {
-        for (Song song : songList) {
-            individualList.add(new Individual(song, rater.rate(song)));
+    public Individual generateUntilRating(double ratingThreshold) {
+        this.ratingThreshold = ratingThreshold;
+        nextPopulation = new ArrayList<Individual>();
+        elitismSongs = new ArrayList<Individual>();
+        currentIteration = 0;
+
+        // TODO: Initialize weight based on input songs. Decide how we are going
+        // to do this.
+
+        // TODO: Change in this method so that markov chain is used.
+        List<Song> firstGeneration = generateFirstGeneration();
+
+        List<Individual> ratedFirstGeneration = ratePopulation(firstGeneration);
+
+        selectElitismSongs(ratedFirstGeneration);
+
+        while (getBestIndividual().getRating() < ratingThreshold) {
+            generateCurrentGeneration();
+        }
+        /*
+         * Return the best song.
+         */
+        return getBestIndividual();
+    }
+
+    /**
+     * Get the best individual.
+     * 
+     * @return the best individual
+     */
+    public Individual getBestIndividual() {
+        if (nextPopulation.size() == 0) {
+            return new Individual(null, 0);
+        } else {
+            int populationSize = nextPopulation.size();
+            int bestIndividualIndex = 0;
+            for (int i = 0; i < populationSize; i++) {
+                if (nextPopulation.get(i).getRating() > nextPopulation.get(
+                        bestIndividualIndex).getRating()) {
+                    bestIndividualIndex = i;
+                }
+            }
+            return nextPopulation.get(bestIndividualIndex);
         }
     }
 
     /**
-     * Sets the mutator that will execute the mutations on all the individuals
-     * during the iterations.
+     * Return the current iteration. Resets each time generateUntilRating() and
+     * generateGeneration() is called.
      * 
-     * @param mutator
-     *            The mutator that will execute all the mutations on the
-     *            individuals during the iterations.
+     * @return the current iteration
      */
-    public void setMutator(Mutator mutator) {
-        this.mutator = mutator;
+    public int getCurrentIteration() {
+        return currentIteration;
     }
 
-    /**
-     * Sets the crossover that will create all the children for each generation.
-     * 
-     * @param crossover
-     *            The crossover that will create all the children for each
-     *            generation.
-     */
-    public void setCrossover(DrCross crossover) {
-        this.crossover = crossover;
+    private List<Song> generateFirstGeneration() {
+        // TODO: Insert markov initialization here
+
+        List<Song> population = new ArrayList<Song>();
+        // for (int individual = 0; individual < populationSize; individual++) {
+        // TODO: Insert generate individual and put in list here
+        // population[individual] = markov
+        // }
+        crossover.setParents(inputSongs);
+        List<Song> tempList = new ArrayList<Song>();
+        for (int i = 0; i < populationSize; i++) {
+            if (tempList.size() == 0) {
+                tempList = crossover.crossIndividuals();
+            }
+            population.add(tempList.remove(0));
+        }
+        return population;
     }
 
-    /**
-     * Sets the rater that will be rating all individuals during the iterations.
-     * 
-     * @param rater
-     *            The rater that will rate all individuals during the
-     *            iterations.
-     */
-    public void setRater(Rater rater) {
-        this.rater = rater;
+    private void generateCurrentGeneration() {
+        currentIteration++;
+        List<Individual> currentPopulation = nextPopulation;
+        for (int i = 0; i < nbrOfElitismSongs; i++) {
+            currentPopulation.add(new Individual(elitismSongs.get(i).getSong()
+                    .copy(), elitismSongs.get(i).getRating()));
+        }
+
+        /*
+         * Select individuals from the new population. Perform crossover on
+         * selected individuals. Mutate each individual in list. Rate each
+         * individual.
+         */
+        List<Song> unratedPopulation = new ArrayList<Song>();
+        List<Song> tempList = new ArrayList<Song>();
+        rwSelect = new RouletteWheelSelection(nextPopulation);
+        for (int i = 0; i < populationSize; i++) {
+            if (tempList.size() == 0) {
+                for (int j = 0; j < nbrOfCrossoverSongs; j++) {
+                    tempList.add(nextPopulation.get(rwSelect.select())
+                            .getSong());
+                }
+                crossover.setParents(tempList);
+                tempList = crossover.crossIndividuals();
+            }
+            unratedPopulation.add(tempList.remove(0));
+            mutator.mutate(unratedPopulation.get(i));
+        }
+        nextPopulation = ratePopulation(unratedPopulation);
+        selectElitismSongs(nextPopulation);
     }
 
-    /**
-     * Sets the number of parents that will be picked for the next generation.
-     * Does not change the current set of parents.
-     * 
-     * @param parentsPerGeneration
-     *            The desired number of parents to be used.
-     */
-    public void setParentsPerGeneration(int parentsPerGeneration) {
-        this.parentsPerGeneration = parentsPerGeneration;
+    private List<Individual> ratePopulation(List<Song> population) {
+        List<Individual> ratedPopulation = new ArrayList<Individual>();
+        for (int individual = 0; individual < populationSize; individual++) {
+            ratedPopulation.add(new Individual(population.get(individual),
+                    rater.rate(population.get(individual))));
+        }
+        return ratedPopulation;
     }
 
-    /**
-     * Sets the number of children that will be generated for each generation.
-     * 
-     * @param childrenPerGeneration
-     *            The number of children that will be generated for each
-     *            generation.
-     */
-    public void setChildrenPerGeneration(int childrenPerGeneration) {
-        this.childrenPerGeneration = childrenPerGeneration;
-    }
-
-    /**
-     * Set whether the first set of parents should be allowed to be kept to the
-     * next generation. The parents will never be kept if elitism is set to
-     * false.
-     * 
-     * @param throwAwayFirstParents
-     *            Whether the first set of parents should be kept or not.
-     */
-    public void setThrowAwayFirstParents(boolean throwAwayFirstParents) {
-        this.throwAwayFirstParents = throwAwayFirstParents;
-    }
-
-    /**
-     * If set to true, the parents of the current generation may stay as parents
-     * to the next generation if they get high enough rating. Otherwise the
-     * parents will only stay for one generation.
-     * 
-     * @param usingElitism
-     *            Whether to use elitism or not.
-     */
-    public void setElitism(boolean usingElitism) {
-        this.usingElitism = usingElitism;
-    }
-
-    /**
-     * Set the lower limit on the rating of one child in a generation, after
-     * which the iterations may stop.
-     * 
-     * @param minimumRating
-     *            The lower rating limit.
-     */
-    public void setMinimumRating(double minimumRating) {
-        this.minimumRating = minimumRating;
-    }
-
-    /**
-     * Set the lower limit on the number of iterations, after which the
-     * iterations may stop.
-     * 
-     * @param minimumIterations
-     *            The lower limit on the number of iterations.
-     */
-    public void setMinimumIterations(int minimumIterations) {
-        this.minimumIterations = minimumIterations;
-    }
-
-    /**
-     * Iterates through generations until both minimumRating and
-     * minimumIterations are fulfilled.
-     */
-    public void iterate(){
-        double highestRating = 0;
-        double currentRating = 0;
-        while (highestRating < minimumRating
-                || iterationsDone < minimumIterations) {
-            currentRating = nextGeneration();            
-            if (currentRating > highestRating) {
-                highestRating = currentRating;
+    private void selectElitismSongs(List<Individual> population) {
+        int nbrOfIndividuals = population.size();
+        int startIndividual = 0;
+        if (elitismSongs.size() == 0) {
+            elitismSongs.add(population.get(0));
+            startIndividual = 1;
+        }
+        boolean isAdded;
+        for (int individual = startIndividual; individual < nbrOfIndividuals; individual++) {
+            isAdded = false;
+            for (int i = 0; i < elitismSongs.size(); i++) {
+                if (population.get(individual).getRating() > elitismSongs
+                        .get(i).getRating()) {
+                    isAdded = true;
+                    if (elitismSongs.size() < nbrOfElitismSongs) {
+                        elitismSongs.add(i, population.get(individual));
+                    } else {
+                        elitismSongs.add(i, population.get(individual));
+                        elitismSongs.remove((elitismSongs.size() - 1));
+                    }
+                }
+            }
+            if (elitismSongs.size() < nbrOfElitismSongs && !isAdded) {
+                elitismSongs.add(population.get(individual));
             }
         }
     }
-
-    /**
-     * Iterates over n generations. This ignores the minimumRating and
-     * minimumIterations criteria.
-     * 
-     * @param n
-     *            The number of generations to iterate over.
-     */
-    public void iterate(int n) {
-        while (iterationsDone < n) {
-            nextGeneration();
-        }
-    }
-    
-    private double nextGeneration() {
-        if (iterationsDone == 0) {
-            generation.makeChildren(crossover, mutator, rater,
-                    childrenPerGeneration);
-        } else if (iterationsDone == 1 && throwAwayFirstParents) {
-            generation = new Generation(
-                    generation.getBestChildren(parentsPerGeneration));
-        } else if (usingElitism) {
-            generation = new Generation(
-                    generation.getBestIndividuals(parentsPerGeneration));
-        } else {
-            generation = new Generation(
-                    generation.getBestChildren(parentsPerGeneration));
-        }
-        generation.makeChildren(crossover, mutator, rater,
-                childrenPerGeneration);
-        iterationsDone++;
-        return generation.getBestIndividuals(1).get(0).getRating();
-    }
-
-    /**
-     * Gets the child which has the highest rating of the current generation.
-     * 
-     * @return The child of the current generation with the highest rating.
-     */
-    public Song getBestChild() {
-        return generation.getBestChildren(1).get(0).getSong();
-    }
-
-    public double getBestRating() {
-        return generation.getBestIndividuals(1).get(0).getRating();
-    }
-    /**
-     * Gets the child or parent which has the highest rating of the current
-     * generation.
-     * 
-     * @return The child or parent of the current generation with the highest
-     *         rating.
-     */
-    public Song getBest() {
-        return generation.getBestIndividuals(1).get(0).getSong();
-    }
-
-    public Generation getGeneration() {
-        return generation;
-    }
-
 }

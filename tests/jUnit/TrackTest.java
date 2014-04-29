@@ -5,11 +5,16 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
+import jm.music.data.Note;
+import jm.music.data.Part;
+import jm.music.data.Phrase;
+
 import org.junit.Before;
 import org.junit.Test;
 
 import com.evoMusic.model.Song;
 import com.evoMusic.model.Track;
+import com.evoMusic.model.Translator;
 import com.evoMusic.util.TrackTag;
 
 public class TrackTest {
