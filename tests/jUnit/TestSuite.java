@@ -38,7 +38,6 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses({TranslatorTest.class, 
     MongoDatabaseTest.class, 
     CrossoverTest.class, 
-    GenerationTest.class,
     SongTest.class,
     TrackTest.class,
     GeneticAlgorithmTest.class,
