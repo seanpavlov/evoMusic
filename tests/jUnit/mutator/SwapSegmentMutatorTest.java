@@ -1,21 +1,16 @@
 package jUnit.mutator;
 
 import static org.junit.Assert.*;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import jm.music.data.Note;
 import jm.music.data.Part;
 import jm.music.data.Phrase;
 import jm.music.data.Score;
-
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import com.evoMusic.model.Song;
 import com.evoMusic.model.Track;
-import com.evoMusic.model.Translator;
 import com.evoMusic.model.geneticAlgorithm.mutation.ISubMutator;
 import com.evoMusic.model.geneticAlgorithm.mutation.SwapSegmentMutator;
 
@@ -35,47 +30,32 @@ public class SwapSegmentMutatorTest {
             phrase.addNote(i, 0.10);
         }
         testSong = new Song(new Score(new Part(phrase)));
-        //testSong = Translator.INSTANCE.loadMidiToSong("midifiles/m83.mid");
     }
     
     @Test
     public void testSwapSegment(){
-        for(int k = 0; k < 5; k++){
-            System.out.println("lap: " + k);
-        int noteCountBefore = 0;
+        for(int k = 0; k < 200; k++){
         List<Integer> beforeValues = new ArrayList<Integer>();
         for(Track track : testSong.getTracks()){
             for(Phrase phrase : track.getPart().getPhraseArray()){
-                for(int v : phrase.getPitchArray()){
-                    if(v != Note.REST){
-                        System.out.print(v + " ");
-                        beforeValues.add(v);
-                        noteCountBefore++;
-                    }
+                for(Note n : phrase.getNoteArray()){
+                    beforeValues.add(n.getPitch());
                 }
             }
         }    
-        System.out.println();
         mutator.mutate(testSong);
-        boolean same = false;
-        int noteCountAfter = 0;
+        List<Integer> afterValues = new ArrayList<Integer>();
         for(Track track : testSong.getTracks()){
-            for(Phrase phrase : track.getPart().getPhraseArray()){
-                int[] values = phrase.getPitchArray();
-                for(int i = 0; i < values.length; i++){ 
-                    if(values[i] != Note.REST){
-                        noteCountAfter++;
-                        System.out.print(values[i] + " ");
-                        if(!same && values[i] != beforeValues.get(i)){
-                            same = true;
-                        }
-                    }
+            Phrase[] phrases = track.getPart().getPhraseArray();
+            for(Phrase phrase : phrases){
+                for(Note n : phrase.getNoteArray()){ 
+                    afterValues.add(n.getPitch());
                 }
             }
         }
-        System.out.println();
-        assertTrue("Same nbr of non Rest notes before and after mutation", noteCountBefore == noteCountAfter);
-        assertTrue("Every note should not be in same place after mutation",same);  
+        
+        assertTrue("Same nbr of non Rest notes before and after mutation", beforeValues.size() == afterValues.size());
+        assertTrue("Every note should not be in same place after mutation", !beforeValues.equals(afterValues));  
         }
     }
 

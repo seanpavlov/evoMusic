@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import jm.music.data.Note;
+import jm.music.data.Part;
+import jm.music.data.Phrase;
+
 import com.evoMusic.model.Song;
 import com.evoMusic.model.Track;
 
@@ -30,10 +34,12 @@ public class SwapSegmentMutator extends ISubMutator{
         ///for(Track track : song.getTracks()){
         List<Track> tracks = song.getTracks();
         for(int i = tracks.size()-1; i >= 0; i--){
-            if(Math.random() < getProbability()){ 
+            if(true){//Math.random() < getProbability()){ 
                 Track track = tracks.get(i);
-               //Retrieve the tracks end time
-               double trackEndTime = track.getPart().getEndTime();
+               //Retrieve and calculate the tracks end time to fraction of 1/4
+               double trackTime = track.getPart().getEndTime();
+               double trackEndTime =  Math.floor(trackTime) + findClosestFraction(trackTime%1);
+               //double trackEndTime = track.getPart().getEndTime();
                //Calculate swap segments length             
                double swapLength = segmentValue(0.25, trackEndTime/2);
                //Calculate first swap start time
@@ -42,9 +48,14 @@ public class SwapSegmentMutator extends ISubMutator{
                double secondSwap = (firstSwap + (swapLength * 2) == trackEndTime) 
                             ? firstSwap + swapLength
                             : segmentValue(firstSwap + swapLength, trackEndTime - swapLength);
-
+              
+               
                //Swap segments in track
-               Track trackWithSwap = swapSegments(track, firstSwap, secondSwap, swapLength);      
+               Track trackWithSwap = swapSegments(track, firstSwap, secondSwap, swapLength, trackEndTime);  
+         
+               //Flatten track to get as few phrases as possible
+               trackWithSwap.flattern();
+
                //Tag new track with swaped segments with same tag old track
                trackWithSwap.setTag(track.getTag());
                //Remove old track from song
@@ -64,9 +75,7 @@ public class SwapSegmentMutator extends ISubMutator{
      * @param length Length of the segments to swap
      * @return Track The new track with swaped segments
      * */
-    private Track swapSegments(Track track, double first, double second, double length){
-        //Retrive tracks end time
-        double trackEndTime = track.getPart().getEndTime();
+    private Track swapSegments(Track track, double first, double second, double length, double trackEndTime){
         /*If second swap segments start time or second added with length
         is larger than tracks end time, return original track*/
         if(second >= trackEndTime || second + length > trackEndTime){
@@ -78,23 +87,40 @@ public class SwapSegmentMutator extends ISubMutator{
         /*If first swap segments start time is larger than 0,
         retrive segment before it and add to list of segment tracks*/
         if(first > 0){
-            tracks.add(track.getSegment(0, first));
+            tracks.add(findSegment(track, 0 , first, 0));
         }
         //Add second swap segment track to list
-        tracks.add(track.getSegment(second, length));
+        tracks.add(findSegment(track, second, length, first));
+        
         //If their is a segment between first and second, add this to segment track list
         if(second - (first + length) > 0){
-            tracks.add(track.getSegment(first+length, second - (first+length)));
+            tracks.add(findSegment(track, first+length, second - (first+length), first+length));
         } 
         //Add first segment track to list
-        tracks.add(track.getSegment(first, length));
+        tracks.add(findSegment(track, first, length, second));
+        
         /*If second swap start time added by lenght is less than track end time
         add last segment track to list*/
-        tracks.add(track.getSegment(second+length, trackEndTime));
- 
+        if(second + length < trackEndTime){
+            tracks.add(findSegment(track, second+length, trackEndTime,second+length));
+        }
         
         //Return appended tracks 
         return appendTracks(tracks);
+    }
+    
+    /**
+     * Finds and retreive segments from a track and changes its phrases start time 
+     * to the right value
+     * @param track The track to find segment from
+     * @param from The start value for the segment 
+     * @param length The length of the segment
+     * @param start The start time to set for the phrases in found segment
+     * */
+    private Track findSegment(Track track, double from, double length, double start){
+        Track trackSegment = getSegment(track,from,length);
+        setPhrasesStartTime(trackSegment, start);
+        return trackSegment;
     }
     
     
@@ -106,7 +132,8 @@ public class SwapSegmentMutator extends ISubMutator{
      * @return double Random generated value between start and end intervall
      * */
     private double segmentValue(double start, double end){
-        return Math.round(randomDouble(start, Math.floor(end))*4)/4f;
+        end = Math.floor(end) + findClosestFraction(end%1);
+        return Math.round(randomDouble(start, end)*4)/4f;
      }
     
     /**
@@ -142,6 +169,78 @@ public class SwapSegmentMutator extends ISubMutator{
      * @param other the track to append
      * */
     private void appendTrack(Track track, Track other){
-        track.getPart().addPhraseList(other.getPart().getPhraseArray());
+        for(Phrase phrase : other.getPart().getPhraseArray()){
+            track.getPart().appendPhrase(phrase);
+        }
+    }
+    
+    /**
+     * Return a segment of a Track as a new Track
+     * @param track The track to get a segment from
+     * @param from The start time of the segment to get
+     * @param length The length of the segment to get
+     * @return Track the segment as a track
+     * */
+    private Track getSegment(Track track, double from, double length) {
+        Phrase[] phrases = track.getPart().getPhraseArray();
+
+        if (from < 0 || from > track.getPart().getEndTime()) {
+            throw new IllegalArgumentException(
+                    "Requested a segment starting at: " + from
+                            + ". The segment must be in in the interval 0 and "
+                            + track.getPart().getEndTime() + "!");
+        }
+        if (phrases.length < 1) {
+            throw new IllegalArgumentException(
+                    "Can't get segment from an empty Track!");
+        }
+        
+        
+        Part partCopy = track.getPart().copy(from, from + length, false, true, true);
+        for(Phrase phrase : partCopy.getPhraseArray()){        
+            Note firstnote = phrase.getNote(0);
+            Note lastNote = phrase.getNote(phrase.getNoteArray().length -1);
+            if(firstnote.getPitch() == Note.REST){
+                phrase.removeNote(0);
+            }
+            if(lastNote.getPitch() == Note.REST){
+                phrase.removeNote(phrase.getNoteArray().length -1);
+            }
+        }
+        return new Track(partCopy);     
+    }
+    
+    /**
+     * Finds closes lower fraction of 1/4 (0.0, 0.25, 0.5, 0.75) 
+     * Example 0.66 is going to find and return closest fraction of 0.5
+     * but 0.49 is going to find and return closest fraction of 0.25
+     * @param fraction the fraction to find closest lower 1/4 to
+     * @return double the closest lower 1/4 found
+     * */
+    private static double[] fractionalValues = {0.25, 0.5, 0.75};
+    private double findClosestFraction(double fraction){
+        double returnFraction = 0.0;
+        double margin = Math.abs(0.0 - fraction);
+        for(double fractionValue : fractionalValues){
+            if(fractionValue < fraction){
+                double nextMargin = Math.abs(fractionValue - fraction);
+                if(margin > nextMargin){
+                    margin = nextMargin;
+                    returnFraction = fractionValue;
+                }
+            }
+        }
+        return returnFraction;
+    }
+    
+    /**
+     * Sets the start time of all the phrases in a track
+     * @param track The track to set its phrases start time 
+     * @param startTime The time to set as start time on all phrases in track
+     * */
+    private void setPhrasesStartTime(Track track, double startTime){
+        for(Phrase phrase : track.getPart().getPhraseArray()){
+            phrase.setStartTime(startTime);
+        }
     }
 }
