@@ -69,4 +69,33 @@ public class TrackTest {
         t2 = testTrack.getSegment(0, 8);
         assertTrue(t1.equals(t2.getSegment(0, 4)));
     }
+    
+    @Test
+    public void testFlattern() {
+        Phrase one = new Phrase();
+        Phrase two = new Phrase();
+        Phrase three = new Phrase();
+
+        one.setStartTime(0);
+        two.setStartTime(5);
+        three.setStartTime(10);
+
+        for (int i = 0; i < 10; i++){
+            Note n = new Note();
+            n.setPitch((int) Math.floor(Math.random()*128));
+            n.setDuration(1);
+            one.add(n);
+            two.add(n);
+            three.add(n);
+        }
+        Part p = new Part();
+        p.add(one);
+        p.add(two);
+        p.add(three);
+        
+        Track tr = new Track(p);
+        Track trTemp = tr;
+        tr.flattern();
+        assertTrue(tr.equals(trTemp));
+    }
 }
