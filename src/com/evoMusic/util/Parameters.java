@@ -20,14 +20,14 @@ public class Parameters {
      */
     public int GA_POPULATION_SIZE = 100;
     public int GA_NBR_OF_ELITISM_SONGS = 2;
-    public int GA_NBR_OF_CROSSOVER_SONGS = 4;
+    public int GA_NBR_OF_CROSSOVER_SONGS = 3;
     
     /*
      * MUTATION PARAMETERS
      */
     public double MUTATION_INITIAL_PROBABILITY = 0.3;
     public double MUTATION_MINIMUM_PROBABILITY = 0.2;
-    public double MUTATION_PROBABILITY_RATIO = 0.0005;
+    public double MUTATION_PROBABILITY_RATIO = 0.05;
 
     public double MUTATOR_RANDOM_NOTE_PROBABILITY = 0.05;
     public int MUTATOR_RANDOM_NOTE_STEP_RANGE = 6;
@@ -38,7 +38,7 @@ public class Parameters {
     public double MUTATOR_OCTAVE_PROBABILITY = 0;
     public int MUTATOR_OCTAVE_RANGE = 1;
 
-    public double MUTATOR_REVERSE_PROBABILITY = 0.01;
+    public double MUTATOR_REVERSE_PROBABILITY = 0.1;
 
     public double MUTATOR_SCALE_OF_FIFTH_PROBABILITY = 0;
     public int MUTATOR_SCALE_OF_FIFTH_RANGE = 3;
@@ -48,30 +48,36 @@ public class Parameters {
     /*
      * RATING PARAMETERS
      */
-    public double RATER_MELODY_REPETITION_WEIGHT = 0.5;
-    public double RATER_BEAT_REPETITION_WEIGHT = 0.5;
-    public double RATER_CHORD_REPETITION_WEIGHT = 0.5;
-    public double RATER_SCALE_WEIGHT = 1;
-    public double RATER_CRAZY_OCTAVE_WEIGHT = 1;
-    public double RATER_MELODY_DIRECTION_WEIGHT = 1;
-    public double RATER_PITCH_VARIETY_WEIGHT = 1;
-    public double RATER_PITCH_DIRECTION_WEIGHT = 1;
-    public double RATER_MELODY_NOTE_DENSITY_WEIGHT = 1;
-    public double RATER_RHYTHMIC_VARIETY_WEIGHT = 1;
+    public double RATER_MELODY_REPETITION_WEIGHT = 0.25;
+    public double RATER_BEAT_REPETITION_WEIGHT = 0.25;
+    public double RATER_CHORD_REPETITION_WEIGHT = 0.25;
+    public double RATER_SCALE_WEIGHT = 0.5;
+    public double RATER_CRAZY_OCTAVE_WEIGHT = 0.5;
+    public double RATER_MELODY_DIRECTION_WEIGHT = 0.5;
+    public double RATER_PITCH_VARIETY_WEIGHT = 0.5;
+    public double RATER_PITCH_DIRECTION_WEIGHT = 0.5;
+    public double RATER_MELODY_NOTE_DENSITY_WEIGHT = 0;
+    public double RATER_RHYTHMIC_VARIETY_WEIGHT = 0.5;
     public double RATER_NO_SILENCE_WEIGHT = 1;
-    public double RATER_MELODY_PITCH_RANGE_WEIGHT = 1;
-    public double RATER_REPEATED_PITCH_DENSITY_WEIGTH = 1;
-    public double RATER_MELODY_REST_DENSITY_WEIGHT = 1;
-    public double RATER_ZIPFS_LAW_WEIGHT = 1;
-    public double RATER_MELODY_NOTE_SUSTAIN_WEIGHT = 1;
-    public double RATER_LCM_PITCH_WEIGHT = 1;
+    public double RATER_MELODY_PITCH_RANGE_WEIGHT = 0.5;
+    public double RATER_REPEATED_PITCH_DENSITY_WEIGTH = 0.5;
+    public double RATER_MELODY_REST_DENSITY_WEIGHT = 0.5;
+    public double RATER_ZIPFS_LAW_WEIGHT = 0.5;
+    public double RATER_MELODY_NOTE_SUSTAIN_WEIGHT = 0.5;
+    public double RATER_LCM_PITCH_WEIGHT = 0.5;
 
     /*
      * CROSSOVER PARAMETERS
      */
-    public int CROSSOVER_NBR_OF_INTERSECTS = 1;
+    public int CROSSOVER_NBR_OF_INTERSECTS = 2;
     public int CROSSOVER_MIN_DURATION = 50;
     public int CROSSOVER_MAX_DURATION = 200;
+    
+    /*
+     * MARKOV PARAMETERS
+     */
+    public int MARKOV_LOOKBACKS = 1;
+    public double MARKOV_SONGDURATION = 50;
 
     private static Parameters parameters = new Parameters();
 

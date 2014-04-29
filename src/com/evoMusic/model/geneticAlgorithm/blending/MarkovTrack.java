@@ -11,10 +11,10 @@ import com.google.common.primitives.Ints;
 public class MarkovTrack {
 
     private ProbabilityMatrix<Integer, Integer> intervalMatrix;
-    private ProbabilityMatrix<Integer, Double> rhythmValueMatrix;
-    private ProbabilityMatrix<Integer, Double> durationMatrix;
+    private ProbabilityMatrix<Integer, Double>  rhythmValueMatrix;
+    private ProbabilityMatrix<Integer, Double>  durationMatrix;
     private ProbabilityMatrix<Integer, Integer> dynamicMatrix;
-    private int numberOfLookbacks;
+    private int                                 numberOfLookbacks;
 
     /**
      * Creates a markov chain containing a probability matrix for each property
@@ -112,28 +112,31 @@ public class MarkovTrack {
         }
 
         // Adding the last rythmValues and durations.
-        
+
         double durationLeft = songDuration - trackLength;
         nextRhythmValue = durationLeft;
         nextDuration = durationLeft;
-        
+
         currentSequence = new Vector<Integer>();
         for (int seqIndex = numberOfLookbacks; seqIndex > 0; seqIndex--) {
             currentSequence.add(trackIntervals.get(trackIntervals.size()
                     - seqIndex));
         }
-//        nextRhythmValue = rhythmValueMatrix.getNext(currentSequence);
-//        nextDuration = durationMatrix.getNext(currentSequence);
         nextDynamic = dynamicMatrix.getNext(currentSequence);
-//        trackLength += nextRhythmValue;
+        // If by a small chance there is no next dynamic, set to previous value
+        // since it the last note anyway.
+        if (nextDynamic == null) {
+            nextDynamic = trackDynamics.get(trackDynamics.size()-1);
+        }
+        trackLength += nextRhythmValue;
         trackRhythmValues.add(nextRhythmValue);
         trackDurations.add(nextDuration);
         trackDynamics.add(nextDynamic);
-
         IntervalTrack iTrack = new IntervalTrack(firstNote, instrument,
                 channel, Ints.toArray(trackIntervals),
                 Doubles.toArray(trackRhythmValues),
-                Doubles.toArray(trackDurations), Ints.toArray(trackDynamics), tag);
+                Doubles.toArray(trackDurations), Ints.toArray(trackDynamics),
+                tag);
         return iTrack;
     }
 
@@ -172,7 +175,7 @@ public class MarkovTrack {
     public void addCountToDuration(Vector<Integer> sequence, Double value) {
         durationMatrix.addCount(sequence, value);
     }
-    
+
     /**
      * Adds a count to the dynamic property in this markov track.
      * 
@@ -199,8 +202,11 @@ public class MarkovTrack {
      * Gets the next sequence in the given sequence that is prior to the given
      * index
      * 
-     * @param intervalIndex The index of the value that comes after the requested sequence.
-     * @param currentIntervals  The list of intervals that the sequence will be picked from.
+     * @param intervalIndex
+     *            The index of the value that comes after the requested
+     *            sequence.
+     * @param currentIntervals
+     *            The list of intervals that the sequence will be picked from.
      * @return
      */
     private Vector<Integer> getNextSequence(int intervalIndex,
