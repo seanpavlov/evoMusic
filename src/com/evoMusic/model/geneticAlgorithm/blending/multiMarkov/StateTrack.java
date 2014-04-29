@@ -7,7 +7,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import jm.music.data.CPhrase;
 import jm.music.data.Note;
 import jm.music.data.Part;
 import jm.music.data.Phrase;
@@ -26,7 +25,7 @@ public class StateTrack {
     private TrackTag tag;
     private int largestChord;
     private List<List<Integer>> intervals;
-    private List<List<Double>> rhythmValues;
+    private List<Double> rhythmValues;
     private List<List<Double>> durations;
     private List<List<Integer>> dynamics;
 
@@ -42,7 +41,7 @@ public class StateTrack {
         instrument = part.getInstrument();
         channel = part.getChannel();
         intervals = new ArrayList<List<Integer>>();
-        rhythmValues = new ArrayList<List<Double>>();
+        rhythmValues = new ArrayList<Double>();
         durations = new ArrayList<List<Double>>();
         dynamics = new ArrayList<List<Integer>>();
         largestChord = 0;
@@ -75,18 +74,35 @@ public class StateTrack {
         Collections.sort(sortedStateList);
 
         // TODO fetch better first note, currently may be buggy.
-        firstNote = formatNote(sortedStateList.get(0).notes.get(0).getPitch());
+        // Should be fixed, but still ugly...
+        firstNote = formatNote(formatState(sortedStateList.get(0)).get(0).getPitch());
         int numberOfStates = sortedStateList.size();
         List<Note> currentState = null;
         Integer previousHeadInterval = firstNote;
-        List<Double> stateRhythmValues;
+        List<Integer> stateIntervals;
         List<Double> stateDurations;
         List<Integer> stateDynamics;
         int currentStateSize;
+        int currentStartTime;
+        int nextStartTime;
         // go through each note group.
-        for (int i = 0; i < numberOfStates - 1; i++) {
+        for (int i = 0; i < numberOfStates; i++) {
             currentState = formatState(sortedStateList.get(i));
             currentStateSize = currentState.size();
+            currentStartTime = sortedStateList.get(i).startTime;
+            if (i == numberOfStates + 1) {
+                // if it is the last state
+                double biggestRyV = 0;
+                for (Note note : sortedStateList.get(i).notes) {
+                    if (note.getRhythmValue() > biggestRyV) {
+                        biggestRyV = note.getRhythmValue();
+                    }
+                }
+                nextStartTime = currentStartTime
+                        + (int) (biggestRyV * RHYTHM_PRECISION);
+            } else {
+                nextStartTime = sortedStateList.get(i + 1).startTime;
+            }
             if (currentStateSize > largestChord) {
                 largestChord = currentStateSize;
             }
@@ -99,7 +115,7 @@ public class StateTrack {
                         - previousHeadInterval);
             }
             Iterator<Integer> iter = intervalMap.keySet().iterator();
-            List<Integer> stateIntervals = new ArrayList<Integer>();
+            stateIntervals = new ArrayList<Integer>();
             while (iter.hasNext()) {
                 stateIntervals.add(iter.next());
             }
@@ -107,48 +123,45 @@ public class StateTrack {
             // by now duplicate intervals are gone and list are sorted with
             // highest note first.
 
-            stateRhythmValues = new ArrayList<Double>();
             stateDurations = new ArrayList<Double>();
             stateDynamics = new ArrayList<Integer>();
             Note rightNote;
+            Double newRhythmValue = ((double) (nextStartTime - currentStartTime))
+                    / RHYTHM_PRECISION;
             for (Integer interval : stateIntervals) {
                 rightNote = currentState.get(intervalMap.get(interval));
-                stateRhythmValues.add(rightNote.getRhythmValue());
+                // stateRhythmValues.add(newRhythmValue);//
+                // rightNote.getRhythmValue());
                 stateDurations.add(rightNote.getDuration());
                 stateDynamics.add(rightNote.getDynamic());
             }
             previousHeadInterval += stateIntervals.get(0);
 
             intervals.add(stateIntervals);
-            rhythmValues.add(stateRhythmValues);
+            rhythmValues.add(newRhythmValue);
             durations.add(stateDurations);
             dynamics.add(stateDynamics);
         }
     }
 
     private List<Note> formatState(ComparableState state) {
-        int lowestRyV = 0;
-        // if only rests, add 1 rest and lowest RyV.
-        // else, add all notes that are not rests and lowest RyV from those
-        // non-rests.
-        lowestRyV = Integer.MAX_VALUE;
+        // if only rests, remove all but one rest.
+        // else, remove all rests.
+
         // if not only rests, remove all rests.
-        if (!currentState.containsOnlyRests()) {
-            for (Note note : currentState.notes) {
+        if (!state.containsOnlyRests()) {
+            for (Note note : state.notes) {
                 if (note.isRest()) {
-                    currentState.notes.remove(note);
+                    state.notes.remove(note);
                 }
             }
-        }
-        // find lowest rhythm value.
-        for (Note note : currentState.notes) {
-            if (note.getRhythmValue() < lowestRyV) {
-                lowestRyV = (int) (note.getRhythmValue() * RHYTHM_PRECISION);
+            // else, remove all but one rest.
+        } else {
+            for (int i = 0; i < state.notes.size() - 1; i++) {
+                state.notes.remove(state.notes.get(i));
             }
         }
-        if (currentState.containsOnlyRests()) {
-
-        }
+        return state.notes;
     }
 
     /**
@@ -186,14 +199,14 @@ public class StateTrack {
             int[] intervals, double[] rhythmValues, double[] durations,
             int[] dynamics, TrackTag tag) {
 
-//        this.firstNote = firstNote;
-//        this.instrument = instrument;
-//        this.channel = channel;
-//        this.intervals = intervals;
-//        this.rhythmValues = rhythmValues;
-//        this.durations = durations;
-//        this.dynamics = dynamics;
-//        this.tag = tag;
+        // this.firstNote = firstNote;
+        // this.instrument = instrument;
+        // this.channel = channel;
+        // this.intervals = intervals;
+        // this.rhythmValues = rhythmValues;
+        // this.durations = durations;
+        // this.dynamics = dynamics;
+        // this.tag = tag;
     }
 
     /**
@@ -207,25 +220,43 @@ public class StateTrack {
         for (int i = 0; i < largestChord; i++) {
             phrases.add(new Phrase(0.0));
         }
-        
-        Note newNote;// = new Note(currentPitch, getRythmValues()[0]);
-//        newNote.setDuration(getDurations()[0]);
-//        newNote.setDynamic(getDynamics()[0]);
-//        phrase.add(newNote);
-        
-        // looping through each chord.
-        for (int i = 0; i < intervals.size(); i++) {
-            
-            currentPitch += intervals[j];
-            if (currentPitch < 0) {// || currentPitch > 127) {
-                newNote = new Note(Note.REST, rhythmValues[j + 1]);
 
-            } else {
-                newNote = new Note(currentPitch, rhythmValues[j + 1]);
+        Note newNote;// = new Note(currentPitch, getRythmValues()[0]);
+        // newNote.setDuration(getDurations()[0]);
+        // newNote.setDynamic(getDynamics()[0]);
+        // phrase.add(newNote);
+        List<Integer> currentIntervals;
+        Double currentRhythmValue;
+        List<Double> currentDurations;
+        List<Integer> currentDynamics;
+        int chordSize;
+        int currentPitchInChord;
+
+        // looping through each chord.
+        for (int stateIndex = 0; stateIndex < intervals.size(); stateIndex++) {
+            currentIntervals = intervals.get(stateIndex);
+            currentRhythmValue = rhythmValues.get(stateIndex);
+            currentDurations = durations.get(stateIndex);
+            currentDynamics = dynamics.get(stateIndex);
+            chordSize = currentIntervals.size();
+
+            for (int noteIndex = 0; noteIndex < chordSize; noteIndex++) {
+                currentPitchInChord = currentHeadPitch
+                        + currentIntervals.get(noteIndex);
+                if (currentPitchInChord < 0 || currentPitchInChord > 127) {
+                    newNote = new Note(Note.REST, currentRhythmValue);
+                } else {
+                    newNote = new Note(currentPitchInChord, currentRhythmValue);
+                }
+                newNote.setDuration(currentDurations.get(noteIndex));
+                newNote.setDynamic(currentDynamics.get(noteIndex));
+                phrases.get(noteIndex).add(newNote);
             }
-            newNote.setDuration(durations[j + 1]);
-            newNote.setDynamic(dynamics[j + 1]);
-            phrase.add(newNote);
+            // Make sure all phrases are the same length
+            for (int i = chordSize; i < largestChord; i++) {
+                newNote = new Note(Note.REST, currentRhythmValue);
+                phrases.get(i).add(newNote);
+            }
         }
         Part newPart = new Part();
         for (Phrase phrase : phrases) {
@@ -277,7 +308,7 @@ public class StateTrack {
      * 
      * @return The list of rhythm values for the notes of this interval track.
      */
-    public List<List<Double>> getRythmValues() {
+    public List<Double> getRythmValues() {
         return rhythmValues;
     }
 
@@ -330,7 +361,6 @@ public class StateTrack {
          */
         public ComparableState(int startTime) {
             this.notes = new ArrayList<Note>();
-            ;
             this.startTime = startTime;
         }
 
