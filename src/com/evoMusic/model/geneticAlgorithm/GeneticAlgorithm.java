@@ -25,6 +25,7 @@ public class GeneticAlgorithm {
     private Mutator mutator;
     private Rater rater;
     private MarkovSong markovSong;
+    private Individual bestIndividual;
     double ratingThreshold, songDuration;
     int populationSize, nbrOfElitismSongs, nbrOfCrossoverSongs,
             nbrOfMarkovLookbacks, currentIteration, nbrOfGenerations;
@@ -53,8 +54,8 @@ public class GeneticAlgorithm {
      */
     public GeneticAlgorithm(List<Song> inputSongs, Mutator mutator,
             DrCross crossover, Rater rater, int populationSize,
-            int nbrOfMarkovLookbacks, double songDuration,
-            int nbrOfElitismSongs, int nbrOfCrossoverSongs) {
+            int nbrOfElitismSongs, int nbrOfCrossoverSongs, int nbrOfMarkovLookbacks,
+            double songDuration) {
         this.inputSongs = inputSongs;
         this.crossover = crossover;
         this.mutator = mutator;
@@ -66,6 +67,7 @@ public class GeneticAlgorithm {
         this.songDuration = songDuration;
         markovSong = new MarkovSong(nbrOfMarkovLookbacks, inputSongs);
         nextPopulation = new ArrayList<Individual>();
+        bestIndividual = new Individual(null, 0);
         currentIteration = 0;
     }
 
@@ -80,6 +82,7 @@ public class GeneticAlgorithm {
         this.nbrOfGenerations = nbrOfGenerations;
         nextPopulation = new ArrayList<Individual>();
         elitismSongs = new ArrayList<Individual>();
+        bestIndividual = new Individual(null, 0);
         currentIteration = 0;
 
         // TODO: Initialize weight based on input songs. Decide how we are going
@@ -111,6 +114,7 @@ public class GeneticAlgorithm {
         this.ratingThreshold = ratingThreshold;
         nextPopulation = new ArrayList<Individual>();
         elitismSongs = new ArrayList<Individual>();
+        bestIndividual = new Individual(null, 0);
         currentIteration = 0;
 
         // TODO: Initialize weight based on input songs. Decide how we are going
@@ -138,19 +142,7 @@ public class GeneticAlgorithm {
      * @return the best individual
      */
     public Individual getBestIndividual() {
-        if (nextPopulation.size() == 0) {
-            return new Individual(null, 0);
-        } else {
-            int populationSize = nextPopulation.size();
-            int bestIndividualIndex = 0;
-            for (int i = 0; i < populationSize; i++) {
-                if (nextPopulation.get(i).getRating() > nextPopulation.get(
-                        bestIndividualIndex).getRating()) {
-                    bestIndividualIndex = i;
-                }
-            }
-            return nextPopulation.get(bestIndividualIndex);
-        }
+        return bestIndividual;
     }
 
     /**
@@ -205,9 +197,14 @@ public class GeneticAlgorithm {
 
     private List<Individual> ratePopulation(List<Song> population) {
         List<Individual> ratedPopulation = new ArrayList<Individual>();
+        double individualRating = 0;
         for (int individual = 0; individual < populationSize; individual++) {
-            ratedPopulation.add(new Individual(population.get(individual),
-                    rater.rate(population.get(individual))));
+            individualRating = rater.rate(population.get(individual));
+            ratedPopulation.add(new Individual(population.get(individual), individualRating
+                    ));
+            if(individualRating > bestIndividual.getRating()){
+                bestIndividual = ratedPopulation.get(ratedPopulation.size()-1);
+            }
         }
         return ratedPopulation;
     }

@@ -70,7 +70,7 @@ public class GenerateCommand extends AbstractCommand {
         //allMut.add(new ReverseMutator(c.MUTATOR_REVERSE_PROBABILITY, c.MUTATOR_REVERSE_NBR_OF_NEIGHBORS, c.MUTATOR_REVERSE_RANGE, true));
         allMut.add(new ScaleOfFifthMutator(c.MUTATOR_SCALE_OF_FIFTH_PROBABILITY, c.MUTATOR_SCALE_OF_FIFTH_RANGE));
         //allMut.add(new SimplifyMutator(c.MUTATOR_SIMPLIFY_PROBABILITY, c.MUTATOR_SIMPLIFY_NBR_OF_NEIGHBORS, c.MUTATOR_SIMPLIFY_PROBABILITY));
-        DrCross crossover = new DrCross(4);
+        DrCross crossover = new DrCross(c.CROSSOVER_NBR_OF_INTERSECTS);
         
         List<SubRater> subRaters = new LinkedList<SubRater>();        
         subRaters.add(new MelodyRepetionRater(c.RATER_MELODY_REPETITION_WEIGHT));
@@ -118,8 +118,7 @@ public class GenerateCommand extends AbstractCommand {
                 new Mutator(allMut, c.MUTATION_INITIAL_PROBABILITY,
                         c.MUTATION_MINIMUM_PROBABILITY,
                         c.MUTATION_PROBABILITY_RATIO), crossover, new Rater(
-                        subRaters), c.GA_POPULATION_SIZE, c.MARKOV_LOOKBACKS, c.MARKOV_SONGDURATION, c.GA_NBR_OF_ELITISM_SONGS, c.GA_NBR_OF_CROSSOVER_SONGS );
-
+                        subRaters), c.GA_POPULATION_SIZE, c.GA_NBR_OF_ELITISM_SONGS, c.GA_NBR_OF_CROSSOVER_SONGS, c.MARKOV_LOOKBACKS, c.MARKOV_SONGDURATION);
         System.out.println("Start iterating");
 
         runProgress(ga, iterations);
