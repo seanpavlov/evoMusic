@@ -78,7 +78,30 @@ public abstract class Sort {
         Collections.sort(allPhrases, comparator);
         return allPhrases;
     }
+
+    /**
+     * Sorts all phrases in a track on the given comparator and returns the sorted
+     * array of phrases.
+     * 
+     * @param track  The Track which hold the phrases to be sorted.
+     * @param comparator    The comparator that will be used.
+     * @return a list of sorted phrases.
+     */
+    public static List<Phrase> sortPhrases(Track track, Comparator<Phrase> comparator) {
+        List<Phrase> allPhrases = new ArrayList<Phrase>();
+
+        allPhrases.addAll(Arrays.asList(track.getPart().getPhraseArray()));
+        
+        Collections.sort(allPhrases, comparator);
+        return allPhrases;
+    }
     
+    /**
+     * Returns a sorted list of all notes in a Part
+     * 
+     * @param part
+     * @return
+     */
     public static List<List<Note>> getSortedNoteList(Part part) {
         ListMultimap<Double, Note> noteMap = ArrayListMultimap.create();
         SortedSet<Double> startTimeList = new TreeSet<Double>();
@@ -98,6 +121,12 @@ public abstract class Sort {
         return sortedNoteList;
     }
     
+    /**
+     * Returns a sorted list of all notes in a song
+     * 
+     * @param song
+     * @return
+     */
     public static List<List<Note>> getSortedNoteList(Song song) {
         ListMultimap<Double, Note> noteMap = ArrayListMultimap.create();
         SortedSet<Double> startTimeList = new TreeSet<Double>();

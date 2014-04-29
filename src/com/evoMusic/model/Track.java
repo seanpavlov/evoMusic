@@ -1,6 +1,7 @@
 package com.evoMusic.model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import jm.JMC;
@@ -260,5 +261,79 @@ public class Track {
      */
     public void setPart(Part p) {
         songPart = p;
+    }
+    
+    /**
+     * Flatterns the current part to as few phrases as possible
+     * 
+     */
+    public void flattern(){
+        List<Phrase> current = Sort.sortPhrases(this, Sort.PHRASE_START_TIME_COMPARATOR);
+        List<Phrase> flatPhrases = new ArrayList<Phrase>();
+        recurseFlattern(flatPhrases, current);
+        
+        Part newPart = new Part();
+        for (Phrase phrase : flatPhrases){
+            newPart.add(phrase);
+        }
+        this.setPart(newPart);
+    }
+
+    /**
+     * Recursively create new flatPhrase list
+     * 
+     * @param flatPhrases
+     * @param current
+     * @return
+     */
+    private List<Phrase> recurseFlattern(List<Phrase> flatPhrases, List<Phrase> current){
+        if (current.isEmpty()){
+            return flatPhrases;
+        }
+
+        List<Phrase> nonIntersect = findNonIntersectPhrases(current);
+        Phrase newPhrase = new Phrase();
+        newPhrase.setStartTime(nonIntersect.get(0).getStartTime());
+        
+        for (Note note : nonIntersect.get(0).getNoteArray()){
+            newPhrase.add(note);
+        }
+        double endTime = nonIntersect.get(0).getEndTime();
+        for (int i = 1; i < nonIntersect.size(); i++){
+            Phrase nextPhrase = nonIntersect.get(i);
+            double gap = endTime - nextPhrase.getStartTime();
+            endTime = nextPhrase.getEndTime();
+            newPhrase.addNote(Note.REST, gap);
+            for (Note note : nonIntersect.get(i).getNoteArray()){
+                newPhrase.add(note);
+            }
+        }
+        
+        flatPhrases.add(newPhrase);
+        return recurseFlattern(flatPhrases, current);
+    }
+
+    /**
+     * Finds the largest list of non intersecting phrases 
+     * from a sorted given phrase list
+     * 
+     * @param phrases
+     * @return
+     */
+    private List<Phrase> findNonIntersectPhrases(List<Phrase> phrases){
+        List<Phrase> nonIntersect = new ArrayList<Phrase>();
+        int pointer = 0;
+        nonIntersect.add(phrases.remove(0));
+        
+        while (pointer < phrases.size()){ 
+            Phrase phrase = phrases.get(pointer);
+            if (phrase.getStartTime() >= nonIntersect.get(nonIntersect.size() - 1).getEndTime()){
+                nonIntersect.add(phrases.remove(pointer));
+            } else {
+                pointer++;
+            }
+        }
+        
+        return nonIntersect;
     }
 }
