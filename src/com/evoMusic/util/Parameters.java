@@ -44,6 +44,8 @@ public class Parameters {
     public int MUTATOR_SCALE_OF_FIFTH_RANGE = 3;
 
     public double MUTATOR_SIMPLIFY_PROBABILITY = 0.02;
+    
+    public double MUTATOR_SWAP_SEGMENT_PROBABILITY = 0.05;
 
     /*
      * RATING PARAMETERS

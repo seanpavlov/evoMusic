@@ -197,15 +197,17 @@ public class SwapSegmentMutator extends ISubMutator{
         
         
         Part partCopy = track.getPart().copy(from, from + length, false, true, true);
-        for(Phrase phrase : partCopy.getPhraseArray()){        
-            Note firstnote = phrase.getNote(0);
-            Note lastNote = phrase.getNote(phrase.getNoteArray().length -1);
-            if(firstnote.getPitch() == Note.REST){
-                phrase.removeNote(0);
-            }
-            if(lastNote.getPitch() == Note.REST){
-                phrase.removeNote(phrase.getNoteArray().length -1);
-            }
+        for(Phrase phrase : partCopy.getPhraseArray()){ 
+                Note firstnote = phrase.getNote(0);
+                if(firstnote.getPitch() == Note.REST && from != 0){
+                    phrase.removeNote(0);
+                }
+           
+                Note lastNote = phrase.getNote(phrase.getNoteArray().length -1);
+                if(lastNote != null && lastNote.getPitch() == Note.REST){
+                    phrase.removeLastNote();
+                }
+
         }
         return new Track(partCopy);     
     }

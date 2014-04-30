@@ -19,6 +19,7 @@ import com.evoMusic.model.geneticAlgorithm.mutation.ReverseBarNotesMutator;
 import com.evoMusic.model.geneticAlgorithm.mutation.RhythmValueMutator;
 import com.evoMusic.model.geneticAlgorithm.mutation.ScaleOfFifthMutator;
 import com.evoMusic.model.geneticAlgorithm.mutation.SimplifyMutator;
+import com.evoMusic.model.geneticAlgorithm.mutation.SwapSegmentMutator;
 import com.evoMusic.model.geneticAlgorithm.rating.BeatRepetitionRater;
 import com.evoMusic.model.geneticAlgorithm.rating.ChordRepetitionRater;
 import com.evoMusic.model.geneticAlgorithm.rating.CrazyNoteOctaveRater;
@@ -70,6 +71,7 @@ public class GenerateCommand extends AbstractCommand {
         //allMut.add(new ReverseMutator(c.MUTATOR_REVERSE_PROBABILITY, c.MUTATOR_REVERSE_NBR_OF_NEIGHBORS, c.MUTATOR_REVERSE_RANGE, true));
         allMut.add(new ScaleOfFifthMutator(c.MUTATOR_SCALE_OF_FIFTH_PROBABILITY, c.MUTATOR_SCALE_OF_FIFTH_RANGE));
         //allMut.add(new SimplifyMutator(c.MUTATOR_SIMPLIFY_PROBABILITY, c.MUTATOR_SIMPLIFY_NBR_OF_NEIGHBORS, c.MUTATOR_SIMPLIFY_PROBABILITY));
+        allMut.add(new SwapSegmentMutator(c.MUTATOR_SWAP_SEGMENT_PROBABILITY));
         DrCross crossover = new DrCross(4);
         
         List<SubRater> subRaters = new LinkedList<SubRater>();        

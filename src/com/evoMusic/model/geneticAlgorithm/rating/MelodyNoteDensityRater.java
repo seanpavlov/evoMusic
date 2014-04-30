@@ -38,8 +38,7 @@ public class MelodyNoteDensityRater extends SubRater{
         for(Track track : song.getTaggedTracks(TrackTag.MELODY)){
             checkPart(track.getPart()); 
         }
-        
-        System.out.println("Nbr Of notes: " + nbrOfNotes);
+
         /**If nbr of total notes in Melody tracks is 0, return rating 0*/
         if(nbrOfNotes == 0 || nbrOfBeats == 0)
             return 0;
@@ -49,7 +48,6 @@ public class MelodyNoteDensityRater extends SubRater{
         double avarageNotesInBeat = (nbrOfNotes/nbrOfBeats);   
         double leastNotesInBeat = nbrOfNotesInBeat.first();
 
-        System.out.println("Rating density: " + leastNotesInBeat / avarageNotesInBeat);
         /**Return least note density divided by the average note density*/
         return (leastNotesInBeat / avarageNotesInBeat);
     }
