@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.evoMusic.model.Song;
+import com.evoMusic.model.Translator;
 import com.evoMusic.model.geneticAlgorithm.blending.MarkovSong;
 import com.evoMusic.model.geneticAlgorithm.mutation.Mutator;
 import com.evoMusic.model.geneticAlgorithm.rating.Rater;
@@ -65,7 +66,7 @@ public class GeneticAlgorithm {
         this.nbrOfCrossoverSongs = nbrOfCrossoverSongs;
         this.nbrOfMarkovLookbacks = nbrOfMarkovLookbacks;
         this.songDuration = songDuration;
-        markovSong = new MarkovSong(nbrOfMarkovLookbacks, inputSongs);
+       // markovSong = new MarkovSong(nbrOfMarkovLookbacks, inputSongs);
         nextPopulation = new ArrayList<Individual>();
         bestIndividual = new Individual(null, 0);
         currentIteration = 0;
@@ -87,10 +88,8 @@ public class GeneticAlgorithm {
 
 
         List<Song> firstGeneration = generateFirstGeneration();
-        rater.initSubRaterWeights(firstGeneration);
-
+        rater.initSubRaterWeights(inputSongs);
         nextPopulation = ratePopulation(firstGeneration);
-
         selectElitismSongs(nextPopulation);
 
         for (int generation = 0; generation < nbrOfGenerations; generation++) {
@@ -121,9 +120,7 @@ public class GeneticAlgorithm {
 
         // TODO: Change in this method so that markov chain is used.
         List<Song> firstGeneration = generateFirstGeneration();
-
         List<Individual> ratedFirstGeneration = ratePopulation(firstGeneration);
-
         selectElitismSongs(ratedFirstGeneration);
 
         while (getBestIndividual().getRating() < ratingThreshold) {
@@ -157,7 +154,9 @@ public class GeneticAlgorithm {
     private List<Song> generateFirstGeneration() {
         List<Song> population = new ArrayList<Song>();
         for (int i = 0; i < populationSize; i++) {
-            population.add(markovSong.generateNew(songDuration));
+            RandomInitiator ri = new RandomInitiator(60);
+            Song s = ri.generateMelody();
+            population.add(s);
         }
         return population;
     }
@@ -199,8 +198,7 @@ public class GeneticAlgorithm {
         double individualRating = 0;
         for (int individual = 0; individual < populationSize; individual++) {
             individualRating = rater.rate(population.get(individual));
-            ratedPopulation.add(new Individual(population.get(individual), individualRating
-                    ));
+            ratedPopulation.add(new Individual(population.get(individual), individualRating));
             if(individualRating > bestIndividual.getRating()){
                 bestIndividual = ratedPopulation.get(ratedPopulation.size()-1);
             }

@@ -4,7 +4,6 @@ import jUnit.blending.IntervalSongTest;
 import jUnit.blending.IntervalTrackTest;
 import jUnit.blending.MarkovSongTest;
 import jUnit.blending.MarkovTrackTest;
-import jUnit.crossover.CrossoverTest;
 import jUnit.crossover.DrCrossTest;
 import jUnit.database.MongoDatabaseTest;
 import jUnit.mutator.OctaveMutatorTest;
