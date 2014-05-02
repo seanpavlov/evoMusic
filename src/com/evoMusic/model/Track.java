@@ -274,7 +274,7 @@ public class Track {
         
         Part newPart = new Part();
         for (Phrase phrase : flatPhrases){
-            newPart.add(phrase);
+            newPart.add(phrase.copy());
         }
         this.setPart(newPart);
     }
@@ -301,7 +301,7 @@ public class Track {
         double endTime = nonIntersect.get(0).getEndTime();
         for (int i = 1; i < nonIntersect.size(); i++){
             Phrase nextPhrase = nonIntersect.get(i);
-            double gap = endTime - nextPhrase.getStartTime();
+            double gap = nextPhrase.getStartTime() - endTime;
             endTime = nextPhrase.getEndTime();
             if(gap > 0.0){
                 newPhrase.addNote(Note.REST, gap);

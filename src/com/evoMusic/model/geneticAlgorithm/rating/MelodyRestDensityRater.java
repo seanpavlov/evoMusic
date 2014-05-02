@@ -41,8 +41,9 @@ public class MelodyRestDensityRater extends SubRater{
         }
 
         /**If nbr of total rest notes in Melody tracks is 0, return rating 0*/
-        if(nbrOfRestNotes == 0)
+        if(nbrOfRestNotes <= 0 || nbrOfBeats <= 0){
             return 0;
+        }
         
         /**Calculate average rest note density for all beats and
          * retrieve the least rest note density beat found*/
