@@ -52,6 +52,7 @@ public class SwapSegmentMutatorTest {
         for(int k = 0; k < 200; k++){
         List<Integer> beforeValues = new ArrayList<Integer>();
         List<Integer> beforeValuesNonRest = new ArrayList<Integer>();
+        int nbrOfTracksBefore = testSong.getNbrOfTracks();
         for(Track track : testSong.getTracks()){
             for(Phrase phrase : track.getPart().getPhraseArray()){
                 for(Note n : phrase.getNoteArray()){
@@ -62,10 +63,11 @@ public class SwapSegmentMutatorTest {
                     beforeValues.add(pitch);
                 }
             }
-        }    
+        }  
         mutator.mutate(testSong);
         List<Integer> afterValues = new ArrayList<Integer>();
         List<Integer> afterValuesNonRest = new ArrayList<Integer>();
+        int nbrOfTracksAfter = testSong.getNbrOfTracks();
         for(Track track : testSong.getTracks()){
             Phrase[] phrases = track.getPart().getPhraseArray();
             for(Phrase phrase : phrases){
@@ -78,7 +80,9 @@ public class SwapSegmentMutatorTest {
                 }
             }
         }
-
+        
+        
+        assertTrue("Same Nbr of tracks", nbrOfTracksBefore == nbrOfTracksAfter);
         assertTrue("Same or less nbr of non rest notes before and after mutation", beforeValuesNonRest.size() >= afterValuesNonRest.size());
         assertTrue("Every non rest note should not be in same place after mutation" , !beforeValuesNonRest.equals(afterValuesNonRest));
         assertTrue("Every note should not be in same place after mutation", !beforeValues.equals(afterValues));  

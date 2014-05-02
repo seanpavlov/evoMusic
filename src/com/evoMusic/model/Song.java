@@ -207,7 +207,11 @@ public class Song {
      * @return
      */
     public Track removeTrack(int i) {
-        return tracks.remove(i);
+        Track trackToRemove = tracks.get(i);
+        if(removeTrack(trackToRemove)){
+            return trackToRemove;
+        }
+        return null;
     }
 
     /**
@@ -217,7 +221,11 @@ public class Song {
      * @return
      */
     public boolean removeTrack(Track track) {
-        return tracks.remove(track);
+        if(tracks.remove(track)){
+            score.removePart(track.getPart());
+            return true;
+        }
+        return false;
     }
 
     /**

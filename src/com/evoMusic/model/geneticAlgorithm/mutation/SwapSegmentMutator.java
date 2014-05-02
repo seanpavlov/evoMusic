@@ -31,11 +31,10 @@ public class SwapSegmentMutator extends ISubMutator{
      * */
     @Override
     public void mutate(Song song) {
-        ///for(Track track : song.getTracks()){
         List<Track> tracks = song.getTracks();
         for(int i = tracks.size()-1; i >= 0; i--){
             if(true){//Math.random() < getProbability()){ 
-                Track track = tracks.get(i);
+               Track track = tracks.get(i);
                //Retrieve and calculate the tracks end time to fraction of 1/4
                double trackTime = track.getPart().getEndTime();
                double trackEndTime =  Math.floor(trackTime) + findClosestFraction(trackTime%1);
@@ -58,10 +57,12 @@ public class SwapSegmentMutator extends ISubMutator{
 
                //Tag new track with swaped segments with same tag old track
                trackWithSwap.setTag(track.getTag());
-               //Remove old track from song
-               song.removeTrack(track);
-               //Add new track with swaped segments
-               song.addTrack(trackWithSwap);
+              
+               //Add new track with swaped segments if old is removed successfully
+               if(song.removeTrack(track)){
+                   //System.out.println("SWAP");
+                   song.addTrack(trackWithSwap);
+               }
             }
         }
     }
@@ -110,8 +111,8 @@ public class SwapSegmentMutator extends ISubMutator{
     }
     
     /**
-     * Finds and retreive segments from a track and changes its phrases start time 
-     * to the right value
+     * Finds and retreive segments from a track and changes its phrases start times 
+     * to the right values
      * @param track The track to find segment from
      * @param from The start value for the segment 
      * @param length The length of the segment
@@ -214,13 +215,16 @@ public class SwapSegmentMutator extends ISubMutator{
     
     /**
      * Finds closes lower fraction of 1/4 (0.0, 0.25, 0.5, 0.75) 
-     * Example 0.66 is going to find and return closest fraction of 0.5
+     * Example: 0.66 is going to find and return closest fraction of 0.5
      * but 0.49 is going to find and return closest fraction of 0.25
      * @param fraction the fraction to find closest lower 1/4 to
      * @return double the closest lower 1/4 found
      * */
     private static double[] fractionalValues = {0.25, 0.5, 0.75};
     private double findClosestFraction(double fraction){
+        if(fraction >= 1.0){
+            return 0.0;
+        }
         double returnFraction = 0.0;
         double margin = Math.abs(0.0 - fraction);
         for(double fractionValue : fractionalValues){
