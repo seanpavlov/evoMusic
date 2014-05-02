@@ -85,10 +85,9 @@ public class GeneticAlgorithm {
         bestIndividual = new Individual(null, 0);
         currentIteration = 0;
 
-        // TODO: Initialize weight based on input songs. Decide how we are going
-        // to do this.
 
         List<Song> firstGeneration = generateFirstGeneration();
+        rater.initSubRaterWeights(firstGeneration);
 
         nextPopulation = ratePopulation(firstGeneration);
 
