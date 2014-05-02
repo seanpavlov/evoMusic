@@ -14,6 +14,7 @@ import com.evoMusic.model.Translator;
 import com.evoMusic.model.geneticAlgorithm.blending.IntervalSong;
 import com.evoMusic.model.geneticAlgorithm.blending.IntervalTrack;
 import com.evoMusic.model.geneticAlgorithm.blending.MarkovSong;
+import com.evoMusic.model.geneticAlgorithm.blending.multiMarkov.StateTrack;
 import com.evoMusic.util.TrackTag;
 
 public class MarkovChainTest {
@@ -64,27 +65,29 @@ public class MarkovChainTest {
     @Test
     public void test() {
         
+        StateTrack st = new StateTrack(nyanCat.getTrack(0));
         
-        //IntervalSong intervalSong = new IntervalSong(marioSong);
-        //Song newSong = intervalSong.toSong();
-        //Translator.INSTANCE.play(newSong);
         
-        //markov = new MarkovChain(flutes.get(2));
-        List<Song> nyanList = new ArrayList<Song>(1);
-        //nyanList.add(nyanCat);
-        //nyanList.add(flutes.get(2));
-        nyanList.add(zelda);
-        //nyanList.add(wilyStage);
-        //nyanList.add(moonlight);
-        //nyanList.add(marioTheme);
-        markov = new MarkovSong(2, nyanList);
-        Song newSong = markov.generateNew(100);
-        //Translator.INSTANCE.saveSongToMidi(newSong, "TestSaveNatan");
-        System.out.println(newSong.getTrack(1).getTag());
-        Translator.INSTANCE.play(newSong);
-        //Translator.INSTANCE.play(zelda.getTrack(3).getPart());
-        //assertTrue(true);
-        //fail("Not yet implemented");
+//        //IntervalSong intervalSong = new IntervalSong(marioSong);
+//        //Song newSong = intervalSong.toSong();
+//        //Translator.INSTANCE.play(newSong);
+//        
+//        //markov = new MarkovChain(flutes.get(2));
+//        List<Song> nyanList = new ArrayList<Song>(1);
+//        //nyanList.add(nyanCat);
+//        //nyanList.add(flutes.get(2));
+//        nyanList.add(zelda);
+//        //nyanList.add(wilyStage);
+//        //nyanList.add(moonlight);
+//        //nyanList.add(marioTheme);
+//        markov = new MarkovSong(2, nyanList);
+//        Song newSong = markov.generateNew(100);
+//        //Translator.INSTANCE.saveSongToMidi(newSong, "TestSaveNatan");
+//        System.out.println(newSong.getTrack(1).getTag());
+//        Translator.INSTANCE.play(newSong);
+//        //Translator.INSTANCE.play(zelda.getTrack(3).getPart());
+//        //assertTrue(true);
+//        //fail("Not yet implemented");
     }
 
 }
