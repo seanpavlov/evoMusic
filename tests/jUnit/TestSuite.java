@@ -37,7 +37,6 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses({TranslatorTest.class, 
     MongoDatabaseTest.class, 
-    CrossoverTest.class, 
     SongTest.class,
     TrackTest.class,
     GeneticAlgorithmTest.class,
