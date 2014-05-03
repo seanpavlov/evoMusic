@@ -90,7 +90,7 @@ public class StateTrack {
             currentState = formatState(sortedStateList.get(i));
             currentStateSize = currentState.size();
             currentStartTime = sortedStateList.get(i).startTime;
-            if (i == numberOfStates + 1) {
+            if (i == numberOfStates - 1) {
                 // if it is the last state
                 double biggestRyV = 0;
                 for (Note note : sortedStateList.get(i).notes) {

@@ -66,8 +66,9 @@ public class MarkovChainTest {
     public void test() {
         
         StateTrack st = new StateTrack(nyanCat.getTrack(0));
-        
-        
+
+//        Translator.INSTANCE.play(marioSong.getTrack(0));
+
 //        //IntervalSong intervalSong = new IntervalSong(marioSong);
 //        //Song newSong = intervalSong.toSong();
 //        //Translator.INSTANCE.play(newSong);
@@ -88,6 +89,7 @@ public class MarkovChainTest {
 //        //Translator.INSTANCE.play(zelda.getTrack(3).getPart());
 //        //assertTrue(true);
 //        //fail("Not yet implemented");
+
     }
 
 }
