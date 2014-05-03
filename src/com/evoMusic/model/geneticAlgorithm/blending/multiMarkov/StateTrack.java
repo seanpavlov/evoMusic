@@ -2,10 +2,7 @@ package com.evoMusic.model.geneticAlgorithm.blending.multiMarkov;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import jm.music.data.Note;
 import jm.music.data.Part;
@@ -16,18 +13,13 @@ import com.evoMusic.util.TrackTag;
 
 public class StateTrack {
 
-    private static final int REST_PITCH = -1000000;
-    public static final int RHYTHM_PRECISION = 1000000;
+    private int         firstNote;
+    private int         instrument;
+    private int         channel;
+    private TrackTag    tag;
+    private int         largestChord;
 
-    private int firstNote;
-    private int instrument;
-    private int channel;
-    private TrackTag tag;
-    private int largestChord;
-    private List<List<Integer>> intervals;
-    private List<Double> rhythmValues;
-    private List<List<Double>> durations;
-    private List<List<Integer>> dynamics;
+    private List<State> stateList;
 
     /**
      * Creates a new interval track from a given track, maintaining its
@@ -40,10 +32,6 @@ public class StateTrack {
         Part part = track.getPart();
         instrument = part.getInstrument();
         channel = part.getChannel();
-        intervals = new ArrayList<List<Integer>>();
-        rhythmValues = new ArrayList<Double>();
-        durations = new ArrayList<List<Double>>();
-        dynamics = new ArrayList<List<Integer>>();
         largestChord = 0;
         if (part.size() == 0) {
             firstNote = 60;
@@ -53,129 +41,39 @@ public class StateTrack {
         tag = track.getTag();
 
         // sort by start time and group notes at the same start time.
-        Map<Integer, ComparableState> noteMap;
-        List<ComparableState> sortedStateList = new ArrayList<ComparableState>();
-        noteMap = new HashMap<Integer, ComparableState>();
-        int partLength = 0;
+        stateList = new ArrayList<State>();
+        double partLength;
+        State currentState;
         for (Phrase phrase : part.getPhraseArray()) {
-            partLength = (int) (phrase.getStartTime() * RHYTHM_PRECISION);
+            partLength = phrase.getStartTime();
             for (Note note : phrase.getNoteArray()) {
-                if (!noteMap.containsKey(partLength)) {
-                    noteMap.put(partLength, new ComparableState(partLength));
-                }
-                noteMap.get(partLength).addNote(note);
-                partLength += (int) (note.getRhythmValue() * RHYTHM_PRECISION);
-            }
-        }
-        Iterator<ComparableState> iterator = noteMap.values().iterator();
-        while (iterator.hasNext()) {
-            sortedStateList.add(iterator.next());
-        }
-        Collections.sort(sortedStateList);
-
-        // TODO fetch better first note, currently may be buggy.
-        // Should be fixed, but still ugly...
-        firstNote = formatNote(formatState(sortedStateList.get(0)).get(0).getPitch());
-        int numberOfStates = sortedStateList.size();
-        List<Note> currentState = null;
-        Integer previousHeadInterval = firstNote;
-        List<Integer> stateIntervals;
-        List<Double> stateDurations;
-        List<Integer> stateDynamics;
-        int currentStateSize;
-        int currentStartTime;
-        int nextStartTime;
-        // go through each note group.
-        for (int i = 0; i < numberOfStates; i++) {
-            currentState = formatState(sortedStateList.get(i));
-            currentStateSize = currentState.size();
-            currentStartTime = sortedStateList.get(i).startTime;
-            if (i == numberOfStates - 1) {
-                // if it is the last state
-                double biggestRyV = 0;
-                for (Note note : sortedStateList.get(i).notes) {
-                    if (note.getRhythmValue() > biggestRyV) {
-                        biggestRyV = note.getRhythmValue();
+                currentState = null;
+                for (State foundState : stateList) {
+                    if (foundState.startsAtTime(partLength)) {
+                        currentState = foundState;
+                        break;
                     }
                 }
-                nextStartTime = currentStartTime
-                        + (int) (biggestRyV * RHYTHM_PRECISION);
-            } else {
-                nextStartTime = sortedStateList.get(i + 1).startTime;
-            }
-            if (currentStateSize > largestChord) {
-                largestChord = currentStateSize;
-            }
-
-            // maps interval to its original note index for mapping intervals to
-            // their rhythm values etc..
-            Map<Integer, Integer> intervalMap = new HashMap<Integer, Integer>();
-            for (int j = 0; j < currentStateSize; j++) {
-                intervalMap.put(j, currentState.get(j).getPitch()
-                        - previousHeadInterval);
-            }
-            Iterator<Integer> iter = intervalMap.keySet().iterator();
-            stateIntervals = new ArrayList<Integer>();
-            while (iter.hasNext()) {
-                stateIntervals.add(iter.next());
-            }
-            Collections.sort(stateIntervals);
-            // by now duplicate intervals are gone and list are sorted with
-            // highest note first.
-
-            stateDurations = new ArrayList<Double>();
-            stateDynamics = new ArrayList<Integer>();
-            Note rightNote;
-            Double newRhythmValue = ((double) (nextStartTime - currentStartTime))
-                    / RHYTHM_PRECISION;
-            for (Integer interval : stateIntervals) {
-                rightNote = currentState.get(intervalMap.get(interval));
-                // stateRhythmValues.add(newRhythmValue);//
-                // rightNote.getRhythmValue());
-                stateDurations.add(rightNote.getDuration());
-                stateDynamics.add(rightNote.getDynamic());
-            }
-            previousHeadInterval += stateIntervals.get(0);
-
-            intervals.add(stateIntervals);
-            rhythmValues.add(newRhythmValue);
-            durations.add(stateDurations);
-            dynamics.add(stateDynamics);
-        }
-    }
-
-    private List<Note> formatState(ComparableState state) {
-        // if only rests, remove all but one rest.
-        // else, remove all rests.
-
-        // if not only rests, remove all rests.
-        if (!state.containsOnlyRests()) {
-            for (Note note : state.notes) {
-                if (note.isRest()) {
-                    state.notes.remove(note);
+                if (currentState == null) {
+                    currentState = new State(partLength);
                 }
-            }
-            // else, remove all but one rest.
-        } else {
-            for (int i = 0; i < state.notes.size() - 1; i++) {
-                state.notes.remove(state.notes.get(i));
+                currentState.addNote(note);
+                stateList.add(currentState);
+                partLength += note.getRhythmValue();
             }
         }
-        return state.notes;
-    }
+        Collections.sort(stateList);
 
-    /**
-     * Changes the value of a pitch if it is a rest. This is to avoid the
-     * interval int to flip.
-     * 
-     * @param inputNote
-     * @return REST_PITCH if note is rest, inputNote otherwise.
-     */
-    private int formatNote(int inputNote) {
-        if (inputNote == Note.REST) {
-            return REST_PITCH;
+        // Initialize all states and find the largest state size.
+        this.firstNote = stateList.get(0).getHighestPitch();
+        int previousPitch = firstNote;
+        for (State state : stateList) {
+            state.initializeIntervalForm(previousPitch);
+            previousPitch += state.getHighestInterval();
+            if (state.size() > largestChord) {
+                largestChord = state.size();
+            }
         }
-        return inputNote;
     }
 
     /**
@@ -188,25 +86,19 @@ public class StateTrack {
      *            The instrument of this track.
      * @param channel
      *            The channel of this track.
-     * @param intervals
-     *            A list of intervals that will define the notes of this track.
-     * @param rhythmValues
-     *            A list of rhythm values which corresponds to the intervals.
-     * @param durations
-     *            A list of durations which corresponds to the intervals.
+     * @param stateList
+     *            A list of states that will define this track.
+     * @param tag
+     *            The track tag for this track.
      */
     public StateTrack(int firstNote, int instrument, int channel,
-            int[] intervals, double[] rhythmValues, double[] durations,
-            int[] dynamics, TrackTag tag) {
+            List<State> stateList, TrackTag tag) {
 
-        // this.firstNote = firstNote;
-        // this.instrument = instrument;
-        // this.channel = channel;
-        // this.intervals = intervals;
-        // this.rhythmValues = rhythmValues;
-        // this.durations = durations;
-        // this.dynamics = dynamics;
-        // this.tag = tag;
+        this.firstNote = firstNote;
+        this.instrument = instrument;
+        this.channel = channel;
+        this.stateList = stateList;
+        this.tag = tag;
     }
 
     /**
@@ -216,46 +108,29 @@ public class StateTrack {
      */
     public Track toTrack() {
         List<Phrase> phrases = new ArrayList<Phrase>();
-        int currentHeadPitch = getFirstNote();
         for (int i = 0; i < largestChord; i++) {
             phrases.add(new Phrase(0.0));
         }
 
-        Note newNote;// = new Note(currentPitch, getRythmValues()[0]);
-        // newNote.setDuration(getDurations()[0]);
-        // newNote.setDynamic(getDynamics()[0]);
-        // phrase.add(newNote);
-        List<Integer> currentIntervals;
-        Double currentRhythmValue;
-        List<Double> currentDurations;
-        List<Integer> currentDynamics;
+        List<Note> generatedNotes;
+        State currentState;
         int chordSize;
-        int currentPitchInChord;
+        int previousPitch = getFirstNote();
 
         // looping through each chord.
-        for (int stateIndex = 0; stateIndex < intervals.size(); stateIndex++) {
-            currentIntervals = intervals.get(stateIndex);
-            currentRhythmValue = rhythmValues.get(stateIndex);
-            currentDurations = durations.get(stateIndex);
-            currentDynamics = dynamics.get(stateIndex);
-            chordSize = currentIntervals.size();
+        for (int stateIndex = 0; stateIndex < stateList.size(); stateIndex++) {
+            currentState = stateList.get(stateIndex);
+            chordSize = currentState.size();
+            previousPitch += currentState.getHighestInterval();
+            generatedNotes = currentState.toNotes(previousPitch);
 
             for (int noteIndex = 0; noteIndex < chordSize; noteIndex++) {
-                currentPitchInChord = currentHeadPitch
-                        + currentIntervals.get(noteIndex);
-                if (currentPitchInChord < 0 || currentPitchInChord > 127) {
-                    newNote = new Note(Note.REST, currentRhythmValue);
-                } else {
-                    newNote = new Note(currentPitchInChord, currentRhythmValue);
-                }
-                newNote.setDuration(currentDurations.get(noteIndex));
-                newNote.setDynamic(currentDynamics.get(noteIndex));
-                phrases.get(noteIndex).add(newNote);
+                phrases.get(noteIndex).add(generatedNotes.get(noteIndex));
             }
             // Make sure all phrases are the same length
             for (int i = chordSize; i < largestChord; i++) {
-                newNote = new Note(Note.REST, currentRhythmValue);
-                phrases.get(i).add(newNote);
+                phrases.get(i).add(
+                        new Note(Note.REST, currentState.getRhythmValue()));
             }
         }
         Part newPart = new Part();
@@ -268,124 +143,48 @@ public class StateTrack {
     }
 
     /**
-     * Gets the first note of this interval track.
+     * Gets the first note of this track.
      * 
-     * @return The first note of this interval track.
+     * @return The first note of this track.
      */
     public int getFirstNote() {
         return firstNote;
     }
 
     /**
-     * Gets the instrument of this interval track.
+     * Gets the instrument of this track.
      * 
-     * @return The instrument of this interval track.
+     * @return The instrument of this track.
      */
     public int getInstrument() {
         return instrument;
     }
 
     /**
-     * Gets the channel of this interval track.
+     * Gets the channel of this track.
      * 
-     * @return The channel of this interval track.
+     * @return The channel of this track.
      */
     public int getChannel() {
         return channel;
     }
 
     /**
-     * Gets the list of intervals for the notes of this interval track.
+     * Gets the list of states of this track.
      * 
-     * @return The list of intervals for the notes of this interval track.
+     * @return The list of states of this track.
      */
-    public List<List<Integer>> getIntervals() {
-        return intervals;
+    public List<State> getStates() {
+        return new ArrayList<State>(this.stateList);
     }
 
     /**
-     * Gets the list of rhythm values for the notes of this interval track.
+     * Gets the tag of this track.
      * 
-     * @return The list of rhythm values for the notes of this interval track.
-     */
-    public List<Double> getRythmValues() {
-        return rhythmValues;
-    }
-
-    /**
-     * Gets the list of durations for the notes of this interval track.
-     * 
-     * @return The list of durations for the notes of this interval track.
-     */
-    public List<List<Double>> getDurations() {
-        return durations;
-    }
-
-    /**
-     * Gets the list of dynamics for the notes of this interval track.
-     * 
-     * @return The list of dynamics for the notes of this interval track.
-     */
-    public List<List<Integer>> getDynamics() {
-        return dynamics;
-    }
-
-    /**
-     * Gets the tag of this interval track.
-     * 
-     * @return The tag of this interval track.
+     * @return The tag of this track.
      */
     public TrackTag getTag() {
         return tag;
     }
-
-    /**
-     * A private class containing a note and its start time. The note is
-     * comparable by its start time.
-     */
-    private class ComparableState implements Comparable<ComparableState> {
-
-        private List<Note> notes;
-        /** Start time multiplied by RHYTHM_PRECISION */
-        private int startTime;
-
-        private boolean containsOnlyRests = true;
-
-        /**
-         * Creates a new comparable note with the given note and its start time.
-         * 
-         * @param note
-         *            The given note.
-         * @param startTime
-         *            The start time of the given note.
-         */
-        public ComparableState(int startTime) {
-            this.notes = new ArrayList<Note>();
-            this.startTime = startTime;
-        }
-
-        public void addNote(Note note) {
-            notes.add(note);
-            if (containsOnlyRests && (!note.isRest())) {
-                containsOnlyRests = false;
-            }
-        }
-
-        public boolean containsOnlyRests() {
-            return containsOnlyRests;
-        }
-
-        @Override
-        public int compareTo(ComparableState o) {
-            double otherStartTime = o.startTime;
-            if (startTime < otherStartTime) {
-                return -1;
-            } else if (startTime > otherStartTime) {
-                return 1;
-            } else {
-                return 0;
-            }
-        }
-    }
-
+    
 }
