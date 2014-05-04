@@ -67,10 +67,10 @@ public class MarkovChainTest {
 
     @Test
     public void test() {
-        StateTrack stateTrack = new StateTrack(marioSong.getTrack(0));
+        StateTrack stateTrack = new StateTrack(zelda.getTrack(1));
         Track newTrack = stateTrack.toTrack();
-//        Translator.INSTANCE.play(marioSong.getTrack(0));
-        Song song = new Song(new Score(120));
+//        Translator.INSTANCE.play(zelda.getTrack(1));
+        Song song = new Song(new Score(140));
         song.addTrack(newTrack);
         Translator.INSTANCE.play(song);
     }

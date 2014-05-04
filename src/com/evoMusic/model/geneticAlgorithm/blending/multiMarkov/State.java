@@ -53,35 +53,16 @@ public class State implements Comparable<State> {
         return Math.abs(this.startTime - startTime) < RHYTHM_VALUE_PRECISION;
     }
 
-    public void initializeIntervalForm(int previousPitch) {
+    public void initializeIntervalForm(int previousPitch, Double nextStartTime) {
         this.intervals = new ArrayList<Integer>();
         this.durations = new ArrayList<Double>();
         this.dynamics = new ArrayList<Integer>();
-        this.rhythmValue = Double.MAX_VALUE;
-        for (Note note : notes) {
-            // Find the smallest rhythm value.
-            if (note.getRhythmValue() < this.rhythmValue) {
-                /*
-                 * Only select IF (only rests AND note is rest) OR (NOT(only
-                 * rests) AND NOT(note is rest))
-                 */
-                if ((onlyRests && note.isRest())
-                        || (!onlyRests && !note.isRest())) {
-                    this.rhythmValue = note.getRhythmValue();
-                }
-            }
-        }
-
+        
         /*
-         * Sort out so that there are either only non-rests if there are
-         * non-rests in the list, or so that there are only one rest if there
-         * are only rests in it.
+         * Sort out so that there are only non-rests if there are
+         * non-rests in the list.
          */
-        if (onlyRests) {
-            intervals.add(REST_VALUE - previousPitch);
-            durations.add(rhythmValue);
-            dynamics.add(REST_DYNAMIC);
-        } else {
+        if (!onlyRests) {
             // Make sure to add them in order, with the largest interval first.
             List<Note> tempNoteList = new ArrayList<>(this.notes);
             Collections.sort(tempNoteList, IntervalComparator.INSTANCE);
@@ -90,9 +71,51 @@ public class State implements Comparable<State> {
                     intervals.add(note.getPitch() - previousPitch);
                     durations.add(note.getDuration());
                     dynamics.add(note.getDynamic());
+                } else {
+                    notes.remove(note);
                 }
             }
         }
+        
+        if (nextStartTime != null) {
+            this.rhythmValue = nextStartTime - this.startTime;
+        } else {
+            // If no next start time, find the largest rhythm value.
+            this.rhythmValue = Double.MIN_VALUE;
+            for (Note note : notes) {
+                // Find the smallest rhythm value.
+                if (note.getRhythmValue() > this.rhythmValue) {
+                    this.rhythmValue = note.getRhythmValue();
+//                    /*
+//                     * Only select IF (only rests AND note is rest) OR (NOT(only
+//                     * rests) AND NOT(note is rest))
+//                     */
+//                    if ((onlyRests && note.isRest())
+//                            || (!onlyRests && !note.isRest())) {
+//                        this.rhythmValue = note.getRhythmValue();
+//                    }
+                }
+            }
+        }
+
+
+        if (onlyRests) {
+            intervals.add(REST_VALUE - previousPitch);
+            durations.add(rhythmValue);
+            dynamics.add(REST_DYNAMIC);
+        }
+//        } else {
+//            // Make sure to add them in order, with the largest interval first.
+//            List<Note> tempNoteList = new ArrayList<>(this.notes);
+//            Collections.sort(tempNoteList, IntervalComparator.INSTANCE);
+//            for (Note note : tempNoteList) {
+//                if (!note.isRest()) {
+//                    intervals.add(note.getPitch() - previousPitch);
+//                    durations.add(note.getDuration());
+//                    dynamics.add(note.getDynamic());
+//                }
+//            }
+//        }
         this.size = intervals.size();
     }
 
@@ -122,6 +145,10 @@ public class State implements Comparable<State> {
     public double getRhythmValue() {
         return this.rhythmValue;
     }
+    
+    public double getStartTime() {
+        return this.startTime;
+    }
 
     public List<Note> toNotes(int previousPitch) {
         List<Note> tempNoteList = new ArrayList<Note>();
@@ -147,7 +174,7 @@ public class State implements Comparable<State> {
      */
     @Override
     public int compareTo(State arg0) {
-        if (Math.abs(startTime - arg0.startTime) < RHYTHM_VALUE_PRECISION) {
+        if (Math.abs(this.startTime - arg0.startTime) < RHYTHM_VALUE_PRECISION) {
             return 0;
         }
         if (startTime < arg0.startTime) {

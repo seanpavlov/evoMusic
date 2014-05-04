@@ -33,6 +33,7 @@ public class StateTrack {
         instrument = part.getInstrument();
         channel = part.getChannel();
         largestChord = 0;
+        stateList = new ArrayList<State>();
         if (part.size() == 0) {
             firstNote = 60;
             tag = TrackTag.NONE;
@@ -41,7 +42,6 @@ public class StateTrack {
         tag = track.getTag();
 
         // sort by start time and group notes at the same start time.
-        stateList = new ArrayList<State>();
         double partLength;
         State currentState;
         for (Phrase phrase : part.getPhraseArray()) {
@@ -67,8 +67,18 @@ public class StateTrack {
         // Initialize all states and find the largest state size.
         this.firstNote = stateList.get(0).getHighestPitch();
         int previousPitch = firstNote;
-        for (State state : stateList) {
-            state.initializeIntervalForm(previousPitch);
+        
+        // find all start times.
+        Double[] nextStartTimes = new Double[stateList.size()];
+        for (int i = 0; i < nextStartTimes.length-1; i++) {
+            nextStartTimes[i] = stateList.get(i+1).getStartTime();
+        }
+        nextStartTimes[nextStartTimes.length-1] = null;
+        // Initiate all states.
+        State state;
+        for (int stateIndex = 0; stateIndex < stateList.size(); stateIndex++) {
+            state = stateList.get(stateIndex);
+            state.initializeIntervalForm(previousPitch, nextStartTimes[stateIndex]);
             previousPitch += state.getHighestInterval();
             if (state.size() > largestChord) {
                 largestChord = state.size();
@@ -121,8 +131,9 @@ public class StateTrack {
         for (int stateIndex = 0; stateIndex < stateList.size(); stateIndex++) {
             currentState = stateList.get(stateIndex);
             chordSize = currentState.size();
-            previousPitch += currentState.getHighestInterval();
+            System.out.println(chordSize);
             generatedNotes = currentState.toNotes(previousPitch);
+            previousPitch += currentState.getHighestInterval();
 
             for (int noteIndex = 0; noteIndex < chordSize; noteIndex++) {
                 phrases.get(noteIndex).add(generatedNotes.get(noteIndex));
