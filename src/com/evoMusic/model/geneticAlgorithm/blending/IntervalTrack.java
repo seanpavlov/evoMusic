@@ -66,8 +66,21 @@ public class IntervalTrack {
         // Currently only takes one note at the same time.
         sortedNoteList.clear();
         Iterator<List<ComparableNote>> iterator = noteMap.values().iterator();
+        List<ComparableNote> nextCNotes;
+        boolean foundNonRest;
         while (iterator.hasNext()) {
-            sortedNoteList.add(iterator.next().get(0));
+            foundNonRest = false;
+            nextCNotes = iterator.next();
+            for (ComparableNote cNote : nextCNotes) {
+                if (!cNote.note.isRest()) {
+                    foundNonRest = true;
+                    sortedNoteList.add(cNote);
+                    break;
+                }
+            }
+            if (!foundNonRest) {
+                sortedNoteList.add(nextCNotes.get(0));
+            }
         }
         Collections.sort(sortedNoteList);
 

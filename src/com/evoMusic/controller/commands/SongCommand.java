@@ -87,13 +87,13 @@ public class SongCommand extends AbstractCommand {
         songArgs.put("list", new AbstractCommand() {
             @Override
             public boolean execute(String[] args) {
-                System.out.println("Available songs:");
+                System.out.println("Available songs(BPM):");
                 for (int i = 0; i < songs.size(); i++) {
-                    System.out.println(i + " -> " + songs.get(i).getTitle());
+                    System.out.println(i + " -> " + songs.get(i).getTitle() + "(" + songs.get(i).getTempo() + ")");
                 }
-                System.out.println("Selected songs:");
+                System.out.println("Selected songs(BPM):");
                 for (Song song : selectedSongs) {
-                    System.out.println(song.getTitle());
+                    System.out.println(song.getTitle() + "(" + song.getTempo() + ")");
                 }
                 return true;
             }

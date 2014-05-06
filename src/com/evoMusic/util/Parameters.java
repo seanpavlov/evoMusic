@@ -2,9 +2,7 @@ package com.evoMusic.util;
 
 /**
  * 
- * GENERAL RULES OF USE 
- * --------------------- 
- * Naming is done in the same name a
+ * GENERAL RULES OF USE --------------------- Naming is done in the same name a
  * package structure is. Always start with a word that identifies in what kind
  * of package the parameter is used. And then go into more specific words.
  * 
@@ -14,31 +12,43 @@ package com.evoMusic.util;
  * 
  */
 public class Parameters {
+    
+    /*
+     * DEBUG MODE
+     * 
+     * In debug mode, the usual console-output is disabled and the debug is shown.
+     */
+    public boolean IN_DEBUG_MODE = false;
 
     /*
      * GENETIC ALGORITHM PARAMETERS
+     * 
+     * Population Size is the size of the population in the GA. 
+     * Number of elitism songs is the number of songs that will be carried over to the
+     * next generation.
+     * Number of crossover songs is the number of songs that will 
      */
     public int GA_POPULATION_SIZE = 100;
     public int GA_NBR_OF_ELITISM_SONGS = 2;
     public int GA_NBR_OF_CROSSOVER_SONGS = 3;
-    
+
     /*
      * MUTATION PARAMETERS
      */
     public double MUTATION_INITIAL_PROBABILITY = 0.3;
     public double MUTATION_MINIMUM_PROBABILITY = 0.2;
-    public double MUTATION_PROBABILITY_RATIO = 0.05;
+    public double MUTATION_PROBABILITY_RATIO = 0.001;
 
     public double MUTATOR_RANDOM_NOTE_PROBABILITY = 0.05;
     public int MUTATOR_RANDOM_NOTE_STEP_RANGE = 6;
-    
+
     public double MUTATOR_RHYTHM_VALUE_PROBABILITY = 0;
     public double MUTATOR_RHYTHM_VALUE_MOVING_RANGE = 1;
 
     public double MUTATOR_OCTAVE_PROBABILITY = 0;
     public int MUTATOR_OCTAVE_RANGE = 1;
 
-    public double MUTATOR_REVERSE_PROBABILITY = 0.1;
+    public double MUTATOR_REVERSE_PROBABILITY = 0;
 
     public double MUTATOR_SCALE_OF_FIFTH_PROBABILITY = 0;
     public int MUTATOR_SCALE_OF_FIFTH_RANGE = 3;
@@ -72,12 +82,12 @@ public class Parameters {
     public int CROSSOVER_NBR_OF_INTERSECTS = 2;
     public int CROSSOVER_MIN_DURATION = 50;
     public int CROSSOVER_MAX_DURATION = 200;
-    
+
     /*
      * MARKOV PARAMETERS
      */
-    public int MARKOV_LOOKBACKS = 1;
-    public double MARKOV_SONGDURATION = 50;
+    public int MARKOV_LOOKBACKS = 2;
+    public double MARKOV_SONGDURATION = 100;
 
     private static Parameters parameters = new Parameters();
 
