@@ -7,6 +7,7 @@ import java.util.Set;
 import java.util.concurrent.Semaphore;
 
 import com.evoMusic.model.Song;
+import com.evoMusic.model.Track;
 import com.evoMusic.model.Translator;
 import com.evoMusic.model.geneticAlgorithm.DrCross;
 import com.evoMusic.model.geneticAlgorithm.GeneticAlgorithm;
@@ -39,6 +40,7 @@ import com.evoMusic.model.geneticAlgorithm.rating.ScaleWhizz;
 import com.evoMusic.model.geneticAlgorithm.rating.SubRater;
 import com.evoMusic.model.geneticAlgorithm.rating.ZipfsLawRater;
 import com.evoMusic.util.Parameters;
+import com.evoMusic.util.Sort;
 import com.google.common.collect.Sets;
 
 public class GenerateCommand extends AbstractCommand {

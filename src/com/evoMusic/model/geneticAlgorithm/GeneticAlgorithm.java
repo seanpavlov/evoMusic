@@ -64,9 +64,7 @@ public class GeneticAlgorithm {
         this.populationSize = populationSize;
         this.nbrOfElitismSongs = nbrOfElitismSongs;
         this.nbrOfCrossoverSongs = nbrOfCrossoverSongs;
-        this.nbrOfMarkovLookbacks = nbrOfMarkovLookbacks;
         this.songDuration = songDuration;
-       // markovSong = new MarkovSong(nbrOfMarkovLookbacks, inputSongs);
         nextPopulation = new ArrayList<Individual>();
         bestIndividual = new Individual(null, 0);
         currentIteration = 0;
@@ -85,7 +83,6 @@ public class GeneticAlgorithm {
         elitismSongs = new ArrayList<Individual>();
         bestIndividual = new Individual(null, 0);
         currentIteration = 0;
-
 
         List<Song> firstGeneration = generateFirstGeneration();
         rater.initSubRaterWeights(inputSongs);
@@ -122,7 +119,6 @@ public class GeneticAlgorithm {
         List<Song> firstGeneration = generateFirstGeneration();
         List<Individual> ratedFirstGeneration = ratePopulation(firstGeneration);
         selectElitismSongs(ratedFirstGeneration);
-
         while (getBestIndividual().getRating() < ratingThreshold) {
             generateCurrentGeneration();
         }
@@ -154,9 +150,8 @@ public class GeneticAlgorithm {
     private List<Song> generateFirstGeneration() {
         List<Song> population = new ArrayList<Song>();
         for (int i = 0; i < populationSize; i++) {
-            RandomInitiator ri = new RandomInitiator(60);
-            Song s = ri.generateMelody();
-            population.add(s);
+            crossover.setParents(inputSongs);
+            population.add(crossover.crossIndividuals().get(0));
         }
         return population;
     }
@@ -197,6 +192,7 @@ public class GeneticAlgorithm {
         List<Individual> ratedPopulation = new ArrayList<Individual>();
         double individualRating = 0;
         for (int individual = 0; individual < populationSize; individual++) {
+            population.get(individual).flattern();
             individualRating = rater.rate(population.get(individual));
             ratedPopulation.add(new Individual(population.get(individual), individualRating));
             if(individualRating > bestIndividual.getRating()){

@@ -18,7 +18,7 @@ public class Parameters {
     /*
      * GENETIC ALGORITHM PARAMETERS
      */
-    public int GA_POPULATION_SIZE = 40;
+    public int GA_POPULATION_SIZE = 10;
     public int GA_NBR_OF_ELITISM_SONGS = 2;
     public int GA_NBR_OF_CROSSOVER_SONGS = 2;
     
@@ -70,8 +70,6 @@ public class Parameters {
      * CROSSOVER PARAMETERS
      */
     public int CROSSOVER_NBR_OF_INTERSECTS = 2;
-    public int CROSSOVER_MIN_DURATION = 50;
-    public int CROSSOVER_MAX_DURATION = 200;
     
     /*
      * MARKOV PARAMETERS
