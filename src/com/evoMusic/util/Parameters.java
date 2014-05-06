@@ -35,14 +35,14 @@ public class Parameters {
     /*
      * MUTATION PARAMETERS
      */
-    public double MUTATION_INITIAL_PROBABILITY = 1;
+    public double MUTATION_INITIAL_PROBABILITY = 0.7;
     public double MUTATION_MINIMUM_PROBABILITY = 0.2;
     public double MUTATION_PROBABILITY_RATIO = 0;
 
     public double MUTATOR_RANDOM_NOTE_PITCH_PROBABILITY = 0.05;
     public int MUTATOR_RANDOM_NOTE_PITCH_STEP_RANGE = 6;
 
-    public double MUTATOR_RHYTHM_VALUE_PROBABILITY = 0;
+    public double MUTATOR_RHYTHM_VALUE_PROBABILITY = 0.05;
     public double MUTATOR_RHYTHM_VALUE_MOVING_RANGE = 1;
 
     public double MUTATOR_OCTAVE_PROBABILITY = 0;
