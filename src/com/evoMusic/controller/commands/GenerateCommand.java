@@ -126,9 +126,7 @@ public class GenerateCommand extends AbstractCommand {
         subRaters.add(new LcmPitchRater(c.RATER_LCM_PITCH_WEIGHT));
 
         final GeneticAlgorithm ga = new GeneticAlgorithm(selectedSongs,
-                new Mutator(allMut, c.MUTATION_INITIAL_PROBABILITY,
-                        c.MUTATION_MINIMUM_PROBABILITY,
-                        c.MUTATION_PROBABILITY_RATIO), crossover, new Rater(
+                new Mutator(allMut, c.MUTATION_PROBABILITY), crossover, new Rater(
                         subRaters), c.GA_POPULATION_SIZE,
                 c.GA_NBR_OF_ELITISM_SONGS, c.GA_NBR_OF_CROSSOVER_SONGS,
                 c.MARKOV_LOOKBACKS, c.MARKOV_SONGDURATION);
