@@ -39,19 +39,17 @@ public class MelodyNoteDensityRater extends SubRater{
             checkPart(track.getPart()); 
         }
         
-        System.out.println("Nbr Of notes: " + nbrOfNotes);
         /**If nbr of total notes in Melody tracks is 0, return rating 0*/
-        if(nbrOfNotes == 0 || nbrOfBeats == 0)
+        if(nbrOfNotes <= 0 || nbrOfBeats <= 0)
             return 0;
         
         /**Calculate average note density for all beats and
          * retrieve the least note density beat found*/
-        double avarageNotesInBeat = (nbrOfNotes/nbrOfBeats);   
+        double averageNotesInBeat = (nbrOfNotes/nbrOfBeats);   
         double leastNotesInBeat = nbrOfNotesInBeat.first();
 
-        System.out.println("Rating density: " + leastNotesInBeat / avarageNotesInBeat);
         /**Return least note density divided by the average note density*/
-        return (leastNotesInBeat / avarageNotesInBeat);
+        return (leastNotesInBeat / averageNotesInBeat);
     }
     
     /**Checks all notes in all phrases and counts 
@@ -67,7 +65,7 @@ public class MelodyNoteDensityRater extends SubRater{
         /**Iterate through every phrase and note in part*/
         for(Phrase phrase : part.getPhraseArray()){
             for(Note note : phrase.getNoteArray()){
-                
+               
                 /**If notes pitch value is rest, skip to next note*/
                 if(note.getPitch() == Note.REST)
                     continue;

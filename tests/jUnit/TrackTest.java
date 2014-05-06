@@ -12,9 +12,11 @@ import jm.music.data.Phrase;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.evoMusic.database.MongoDatabase;
 import com.evoMusic.model.Song;
 import com.evoMusic.model.Track;
 import com.evoMusic.model.Translator;
+import com.evoMusic.model.geneticAlgorithm.mutation.RhythmValueMutator;
 import com.evoMusic.util.TrackTag;
 
 public class TrackTest {
@@ -88,6 +90,7 @@ public class TrackTest {
             two.add(n);
             three.add(n);
         }
+        
         Part p = new Part();
         p.add(one);
         p.add(two);

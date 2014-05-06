@@ -200,12 +200,32 @@ public class Song {
         tracks.add(newTagPart);
     }
 
+    /**
+     * Removes a track at a specific index
+     * 
+     * @param i
+     * @return
+     */
     public Track removeTrack(int i) {
         return tracks.remove(i);
     }
 
+    /**
+     * Removes a given track from the song
+     * 
+     * @param track
+     * @return
+     */
     public boolean removeTrack(Track track) {
         return tracks.remove(track);
     }
 
+    /**
+     * Flatterns each track in the song
+     */
+    public void flattern(){
+        for (Track track : getTracks()){
+            track.flattern();
+        }
+    }
 }
