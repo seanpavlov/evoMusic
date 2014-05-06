@@ -44,8 +44,9 @@ public class RandomNotePitchMutator extends ISubMutator {
     }
 
     @Override
-    public void mutate(Song individual) {
+    public void mutate(Song individual, double probabilityMultiplier) {
         MidiUtil mu = new MidiUtil();
+        double localProbability = getProbability()*probabilityMultiplier;
 
         int nbrOfTracks = individual.getScore().getSize();
         for (int track = 0; track < nbrOfTracks; track++) {
@@ -53,7 +54,7 @@ public class RandomNotePitchMutator extends ISubMutator {
             for(int phrase = 0; phrase < nbrOfPhrases; phrase++){
                 int nbrOfNotes = individual.getScore().getPart(track).getPhrase(phrase).getSize();
                 for(int note = 0; note < nbrOfNotes; note++){
-                    if(Math.random() < getProbability()){
+                    if(Math.random() < localProbability){
                         Note currentNote = individual.getScore().getPart(track).getPhrase(phrase).getNote(note);
                         int nbrOfSteps = randomizeNbrOfSteps();
                         int pitchNbr = currentNote.getPitch();

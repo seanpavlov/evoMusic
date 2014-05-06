@@ -17,15 +17,15 @@ public class RhythmValueMutator extends ISubMutator {
     }
 
     @Override
-    public void mutate(Song individual) {
-        System.out.println("MUTATION");
+    public void mutate(Song individual, double probabilityMultiplier) {
         Random ra = new Random();
-
+        double localProbability = getProbability()*probabilityMultiplier;
+        
         for (Track track : individual.getTracks()) {
             double[] currentPhraseTime = new double[track.getPart().getSize()];
             for(Phrase phrase : track.getPart().getPhraseArray()){
                 for(Note note : phrase.getNoteArray()) {
-                    if (Math.random() < getProbability()) {
+                    if (Math.random() < localProbability) {
                         double movingLength = 0.5 * (ra.nextInt(((int)(movingRange/0.5)))+1);
                         if(Math.random() < 0.5){
                             movingLength = -movingLength;
