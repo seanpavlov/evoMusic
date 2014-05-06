@@ -35,11 +35,12 @@ public class Parameters {
     /*
      * MUTATION PARAMETERS
      */
-    public double MUTATION_INITIAL_PROBABILITY = 0.7;
-    public double MUTATION_MINIMUM_PROBABILITY = 0.2;
-    public double MUTATION_PROBABILITY_RATIO = 0;
+    public double MUTATION_PROBABILITY = 0.7;
+    
+    public double MUTATION_LOCAL_PROBABILITY_MULTIPLIER_DECREASE_RATIO = 0.02;
+    public double MUTATION_LOCAL_PROBABILITY_MINIMUM_MULTIPLIER = 0.1;
 
-    public double MUTATOR_RANDOM_NOTE_PITCH_PROBABILITY = 0.05;
+    public double MUTATOR_RANDOM_NOTE_PITCH_PROBABILITY = 0.1;
     public int MUTATOR_RANDOM_NOTE_PITCH_STEP_RANGE = 6;
 
     public double MUTATOR_RHYTHM_VALUE_PROBABILITY = 0.05;
@@ -53,7 +54,7 @@ public class Parameters {
     public double MUTATOR_SCALE_OF_FIFTH_PROBABILITY = 0;
     public int MUTATOR_SCALE_OF_FIFTH_RANGE = 3;
 
-    public double MUTATOR_SIMPLIFY_PROBABILITY = 0.02;
+    public double MUTATOR_SIMPLIFY_PROBABILITY = 0.08;
 
     /*
      * RATING PARAMETERS
