@@ -233,6 +233,10 @@ public class GeneticAlgorithm {
                 crossover.setParents(tempList);
                 tempList = crossover.crossIndividuals();
             }
+            if(Parameters.getInstance().IN_DEBUG_MODE){
+                System.out.print("DEBUG:\t");
+                System.out.println("Mutation - Generation: " + getCurrentIteration() + " Individual: " + i);
+            }
             unratedPopulation.add(tempList.remove(0));
             mutator.mutate(unratedPopulation.get(i));
         }

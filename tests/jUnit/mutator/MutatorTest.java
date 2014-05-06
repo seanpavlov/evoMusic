@@ -12,7 +12,7 @@ import static org.junit.Assert.*;
 import com.evoMusic.model.Song;
 import com.evoMusic.model.geneticAlgorithm.mutation.ISubMutator;
 import com.evoMusic.model.geneticAlgorithm.mutation.Mutator;
-import com.evoMusic.model.geneticAlgorithm.mutation.RandomNoteMutator;
+import com.evoMusic.model.geneticAlgorithm.mutation.RandomNotePitchMutator;
 
 public class MutatorTest {
 
@@ -28,7 +28,7 @@ public class MutatorTest {
     public void setUpSong() {
         testSong = Helpers.createTestSong();
         subMutators = new ArrayList<ISubMutator>();
-        subMutators.add(new RandomNoteMutator(1, 1));
+        subMutators.add(new RandomNotePitchMutator(1, 1));
     }
 
     @Test(expected = IllegalArgumentException.class)

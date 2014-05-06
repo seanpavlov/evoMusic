@@ -14,7 +14,7 @@ import com.evoMusic.model.geneticAlgorithm.Individual;
 import com.evoMusic.model.geneticAlgorithm.mutation.ISubMutator;
 import com.evoMusic.model.geneticAlgorithm.mutation.Mutator;
 import com.evoMusic.model.geneticAlgorithm.mutation.OctaveMutator;
-import com.evoMusic.model.geneticAlgorithm.mutation.RandomNoteMutator;
+import com.evoMusic.model.geneticAlgorithm.mutation.RandomNotePitchMutator;
 import com.evoMusic.model.geneticAlgorithm.mutation.ReverseBarNotesMutator;
 import com.evoMusic.model.geneticAlgorithm.mutation.RhythmValueMutator;
 import com.evoMusic.model.geneticAlgorithm.mutation.ScaleOfFifthMutator;
@@ -65,8 +65,8 @@ public class GenerateCommand extends AbstractCommand {
         }
         final int iterations = Integer.parseInt(args[0]);
         List<ISubMutator> allMut = new ArrayList<ISubMutator>();
-        allMut.add(new RandomNoteMutator(c.MUTATOR_RANDOM_NOTE_PROBABILITY,
-                c.MUTATOR_RANDOM_NOTE_STEP_RANGE));
+        allMut.add(new RandomNotePitchMutator(c.MUTATOR_RANDOM_NOTE_PITCH_PROBABILITY,
+                c.MUTATOR_RANDOM_NOTE_PITCH_STEP_RANGE));
         allMut.add(new OctaveMutator(c.MUTATOR_OCTAVE_PROBABILITY,
                 c.MUTATOR_OCTAVE_RANGE));
         // allMut.add(new ReverseMutator(c.MUTATOR_REVERSE_PROBABILITY,
@@ -86,8 +86,8 @@ public class GenerateCommand extends AbstractCommand {
         subRaters.add(new BeatRepetitionRater(c.RATER_BEAT_REPETITION_WEIGHT));
         subRaters
                 .add(new ChordRepetitionRater(c.RATER_CHORD_REPETITION_WEIGHT));
-        allMut.add(new RandomNoteMutator(c.MUTATOR_RANDOM_NOTE_PROBABILITY,
-                c.MUTATOR_RANDOM_NOTE_STEP_RANGE));
+        allMut.add(new RandomNotePitchMutator(c.MUTATOR_RANDOM_NOTE_PITCH_PROBABILITY,
+                c.MUTATOR_RANDOM_NOTE_PITCH_STEP_RANGE));
         allMut.add(new RhythmValueMutator(c.MUTATOR_RHYTHM_VALUE_PROBABILITY,
                 c.MUTATOR_RHYTHM_VALUE_MOVING_RANGE));
         allMut.add(new ReverseBarNotesMutator(c.MUTATOR_REVERSE_PROBABILITY));
