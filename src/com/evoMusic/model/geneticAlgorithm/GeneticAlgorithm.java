@@ -250,6 +250,7 @@ public class GeneticAlgorithm {
             System.out.println("Elitism - Generation: " + getCurrentIteration());
         }
         selectElitismSongs(nextPopulation);
+        mutator.updateProbabilityMultiplier();
     }
 
     private List<Individual> ratePopulation(List<Song> population) {
