@@ -5,6 +5,7 @@ import java.io.IOException;
 
 import jm.audio.Instrument;
 import jm.music.data.Part;
+import jm.music.data.Phrase;
 import jm.music.data.Score;
 import jm.util.Play;
 import jm.util.Read;
@@ -122,6 +123,17 @@ public enum Translator {
      */
     public void play(Track track) {
         play(track.getPart());
+    }
+    
+    /**
+     * Play a single phrase of a song.
+     * 
+     * @param phrase
+     */
+    public void play(Phrase phrase, double tempo) {
+        Score score = new Score(new Part(phrase.copy()));
+        score.setTempo(tempo);
+        Play.midi(score);
     }
 
     /**
