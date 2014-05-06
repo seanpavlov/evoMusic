@@ -1,4 +1,4 @@
-package com.evoMusic.model.geneticAlgorithm.blending;
+package com.evoMusic.model.geneticAlgorithm.blending.multiMarkov;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -13,15 +13,17 @@ import jm.music.data.Score;
 
 import com.evoMusic.model.Song;
 import com.evoMusic.model.Track;
+import com.evoMusic.model.geneticAlgorithm.blending.IntervalSong;
+import com.evoMusic.model.geneticAlgorithm.blending.IntervalTrack;
+import com.evoMusic.model.geneticAlgorithm.blending.MarkovTrack;
 import com.evoMusic.util.TrackTag;
 
-public class MarkovSong {
-
+public class MarkovSongStateMachine {
     private int numberOfLookbacks;
 
     private Random rand;
-    private List<IntervalSong> intervalledSongs;
-    private List<MarkovTrack> markovTracks;
+    private List<StateSong> statedSongs;
+    private List<MarkovTrackStateMachine> markovTracks;
     private int numberOfTracks;
 
     /**
@@ -42,19 +44,19 @@ public class MarkovSong {
      *            The given songs that will be merged when generateNew is
      *            called. This list may contain only one song.
      */
-    public MarkovSong(int lookbacks, List<Song> songs) {
+    public MarkovSongStateMachine(int lookbacks, List<Song> songs) {
         if (lookbacks < 0) {
             throw new IllegalArgumentException("Negative lookback value");
         }
         this.numberOfLookbacks = lookbacks;
         this.rand = new Random();
-        this.intervalledSongs = new ArrayList<IntervalSong>();
+        this.statedSongs = new ArrayList<StateSong>();
         List<Song> trimmedSongs = trimSongParts(songs);
         for (Song currentSong : trimmedSongs) {
-            intervalledSongs.add(new IntervalSong(currentSong));
+            statedSongs.add(new StateSong(currentSong));
         }
-        numberOfTracks = intervalledSongs.get(0).getTracks().size();
-        markovTracks = new ArrayList<MarkovTrack>(numberOfTracks);
+        numberOfTracks = statedSongs.get(0).getTracks().size();
+        markovTracks = new ArrayList<MarkovTrackStateMachine>(numberOfTracks);
         initProbabilityMatrices();
     }
 
@@ -126,11 +128,11 @@ public class MarkovSong {
     public Song generateNew() {
         double longestDuration = 0;
         double currentDuration;
-        for (IntervalSong currentIntervalSong : intervalledSongs) {
-            for (IntervalTrack track : currentIntervalSong.getTracks()) {
+        for (StateSong currentStateSong : statedSongs) {
+            for (StateTrack track : currentStateSong.getTracks()) {
                 currentDuration = 0;
-                for (double duration : track.getDurations()) {
-                    currentDuration += duration;
+                for (State state : track.getStates()) {
+                    currentDuration += state.getRhythmValue();
                 }
                 if (currentDuration > longestDuration) {
                     longestDuration = currentDuration;
@@ -152,20 +154,20 @@ public class MarkovSong {
      */
     public Song generateNew(double songDuration) {
 
-        IntervalSong newSong = new IntervalSong(getRandomTempo());
+        StateSong newSong = new StateSong(getRandomTempo());
 
         // For each track.
-        int numberOfSongs = intervalledSongs.size();
-        IntervalTrack randomTrack = null;
+        int numberOfSongs = statedSongs.size();
+        StateTrack randomTrack = null;
         boolean chosenTrackIsEmpty;
         for (int trackIndex = 0; trackIndex < numberOfTracks; trackIndex++) {
             // make sure an empty track doesn't give their instruments etc.
             chosenTrackIsEmpty = true;
             while (chosenTrackIsEmpty) {
-                randomTrack = intervalledSongs.get(
+                randomTrack = statedSongs.get(
                         (int) (rand.nextDouble() * numberOfSongs)).getTrack(
                         trackIndex);
-                chosenTrackIsEmpty = randomTrack.getIntervals().length == 0;
+                chosenTrackIsEmpty = randomTrack.getStates().size() == 0;
             }
             
             newSong.addTrack(markovTracks.get(trackIndex).generateNew(
@@ -184,10 +186,10 @@ public class MarkovSong {
     private double getRandomTempo() {
         // TODO Make more random.
         double tempo = 0;
-        for (IntervalSong song : intervalledSongs) {
+        for (StateSong song : statedSongs) {
             tempo += song.getTempo();
         }
-        return tempo / intervalledSongs.size();
+        return tempo / statedSongs.size();
     }
 
     /**
@@ -195,74 +197,76 @@ public class MarkovSong {
      * This is probably the most resource heavy method in this class.
      */
     private void initProbabilityMatrices() {
-        int[] currentIntervals;
+        List<State> currentStates;
         double[] currentRythmValues;
         double[] currentDurations;
         int[] currentDynamics;
-        IntervalTrack currentIntervalTrack;
-        MarkovTrack currentMarkovTrack;
+        StateTrack currentStateTrack;
+        MarkovTrackStateMachine currentMarkovTrack;
 
-        Vector<Integer> sequence;
-        int currentIntervalsLength;
+        Vector<State> sequence;
+        int currentNumberOfStates;
 
         for (int i = 0; i < numberOfTracks; i++) {
-            markovTracks.add(new MarkovTrack(numberOfLookbacks));
+            markovTracks.add(new MarkovTrackStateMachine(numberOfLookbacks));
         }
 
-        for (IntervalSong currentIntervalSong : intervalledSongs) {
+        for (StateSong currentStateSong : statedSongs) {
             // for each part
             for (int partIndex = 0; partIndex < numberOfTracks; partIndex++) {
-                currentIntervalTrack = currentIntervalSong.getTrack(partIndex);
+                currentStateTrack = currentStateSong.getTrack(partIndex);
                 currentMarkovTrack = markovTracks.get(partIndex);
-                currentIntervals = currentIntervalTrack.getIntervals();
-                if(currentIntervals.length == 0) {
+                currentStates = currentStateTrack.getStates();
+                if(currentStates.size() == 0) {
                     continue;
                 }
-                currentRythmValues = currentIntervalTrack.getRythmValues();
-                currentDurations = currentIntervalTrack.getDurations();
-                currentDynamics = currentIntervalTrack.getDynamics();
+//                currentRythmValues = currentStateTrack.getRythmValues();
+//                currentDurations = currentStateTrack.getDurations();
+//                currentDynamics = currentStateTrack.getDynamics();
 
-                currentIntervalsLength = currentIntervals.length;
+                currentNumberOfStates = currentStates.size();
 
-                for (int i = 0; i < currentIntervalsLength
+                for (int i = 0; i < currentNumberOfStates
                         - (numberOfLookbacks); i++) {
                     // Adding for empty sequences.
-                    sequence = new Vector<Integer>();
-                    currentMarkovTrack.addCountInterval(sequence,
-                            currentIntervals[i]);
-                    currentMarkovTrack.addCountToRhythmValue(sequence,
-                            currentRythmValues[i]);
-                    currentMarkovTrack.addCountToDuration(sequence,
-                            currentDurations[i]);
-                    currentMarkovTrack.addCountToDynamic(sequence, currentDynamics[i]);
+                    sequence = new Vector<State>();
+                    currentMarkovTrack.addCountState(sequence, currentStates.get(i));
+//                    currentMarkovTrack.addCountInterval(sequence,
+//                            currentStates[i]);
+//                    currentMarkovTrack.addCountToRhythmValue(sequence,
+//                            currentRythmValues[i]);
+//                    currentMarkovTrack.addCountToDuration(sequence,
+//                            currentDurations[i]);
+//                    currentMarkovTrack.addCountToDynamic(sequence, currentDynamics[i]);
                     
 
                     // Adding for longer sequences.
                     for (int j = i; j < i + numberOfLookbacks; j++) {
-                        sequence = new Vector<Integer>(sequence);
-                        sequence.add(currentIntervals[j]);
-                        currentMarkovTrack.addCountInterval(sequence,
-                                currentIntervals[j + 1]);
-                        currentMarkovTrack.addCountToRhythmValue(sequence,
-                                currentRythmValues[j + 1]);
-                        currentMarkovTrack.addCountToDuration(sequence,
-                                currentDurations[j + 1]);
-                        currentMarkovTrack.addCountToDynamic(sequence, currentDynamics[j + 1]);
+                        sequence = new Vector<State>(sequence);
+                        sequence.add(currentStates.get(j));
+                        currentMarkovTrack.addCountState(sequence, currentStates.get(j + 1));
+//                        currentMarkovTrack.addCountInterval(sequence,
+//                                currentStates[j + 1]);
+//                        currentMarkovTrack.addCountToRhythmValue(sequence,
+//                                currentRythmValues[j + 1]);
+//                        currentMarkovTrack.addCountToDuration(sequence,
+//                                currentDurations[j + 1]);
+//                        currentMarkovTrack.addCountToDynamic(sequence, currentDynamics[j + 1]);
                     }
 
                 }
-                sequence = new Vector<Integer>();
-                for (int i = numberOfLookbacks; i > 0; i--) {
-                    sequence.add(currentIntervals[currentIntervalsLength - i]);
-                }
-                currentMarkovTrack.addCountToRhythmValue(sequence,
-                        currentRythmValues[currentRythmValues.length - 1]);
-                currentMarkovTrack.addCountToDuration(sequence,
-                        currentDurations[currentDurations.length - 1]);
-                currentMarkovTrack.addCountToDynamic(sequence, currentDynamics[currentDynamics.length - 1]);
+//                sequence = new Vector<Integer>();
+//                for (int i = numberOfLookbacks; i > 0; i--) {
+//                    sequence.add(currentStates[currentNumberOfStates - i]);
+//                }
+//                currentMarkovTrack.addCountToRhythmValue(sequence,
+//                        currentRythmValues[currentRythmValues.length - 1]);
+//                currentMarkovTrack.addCountToDuration(sequence,
+//                        currentDurations[currentDurations.length - 1]);
+//                currentMarkovTrack.addCountToDynamic(sequence, currentDynamics[currentDynamics.length - 1]);
             }
         }
-        for (MarkovTrack track : markovTracks) {
+        for (MarkovTrackStateMachine track : markovTracks) {
             track.initProbabilities();
         }
 

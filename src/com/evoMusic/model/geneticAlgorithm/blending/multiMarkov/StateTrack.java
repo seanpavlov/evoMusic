@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import jm.music.data.CPhrase;
 import jm.music.data.Note;
 import jm.music.data.Part;
 import jm.music.data.Phrase;
@@ -13,11 +14,11 @@ import com.evoMusic.util.TrackTag;
 
 public class StateTrack {
 
-    private int         firstNote;
-    private int         instrument;
-    private int         channel;
-    private TrackTag    tag;
-    private int         largestChord;
+    private int firstNote;
+    private int instrument;
+    private int channel;
+    private TrackTag tag;
+    private int largestChord;
 
     private List<State> stateList;
 
@@ -47,6 +48,7 @@ public class StateTrack {
         for (Phrase phrase : part.getPhraseArray()) {
             partLength = phrase.getStartTime();
             for (Note note : phrase.getNoteArray()) {
+
                 currentState = null;
                 for (State foundState : stateList) {
                     if (foundState.startsAtTime(partLength)) {
@@ -56,29 +58,39 @@ public class StateTrack {
                 }
                 if (currentState == null) {
                     currentState = new State(partLength);
+                    stateList.add(currentState);
                 }
                 currentState.addNote(note);
-                stateList.add(currentState);
                 partLength += note.getRhythmValue();
             }
         }
         Collections.sort(stateList);
+        
+        // Compensate for when first start time != 0.0
+        if (!stateList.get(0).startsAtTime(0.0)) {
+            currentState = new State(0.0);
+            currentState.addNote(new Note(Note.REST, stateList.get(0).getStartTime()));
+            stateList.add(currentState);
+            Collections.sort(stateList);
+        }
 
         // Initialize all states and find the largest state size.
         this.firstNote = stateList.get(0).getHighestPitch();
         int previousPitch = firstNote;
-        
+
         // find all start times.
         Double[] nextStartTimes = new Double[stateList.size()];
-        for (int i = 0; i < nextStartTimes.length-1; i++) {
-            nextStartTimes[i] = stateList.get(i+1).getStartTime();
+        for (int i = 0; i < nextStartTimes.length - 1; i++) {
+            nextStartTimes[i] = stateList.get(i + 1).getStartTime();
         }
-        nextStartTimes[nextStartTimes.length-1] = null;
+        nextStartTimes[nextStartTimes.length - 1] = null;
+        
         // Initiate all states.
         State state;
         for (int stateIndex = 0; stateIndex < stateList.size(); stateIndex++) {
             state = stateList.get(stateIndex);
-            state.initializeIntervalForm(previousPitch, nextStartTimes[stateIndex]);
+            state.initializeIntervalForm(previousPitch,
+                    nextStartTimes[stateIndex]);
             previousPitch += state.getHighestInterval();
             if (state.size() > largestChord) {
                 largestChord = state.size();
@@ -109,6 +121,12 @@ public class StateTrack {
         this.channel = channel;
         this.stateList = stateList;
         this.tag = tag;
+        
+        for (State state : stateList) {
+            if (state.size() > largestChord) {
+                largestChord = state.size();
+            }
+        }
     }
 
     /**
@@ -131,11 +149,11 @@ public class StateTrack {
         for (int stateIndex = 0; stateIndex < stateList.size(); stateIndex++) {
             currentState = stateList.get(stateIndex);
             chordSize = currentState.size();
-            System.out.println(chordSize);
             generatedNotes = currentState.toNotes(previousPitch);
             previousPitch += currentState.getHighestInterval();
 
             for (int noteIndex = 0; noteIndex < chordSize; noteIndex++) {
+//                System.out.println("length: " + phrases.size() + ", index: " + noteIndex);//TODO
                 phrases.get(noteIndex).add(generatedNotes.get(noteIndex));
             }
             // Make sure all phrases are the same length
@@ -197,5 +215,5 @@ public class StateTrack {
     public TrackTag getTag() {
         return tag;
     }
-    
+
 }

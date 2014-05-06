@@ -16,7 +16,9 @@ import com.evoMusic.model.Translator;
 import com.evoMusic.model.geneticAlgorithm.blending.IntervalSong;
 import com.evoMusic.model.geneticAlgorithm.blending.IntervalTrack;
 import com.evoMusic.model.geneticAlgorithm.blending.MarkovSong;
+import com.evoMusic.model.geneticAlgorithm.blending.multiMarkov.MarkovSongStateMachine;
 import com.evoMusic.model.geneticAlgorithm.blending.multiMarkov.State;
+import com.evoMusic.model.geneticAlgorithm.blending.multiMarkov.StateSong;
 import com.evoMusic.model.geneticAlgorithm.blending.multiMarkov.StateTrack;
 import com.evoMusic.util.TrackTag;
 
@@ -45,7 +47,8 @@ public class MarkovChainTest {
         
         multiSongTestList = new ArrayList<Song>();
         
-        zelda = Translator.INSTANCE.loadMidiToSong("midifiles/zeldaALinkToThePast.mid");
+        zelda = Translator.INSTANCE.loadMidiToSong("midifiles/pieces/zelda/ALTTP_middle.mid");
+//        zelda = Translator.INSTANCE.loadMidiToSong("midifiles/zeldaALinkToThePast.mid");
         zelda.addTagToTrack(0, TrackTag.BASELINE);
         zelda.addTagToTrack(1, TrackTag.CHORDS);
         zelda.addTagToTrack(3, TrackTag.MELODY);
@@ -67,12 +70,11 @@ public class MarkovChainTest {
 
     @Test
     public void test() {
-        StateTrack stateTrack = new StateTrack(zelda.getTrack(1));
-        Track newTrack = stateTrack.toTrack();
-//        Translator.INSTANCE.play(zelda.getTrack(1));
-        Song song = new Song(new Score(140));
-        song.addTrack(newTrack);
-        Translator.INSTANCE.play(song);
+        List<Song> songList = new ArrayList<Song>();
+        songList.add(zelda);
+        MarkovSongStateMachine markov = new MarkovSongStateMachine(2, songList);
+        
+        Translator.INSTANCE.play(markov.generateNew(50));
     }
 
 }
