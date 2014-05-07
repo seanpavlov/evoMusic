@@ -39,7 +39,7 @@ public class RandomNoteMutatorTest {
         boolean testIsOkay = true;
         int stepRange = 12;
         RandomNotePitchMutator rnm = new RandomNotePitchMutator(1, stepRange);
-        rnm.mutate(mutatedSong);
+        rnm.mutate(mutatedSong, 1);
         int nbrOfTracks = originSong.getScore().getSize();
         int originPitch = 0;
         int mutatedPitch = 0;
