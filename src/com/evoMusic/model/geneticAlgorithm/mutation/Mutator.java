@@ -1,16 +1,13 @@
 package com.evoMusic.model.geneticAlgorithm.mutation;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.evoMusic.model.Song;
-import com.evoMusic.util.MidiUtil;
 import com.evoMusic.util.Parameters;
 
 public class Mutator {
     private List<ISubMutator> subMutators;
     private double mutationProbability;
-    private MidiUtil mu = new MidiUtil();
     private double probabilityMultiplier;
 
     /**
@@ -58,5 +55,14 @@ public class Mutator {
         if (probabilityMultiplier < Parameters.getInstance().MUTATION_LOCAL_PROBABILITY_MINIMUM_MULTIPLIER) {
             probabilityMultiplier = Parameters.getInstance().MUTATION_LOCAL_PROBABILITY_MINIMUM_MULTIPLIER;
         }
+    }
+
+    /**
+     * Get the current value of the probability multiplier.
+     * 
+     * @return probability multiplier as a double.
+     */
+    public double getProbabilityMultiplier() {
+        return probabilityMultiplier;
     }
 }

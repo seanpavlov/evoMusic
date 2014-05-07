@@ -13,6 +13,7 @@ import com.evoMusic.model.Song;
 import com.evoMusic.model.geneticAlgorithm.mutation.ISubMutator;
 import com.evoMusic.model.geneticAlgorithm.mutation.Mutator;
 import com.evoMusic.model.geneticAlgorithm.mutation.RandomNotePitchMutator;
+import com.evoMusic.util.Parameters;
 
 public class MutatorTest {
 
@@ -31,30 +32,21 @@ public class MutatorTest {
         subMutators.add(new RandomNotePitchMutator(1, 1));
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void decreasingRatioThresholdTest() {
-        new Mutator(subMutators, 1, 0.5, -1);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void minimumMutationValueTest() {
-        new Mutator(subMutators, 0.5, 1, 0.6);
-    }
-
     @Test
-    public void minimumProbabilityThresholdTest() {
-        Mutator m = new Mutator(subMutators, 1, 0.5, 0.01);
-        for (int i = 0; i < 1000; i++) {
-            m.updateMutationProbability();
+    public void minimumProbabilityMultiplierTest() {
+        Mutator m = new Mutator(subMutators, 1);
+        Parameters.getInstance().MUTATION_LOCAL_PROBABILITY_MINIMUM_MULTIPLIER = 0.1;
+        Parameters.getInstance().MUTATION_LOCAL_PROBABILITY_MULTIPLIER_DECREASE_RATIO = 0.1;
+        for (int i = 0; i < 10; i++) {
+            m.updateProbabilityMultiplier();
         }
         assertTrue(
-                "Old probability: " + m.getInitialMutationProbability()
+                "Old probability: " + 1
                         + "\nNew Probability: "
-                        + m.getCurrentMutationProbability()
+                        + m.getProbabilityMultiplier()
                         + "\nMinimum probability: "
-                        + m.getMinimumMutationProbability(),
-                m.getCurrentMutationProbability() == m
-                        .getMinimumMutationProbability());
+                        + Parameters.getInstance().MUTATION_LOCAL_PROBABILITY_MINIMUM_MULTIPLIER,
+                m.getProbabilityMultiplier() == Parameters.getInstance().MUTATION_LOCAL_PROBABILITY_MINIMUM_MULTIPLIER);
     }
 
 }
