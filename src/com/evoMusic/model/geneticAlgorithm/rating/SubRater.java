@@ -30,13 +30,4 @@ public abstract class SubRater {
             System.err.println("Weight must be between 0 and 1");
         }
     }
-    
-    /**
-     * If the weight is 0, the rater should not be included.
-     * 
-     * @return if this weight is 0
-     */
-    public boolean shouldRate(){
-        return (weight!=0.0);
-    }
 }
