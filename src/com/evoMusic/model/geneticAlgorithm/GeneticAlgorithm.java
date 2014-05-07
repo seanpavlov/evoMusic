@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.evoMusic.model.Song;
-import com.evoMusic.model.Translator;
 import com.evoMusic.model.geneticAlgorithm.blending.MarkovSong;
 import com.evoMusic.model.geneticAlgorithm.mutation.Mutator;
 import com.evoMusic.model.geneticAlgorithm.rating.Rater;
