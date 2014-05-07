@@ -39,7 +39,7 @@ public class RhythmValueMutatorTest {
     public void rhythmValueMutatorTest(){
         boolean testIsOkay = true;
         RhythmValueMutator rvm = new RhythmValueMutator(1, 1);
-        rvm.mutate(mutatedSong);
+        rvm.mutate(mutatedSong, 1);
         int nbrOfTracks = originSong.getScore().getSize();
         int originPitch = 0;
         int mutatedPitch = 0;
@@ -64,8 +64,6 @@ public class RhythmValueMutatorTest {
         int nbrOfMutatedSongPhrases = 0;
         int nbrOfOriginSongPhrases = 0;
         for(int track = 0; track < nbrOfTracks; track++){
-            System.out.println("Mu:\t" + track + "\t" + mutatedSong.getScore().getPart(track).getSize());
-            System.out.println("Mu:\t" + track + "\t" + originSong.getScore().getPart(track).getSize());
             nbrOfMutatedSongPhrases += mutatedSong.getScore().getPart(track).getSize();
             nbrOfOriginSongPhrases += originSong.getScore().getPart(track).getSize();
         }
