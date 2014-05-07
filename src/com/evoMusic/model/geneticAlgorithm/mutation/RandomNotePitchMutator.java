@@ -1,13 +1,10 @@
 package com.evoMusic.model.geneticAlgorithm.mutation;
 
-import java.util.List;
-import java.util.Random;
-
 import jm.music.data.Note;
+import jm.music.data.Part;
+import jm.music.data.Phrase;
 
 import com.evoMusic.model.Song;
-import com.evoMusic.util.MidiUtil;
-import com.evoMusic.util.Sort;
 
 public class RandomNotePitchMutator extends ISubMutator {
     private double[] probabilityList;
@@ -28,11 +25,11 @@ public class RandomNotePitchMutator extends ISubMutator {
         double temp = 0;
         for (int i = 0; i < halfStepRange; i++) {
             if (i % 2 == 0) {
-                temp = (halfStepRange - i) / (double) halfStepRange;
+                temp = (halfStepRange - i);
                 probabilityList[i] = temp;
                 sum += temp;
             } else {
-                temp = (halfStepRange - (i - 1)) / (double) halfStepRange;
+                temp = (halfStepRange - (i - 1));
                 probabilityList[i] = temp;
                 sum += temp;
             }
@@ -45,51 +42,64 @@ public class RandomNotePitchMutator extends ISubMutator {
 
     @Override
     public void mutate(Song individual, double probabilityMultiplier) {
-        MidiUtil mu = new MidiUtil();
-        double localProbability = getProbability()*probabilityMultiplier;
+        double localProbability = getProbability() * probabilityMultiplier;
+        int notePitch;
 
-        int nbrOfTracks = individual.getScore().getSize();
-        for (int track = 0; track < nbrOfTracks; track++) {
-            int nbrOfPhrases = individual.getScore().getPart(track).getSize();
-            for(int phrase = 0; phrase < nbrOfPhrases; phrase++){
-                int nbrOfNotes = individual.getScore().getPart(track).getPhrase(phrase).getSize();
-                for(int note = 0; note < nbrOfNotes; note++){
-                    if(Math.random() < localProbability){
-                        Note currentNote = individual.getScore().getPart(track).getPhrase(phrase).getNote(note);
-                        int nbrOfSteps = randomizeNbrOfSteps();
-                        int pitchNbr = currentNote.getPitch();
-                        if (!mu.isBlank(pitchNbr)) {
-                            if (mu.canRaiseNote(pitchNbr, nbrOfSteps)) {
-                                if (mu.canLowerNote(pitchNbr, nbrOfSteps)) {
-                                    if (Math.random() < 0.5) {
-                                        currentNote.setPitch(pitchNbr
-                                                - nbrOfSteps);
-                                    } else {
-                                        currentNote.setPitch(pitchNbr
-                                                + nbrOfSteps);
-                                    }
-                                } else {
-                                    currentNote.setPitch(pitchNbr + nbrOfSteps);
-                                }
-                            } else if (mu.canLowerNote(pitchNbr, nbrOfSteps)) {
-                                currentNote.setPitch(pitchNbr - nbrOfSteps);
-                            }
-                        }
+        for (Part part : individual.getScore().getPartArray()) {
+            for (Phrase phrase : part.getPhraseArray()) {
+                for (Note note : phrase.getNoteArray()) {
+                    notePitch = note.getPitch();
+                    // TODO change second restriction to note != rest.
+                    if (Math.random() < localProbability && notePitch < 128 && notePitch >= 0) {
+                        note.setPitch(note.getPitch()
+                                + chooseNewPitch(note.getPitch()));
                     }
                 }
             }
         }
     }
-    
-    private int randomizeNbrOfSteps(){
-        double random = Math.random();
-        double currentProbability = probabilityList[1];
-        int currentStepId = 0;
-        while(currentProbability < random){
-            currentStepId++;
-            currentProbability += probabilityList[currentStepId];
-        }
-        return currentStepId;
-    }
 
+    private int chooseNewPitch(int currentPitch) {
+
+        double maxProb = 0.0;
+        int listSize = probabilityList.length;
+        int maxNotesUp;
+        int maxNotesDown;
+
+        if (currentPitch + listSize > 127) {
+            maxNotesUp = (currentPitch + listSize) - 127;
+            for (int i = 0; i < maxNotesUp; i++) {
+                maxProb += probabilityList[i];
+            }
+        } else {
+            maxNotesUp = listSize;
+            maxProb += 1.0;
+        }
+        if (currentPitch - listSize < 0) {
+            maxNotesDown = currentPitch;
+            for (int i = 0; i < maxNotesUp; i++) {
+                maxProb += probabilityList[i];
+            }
+        } else {
+            maxNotesDown = listSize;
+            maxProb += 1.0;
+        }
+
+        double randomValue = Math.random() * maxProb;
+        double currentRandom = 0;
+
+        for (int i = 0; i < maxNotesUp; i++) {
+            currentRandom += probabilityList[i];
+            if (currentRandom > randomValue) {
+                return i + 1;
+            }
+        }
+        for (int i = 0; i < maxNotesDown; i++) {
+            currentRandom += probabilityList[i];
+            if (currentRandom > randomValue) {
+                return -(i + 1);
+            }
+        }
+        return 0;
+    }
 }
