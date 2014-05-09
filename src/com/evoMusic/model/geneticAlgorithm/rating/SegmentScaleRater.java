@@ -2,6 +2,10 @@ package com.evoMusic.model.geneticAlgorithm.rating;
 
 import com.evoMusic.model.Song;
 
+/**
+ * Uses ScaleWhizz to rate just a segment of a song. For songs 
+ * where tone are out of scale but far from each other 
+ */
 public class SegmentScaleRater extends SubRater {
 
     private final double minWindowSize = 8.0;
@@ -14,7 +18,14 @@ public class SegmentScaleRater extends SubRater {
         this.scaleRater = new ScaleWhizz(weight);
     }
     
-    public double rateSegments(double currentStartTime, double windowSize) {
+    /**
+     * Rates segments of a given windowSize. Recurses until minimum window size
+     * is reached.
+     * @param currentStartTime Where the start of the segment is in he song
+     * @param windowSize how big the segment will be
+     * @return the sum of rating for every segment
+     */
+    private double rateSegments(double currentStartTime, double windowSize) {
         rounds++;
         // Are we at end of the song?
         if (currentStartTime + windowSize >= song.getScore().getEndTime()) {
@@ -47,6 +58,6 @@ public class SegmentScaleRater extends SubRater {
         this.maxWindowSize = Math.max(song.getScore().getEndTime()/8, minWindowSize);
         
         double res = rateSegments(0, maxWindowSize);
-        return Math.pow(res / rounds, 10);
+        return Math.pow(res / rounds, 5);
     }
 }

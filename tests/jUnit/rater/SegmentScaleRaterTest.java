@@ -20,14 +20,14 @@ public class SegmentScaleRaterTest {
         SubRater r = new SegmentScaleRater(1);
         SubRater r2 = new ScaleWhizz(1);
 
-        assertTrue("should rate better than scalewhizz", r.rate(s) > r2.rate(s));
+        assertTrue("should rate higher than scalewhizz", r.rate(s) > r2.rate(s));
         System.out.println(r.rate(s));
-        s = Helpers.createSongWithMelody(new int[]{2,3,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+        s = Helpers.createSongWithMelody(new int[]{2,3,1,1,1,1,1,1,2,3,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
                 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1});
         s.addTagToTrack(0, TrackTag.MELODY);
         System.out.println(r.rate(s));
         assertTrue("should rate lower than scalewhizz", r.rate(s) < r2.rate(s));
-        
+
     }
 
 }
