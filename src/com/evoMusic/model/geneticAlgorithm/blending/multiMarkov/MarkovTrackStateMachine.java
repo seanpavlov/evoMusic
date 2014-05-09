@@ -58,6 +58,7 @@ public class MarkovTrackStateMachine {
                 currentSequence = getNextSequence(stateIndex,
                         currentStates);
                 nextState = stateMatrix.getNext(currentSequence);
+                System.out.println(nextState);
                 if (nextState == null) {
                     break; // Has come to the end of the song, must start
                            // over.
