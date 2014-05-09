@@ -11,7 +11,7 @@ import jm.music.data.Phrase;
 import com.evoMusic.model.Song;
 import com.evoMusic.model.Track;
 
-/*Mutator which swaps two segments of a track in the song of random length  
+/*Mutator which swaps two segments of the tracks in the song by random length  
  *and random start times 
  * */
 public class SwapSegmentMutator extends ISubMutator{
@@ -25,20 +25,20 @@ public class SwapSegmentMutator extends ISubMutator{
     }
 
     /**
-     * Method swaps two segments of the tracks in song of random length
+     * Method swaps two segments of the tracks in the song by random length  
      * and random start times
      * @param Song song to be mutated
      * */
     @Override
-    public void mutate(Song song) {
-        List<Track> tracks = song.getTracks();
+    public void mutate(Song song, double probabilityMultiplier) {
+        double localProbability = getProbability()*probabilityMultiplier;
+        List<Track> tracks = song.copy().getTracks();
         for(int i = tracks.size()-1; i >= 0; i--){
-            if(true){//Math.random() < getProbability()){ 
+            if(Math.random() < localProbability){ 
                Track track = tracks.get(i);
                //Retrieve and calculate the tracks end time to fraction of 1/4
                double trackTime = track.getPart().getEndTime();
                double trackEndTime =  Math.floor(trackTime) + findClosestFraction(trackTime%1);
-               //double trackEndTime = track.getPart().getEndTime();
                //Calculate swap segments length             
                double swapLength = segmentValue(0.25, trackEndTime/2);
                //Calculate first swap start time
@@ -60,7 +60,6 @@ public class SwapSegmentMutator extends ISubMutator{
               
                //Add new track with swaped segments if old is removed successfully
                if(song.removeTrack(track)){
-                   //System.out.println("SWAP");
                    song.addTrack(trackWithSwap);
                }
             }
@@ -69,7 +68,9 @@ public class SwapSegmentMutator extends ISubMutator{
     
     
     /**
-     * Swaps two segments of the track 
+     * Swaps two segments of the track by splitting
+     * the track in to pieces and building it back 
+     * toghether againg where the two segments have changed places
      * @param track Track to swap segments in
      * @param first Start value of the first swap segment
      * @param second Start value of the second swap segment
@@ -126,7 +127,8 @@ public class SwapSegmentMutator extends ISubMutator{
     
     
     /**
-     * Calculates a random value between start and end time where end time is 
+     * Calculates a random value between start and end time where end time and
+     * also the resulting segment is 
      * rounded to closest 1/4 of a beat (.25, .5, .75 or whole beat)
      * @param start Start of the intervall to generate random value from
      * @param end End of the intervall to generate random value from

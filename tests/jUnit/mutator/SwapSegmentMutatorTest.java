@@ -64,7 +64,7 @@ public class SwapSegmentMutatorTest {
                 }
             }
         }  
-        mutator.mutate(testSong);
+        mutator.mutate(testSong, 1);
         List<Integer> afterValues = new ArrayList<Integer>();
         List<Integer> afterValuesNonRest = new ArrayList<Integer>();
         int nbrOfTracksAfter = testSong.getNbrOfTracks();

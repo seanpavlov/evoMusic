@@ -98,6 +98,7 @@ public class GenerateCommand extends AbstractCommand {
         allMut.add(new ScaleOfFifthMutator(
                 c.MUTATOR_SCALE_OF_FIFTH_PROBABILITY,
                 c.MUTATOR_SCALE_OF_FIFTH_RANGE));
+        allMut.add(new SwapSegmentMutator(c.MUTATOR_SWAP_SEGMENT_PROBABILITY));
 
         subRaters
                 .add(new MelodyRepetionRater(c.RATER_MELODY_REPETITION_WEIGHT));
