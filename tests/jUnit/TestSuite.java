@@ -4,12 +4,12 @@ import jUnit.blending.IntervalSongTest;
 import jUnit.blending.IntervalTrackTest;
 import jUnit.blending.MarkovSongTest;
 import jUnit.blending.MarkovTrackTest;
-import jUnit.crossover.CrossoverTest;
 import jUnit.crossover.DrCrossTest;
 import jUnit.database.MongoDatabaseTest;
 import jUnit.mutator.OctaveMutatorTest;
 import jUnit.mutator.RandomNoteMutatorTest;
 import jUnit.mutator.SimplifyMutatorTest;
+import jUnit.mutator.SwapSegmentMutatorTest;
 import jUnit.rater.BeatRaterTest;
 import jUnit.rater.ChordRepetitionRaterTest;
 import jUnit.rater.CrazyNoteOctaveRaterTest;
@@ -37,7 +37,6 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses({TranslatorTest.class, 
     MongoDatabaseTest.class, 
-    CrossoverTest.class, 
     SongTest.class,
     TrackTest.class,
     GeneticAlgorithmTest.class,
@@ -70,6 +69,7 @@ import org.junit.runners.Suite.SuiteClasses;
     RandomNoteMutatorTest.class,
     OctaveMutatorTest.class,
     SimplifyMutatorTest.class,
+    SwapSegmentMutatorTest.class,
     
     /*
      * Markov

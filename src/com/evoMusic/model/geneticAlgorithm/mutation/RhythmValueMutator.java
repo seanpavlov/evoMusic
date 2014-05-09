@@ -1,6 +1,5 @@
 package com.evoMusic.model.geneticAlgorithm.mutation;
 
-import java.util.List;
 import java.util.Random;
 
 import jm.music.data.Note;
@@ -8,7 +7,6 @@ import jm.music.data.Phrase;
 
 import com.evoMusic.model.Song;
 import com.evoMusic.model.Track;
-import com.evoMusic.util.Sort;
 
 public class RhythmValueMutator extends ISubMutator {
     double movingRange;
@@ -19,29 +17,21 @@ public class RhythmValueMutator extends ISubMutator {
     }
 
     @Override
-    public void mutate(Song individual) {
+    public void mutate(Song individual, double probabilityMultiplier) {
         Random ra = new Random();
-
+        double localProbability = getProbability()*probabilityMultiplier;
+        
         for (Track track : individual.getTracks()) {
-            List<List<Note>> noteList = Sort.getSortedNoteList(track.getPart());
-            
-            // For all elements in the list
-            for (List<Note> parallelNoteList : noteList) {
-                
-                //if probability allows this note to be mutated
-                if (Math.random() < getProbability()) {
-                    double movingLength = 0.5 * (ra.nextInt(((int)(movingRange/0.5)))+1);
-                    if(Math.random() < 0.5){
-                        movingLength = -movingLength;
-                    }
-                    
-                    // For all parallel notes
-                    for (Note note : parallelNoteList) {
-                        double newStartTime = 
-                                note.getMyPhrase().getStartTime() + 
-                                note.getMyPhrase().getNoteStartTime(note.getMyPhrase().getNoteList().indexOf(note)) + 
-                                movingLength;
+            double[] currentPhraseTime = new double[track.getPart().getSize()];
+            for(Phrase phrase : track.getPart().getPhraseArray()){
+                for(Note note : phrase.getNoteArray()) {
+                    if (Math.random() < localProbability) {
+                        double movingLength = 0.5 * (ra.nextInt(((int)(movingRange/0.5)))+1);
+                        if(Math.random() < 0.5){
+                            movingLength = -movingLength;
+                        }
                         if(!note.isRest()){
+                            double newStartTime = currentPhraseTime[track.getPart().getPhraseList().indexOf(phrase)] + movingLength;
                             if(newStartTime >= 0 && newStartTime + note.getDuration() <= individual.getScore().getEndTime()){
                                 Phrase newPhrase = new Phrase(newStartTime);
                                 newPhrase.addNote(note.copy());
@@ -49,11 +39,11 @@ public class RhythmValueMutator extends ISubMutator {
                                 note.setPitch(Integer.MIN_VALUE);
                             }
                         }
+                        
                     }
+                    currentPhraseTime[track.getPart().getPhraseList().indexOf(phrase)] += note.getRhythmValue();
                 }
             }
         }
-        
-        individual.flattern();
     }
 }

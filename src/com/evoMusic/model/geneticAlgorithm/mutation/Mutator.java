@@ -1,19 +1,15 @@
 package com.evoMusic.model.geneticAlgorithm.mutation;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.evoMusic.model.Song;
-import com.evoMusic.util.MidiUtil;
+import com.evoMusic.util.Parameters;
+import com.evoMusic.util.Sort;
 
 public class Mutator {
     private List<ISubMutator> subMutators;
-    private double initialMutationProbability;
-    private double currentMutationProbability;
-    private double minimumMutationProbability;
-    private double probabilityDecreaseRatio;
-    private boolean probabilityDecreaseRatioActive;
-    private MidiUtil mu = new MidiUtil();
+    private double mutationProbability;
+    private double probabilityMultiplier;
 
     /**
      * Handles all mutations. Iterate through every note in the song and then
@@ -21,7 +17,7 @@ public class Mutator {
      * 
      * @param subMutators
      *            is a list of all sub mutators that handles mutation.
-     * @param initialMutationProbability
+     * @param mutationProbability
      *            is the initial probability of mutation.
      * @param minimumMutationProbability
      *            is the lower bound of mutation probability, if it uses
@@ -30,29 +26,10 @@ public class Mutator {
      *            is the ratio which it lowers the probability of mutation in
      *            each generation. If it is set to 0, it will not be used.
      */
-    public Mutator(List<ISubMutator> subMutators,
-            double initialMutationProbability,
-            double minimumMutationProbability, double probabilityDecreaseRatio) {
+    public Mutator(List<ISubMutator> subMutators, double mutationProbability) {
         this.subMutators = subMutators;
-        this.initialMutationProbability = initialMutationProbability;
-        this.currentMutationProbability = initialMutationProbability;
-        if (minimumMutationProbability > initialMutationProbability) {
-            throw new IllegalArgumentException(
-                    "Minimum probability must be lower than current mutation probability");
-        } else {
-            this.minimumMutationProbability = minimumMutationProbability;
-        }
-        if (probabilityDecreaseRatio <= 0) {
-            if (probabilityDecreaseRatio < 0) {
-                throw new IllegalArgumentException(
-                        "Ratio lower than zero. Decreasing probability ratio disabled.");
-            } else {
-                probabilityDecreaseRatioActive = false;
-            }
-        } else {
-            this.probabilityDecreaseRatio = probabilityDecreaseRatio;
-            probabilityDecreaseRatioActive = true;
-        }
+        this.mutationProbability = mutationProbability;
+        probabilityMultiplier = 1;
     }
 
     /**
@@ -62,40 +39,32 @@ public class Mutator {
      * @param individual
      */
     public void mutate(Song individual) {
-        if (Math.random() < currentMutationProbability) {
+        if (Math.random() < mutationProbability) {
             for (ISubMutator subMutator : subMutators) {
-                if (Math.random() < subMutator.getProbability()) {
-                    subMutator.mutate(individual);
-                }
+                subMutator.mutate(individual, probabilityMultiplier);
+                individual.flattern();
             }
         }
     }
 
     /**
-     * Called after each generation to update the mutation probability if it
-     * uses decreasing mutation ratio.
+     * Update the multiplier of the local probabilities, the sub mutator
+     * probability, to be the current multiplier times the decrease ratio.
+     * 
      */
-    public void updateMutationProbability() {
-        if (probabilityDecreaseRatioActive) {
-            double newProbability = currentMutationProbability
-                    - probabilityDecreaseRatio;
-            if (newProbability > minimumMutationProbability) {
-                currentMutationProbability = newProbability;
-            } else {
-                currentMutationProbability = minimumMutationProbability;
-            }
+    public void updateProbabilityMultiplier() {
+        probabilityMultiplier -= Parameters.getInstance().MUTATION_LOCAL_PROBABILITY_MULTIPLIER_DECREASE_RATIO;
+        if (probabilityMultiplier < Parameters.getInstance().MUTATION_LOCAL_PROBABILITY_MINIMUM_MULTIPLIER) {
+            probabilityMultiplier = Parameters.getInstance().MUTATION_LOCAL_PROBABILITY_MINIMUM_MULTIPLIER;
         }
     }
 
-    public double getCurrentMutationProbability() {
-        return currentMutationProbability;
-    }
-
-    public double getMinimumMutationProbability() {
-        return minimumMutationProbability;
-    }
-
-    public double getInitialMutationProbability() {
-        return initialMutationProbability;
+    /**
+     * Get the current value of the probability multiplier.
+     * 
+     * @return probability multiplier as a double.
+     */
+    public double getProbabilityMultiplier() {
+        return probabilityMultiplier;
     }
 }

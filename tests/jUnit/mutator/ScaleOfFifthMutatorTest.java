@@ -39,7 +39,7 @@ public class ScaleOfFifthMutatorTest {
         boolean testIsOkay = true;
         int stepRange = 2;
         ScaleOfFifthMutator sofm = new ScaleOfFifthMutator(1, stepRange);
-        sofm.mutate(mutatedSong);
+        sofm.mutate(mutatedSong, 1);
         int nbrOfTracks = originSong.getScore().getSize();
         int originPitch = 0;
         int mutatedPitch = 0;

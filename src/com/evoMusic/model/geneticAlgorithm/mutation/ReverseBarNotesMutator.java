@@ -32,13 +32,14 @@ public class ReverseBarNotesMutator extends ISubMutator {
      * Mutate the note with noteIndex of song.
      */
     @Override
-    public void mutate(Song individual) {
+    public void mutate(Song individual, double probabilityMultiplier) {
         int nbrOfTracks = individual.getScore().getSize();
+        double localProbability = getProbability()*probabilityMultiplier;
         for (int track = 0; track < nbrOfTracks; track++) {
             double nbrOfBars = individual.getScore().getPart(track).getEndTime() / 4.0;
             Track currentTrack = new Track(individual.getScore().getPart(track));
             for (int bar = 0; bar < nbrOfBars; bar++) {
-                if(Math.random() < getProbability()){
+                if(Math.random() < localProbability){
                     Track currentBar = currentTrack.getSegment(bar*4, 4);
                     int nbrOfPhrases = currentBar.getPart().size();
                     for(int phrase = 0; phrase < nbrOfPhrases; phrase++){

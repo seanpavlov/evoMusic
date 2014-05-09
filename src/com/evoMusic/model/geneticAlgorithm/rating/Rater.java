@@ -28,28 +28,24 @@ public class Rater {
      * rates a song with the help of all subraters in the list
      * 
      * @param song
-     *            to be rater
+     *            to be rated
      * @return combined rating of the song
      */
     public double rate(Song song) {
-
-        double rating = 0.0;
-        double sumOfweights = 0.0;
-        double subRating = 0.0;
+        double totalDelta = 0;
+        double currentRating;
         for (SubRater subRater : subraters) {
-            sumOfweights += subRater.getWeight();
-            if (subRater.shouldRate()) {
-                subRating = subRater.rate(song);
-                if (subRating < 0 || subRating > 1) {
-                    System.err.println("WARNING: rater: '"
-                            + subRater.getClass().getSimpleName() + "' returned an"
-                            + " invalid rating of: " + subRating);
-                }
-                rating += subRating * subRater.getWeight();
+            currentRating = subRater.rate(song);
+            if (currentRating > 1.0 || currentRating < 0.0) {
+                throw new NumberFormatException("rater: '"
+                        + subRater.getClass().getSimpleName()
+                        + "' returned an" + " invalid rating of: "
+                        + currentRating);
+            } else {
+                totalDelta += Math.abs(subRater.getWeight() - currentRating);                
             }
         }
-        rating = rating / sumOfweights;
-        return rating;
+        return 1.0 - (totalDelta / subraters.size());
     }
 
     /**

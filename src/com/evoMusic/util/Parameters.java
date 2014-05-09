@@ -1,5 +1,7 @@
 package com.evoMusic.util;
 
+import com.evoMusic.model.geneticAlgorithm.GeneticAlgorithm.Initiator;
+
 /**
  * 
  * GENERAL RULES OF USE --------------------- Naming is done in the same name a
@@ -28,21 +30,23 @@ public class Parameters {
      * next generation.
      * Number of crossover songs is the number of songs that will 
      */
-    public int GA_POPULATION_SIZE = 100;
-    public int GA_NBR_OF_ELITISM_SONGS = 2;
+    public int GA_POPULATION_SIZE = 30;
+    public int GA_NBR_OF_ELITISM_SONGS = 1;
     public int GA_NBR_OF_CROSSOVER_SONGS = 3;
+    public static final Initiator initiator = Initiator.CROSSOVER;
 
     /*
      * MUTATION PARAMETERS
      */
-    public double MUTATION_INITIAL_PROBABILITY = 0.3;
-    public double MUTATION_MINIMUM_PROBABILITY = 0.2;
-    public double MUTATION_PROBABILITY_RATIO = 0.001;
+    public double MUTATION_PROBABILITY = 1;
 
-    public double MUTATOR_RANDOM_NOTE_PROBABILITY = 0.05;
-    public int MUTATOR_RANDOM_NOTE_STEP_RANGE = 6;
+    public double MUTATION_LOCAL_PROBABILITY_MULTIPLIER_DECREASE_RATIO = 0.002;
+    public double MUTATION_LOCAL_PROBABILITY_MINIMUM_MULTIPLIER = 0.1;
 
-    public double MUTATOR_RHYTHM_VALUE_PROBABILITY = 0;
+    public double MUTATOR_RANDOM_NOTE_PITCH_PROBABILITY = 0.1;
+    public int MUTATOR_RANDOM_NOTE_PITCH_STEP_RANGE = 6;
+
+    public double MUTATOR_RHYTHM_VALUE_PROBABILITY = 0.05;
     public double MUTATOR_RHYTHM_VALUE_MOVING_RANGE = 1;
 
     public double MUTATOR_OCTAVE_PROBABILITY = 0;
@@ -52,8 +56,8 @@ public class Parameters {
 
     public double MUTATOR_SCALE_OF_FIFTH_PROBABILITY = 0;
     public int MUTATOR_SCALE_OF_FIFTH_RANGE = 3;
-
-    public double MUTATOR_SIMPLIFY_PROBABILITY = 0.02;
+    public double MUTATOR_SIMPLIFY_PROBABILITY = 0.08;
+    public double MUTATOR_SWAP_SEGMENT_PROBABILITY = 0.05;
 
     /*
      * RATING PARAMETERS
@@ -79,9 +83,12 @@ public class Parameters {
     /*
      * CROSSOVER PARAMETERS
      */
-    public int CROSSOVER_NBR_OF_INTERSECTS = 2;
-    public int CROSSOVER_MIN_DURATION = 50;
-    public int CROSSOVER_MAX_DURATION = 200;
+    public int CROSSOVER_NBR_OF_INTERSECTS = 3;
+
+    /*
+     * RANDOM INITIATOR PARAMETER
+     */
+    public double RANDOM_INITIATOR_MAX_LENGTH = 20;
 
     /*
      * MARKOV PARAMETERS

@@ -15,7 +15,7 @@ public abstract class ISubMutator {
      * @param origPhrase is the phrase to be mutated
      * @return the mutated phrase
      */
-    abstract public void mutate(Song song);
+    abstract public void mutate(Song song, double probabilityMultiplier);
 
     /**
      * Get the probability of using the sub-mutator.

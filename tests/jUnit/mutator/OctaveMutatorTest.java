@@ -39,7 +39,7 @@ public class OctaveMutatorTest {
         boolean testIsOkay = true;
         int stepRange = 2;
         OctaveMutator om = new OctaveMutator(1, stepRange);
-        om.mutate(mutatedSong);
+        om.mutate(mutatedSong, 1);
         int nbrOfTracks = originSong.getScore().getSize();
         int originPitch = 0;
         int mutatedPitch = 0;

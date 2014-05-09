@@ -14,7 +14,7 @@ import com.evoMusic.util.TrackTag;
 /**Rater that favors song where the average note density in 
  * all beats in it's melody tracks are close or eqaul
  * to the least note density beat found in songs melody tracks*/
-public class MelodyNoteDensityRater extends SubRater{
+public class MelodyNoteDensityVarietyRater extends SubRater{
     
     /**Global variables to keep nbr of notes in different beats,
      * total nbr of beats and total nbr of notes 
@@ -23,7 +23,7 @@ public class MelodyNoteDensityRater extends SubRater{
     private double nbrOfBeats;
     private double nbrOfNotes;
 
-    public MelodyNoteDensityRater(double weight){
+    public MelodyNoteDensityVarietyRater(double weight){
         super.setWeight(weight);
     }
     

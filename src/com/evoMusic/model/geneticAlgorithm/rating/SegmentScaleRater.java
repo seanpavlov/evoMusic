@@ -66,7 +66,11 @@ public class SegmentScaleRater extends SubRater {
             windowSize = Math.max(windowSize/2, minWindowSize);
             sumK += maxWindowSize/windowSize;
         }
-
-        return res / sumK;
+        if (res / sumK > 1.1 || res / sumK < -0.1) {
+            System.err.println("WARNING: SegemntScaleRater"
+                    + " got a invalid rating, "
+                    + "correcting it...");
+        }
+        return Math.max(Math.min(res / sumK, 1), 0);
     }
 }

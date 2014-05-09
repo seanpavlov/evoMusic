@@ -6,11 +6,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import jm.music.data.Note;
 import jm.music.data.Part;
 import jm.music.data.Score;
 
 import org.bson.types.ObjectId;
 
+import com.evoMusic.util.Sort;
 import com.evoMusic.util.TrackTag;
 
 /**
@@ -227,21 +229,48 @@ public class Song {
     /**
      * Removes a track at a specific index
      * 
-     * @param i
-     * @return
+     * @param i Track index
+     * @return Track 
+     *           Track that whas removed, returns null if track could not be removed
      */
     public Track removeTrack(int i) {
-        return tracks.remove(i);
+        if(tracks.size() > i && i >= 0){
+            Track trackToRemove = tracks.get(i);
+            if(tracks.remove(trackToRemove)){
+                int nbrBefore = score.length();
+                score.removePart(i);
+                int nbrAfter = score.length();
+                if(nbrBefore - 1 == nbrAfter){
+                    return trackToRemove;
+                }else{
+                    tracks.add(i, trackToRemove);
+                    return null;
+                }
+            }
+            return null;
+        }
+        return null;
     }
 
     /**
      * Removes a given track from the song
      * 
-     * @param track
-     * @return
+     * @param track Track to be removed
+     * @return boolean true if track was removed false otherwise
      */
     public boolean removeTrack(Track track) {
-        return tracks.remove(track);
+        if(tracks.remove(track)){
+            int nbrBefore = score.length();
+            score.removePart(track.getPart());
+            int nbrAfter = score.length();
+            if(nbrBefore - 1 == nbrAfter){
+                return true;
+            }else{
+                tracks.add(track);
+                return false;
+            }
+        }
+        return false;
     }
 
     /**
@@ -250,6 +279,17 @@ public class Song {
     public void flattern(){
         for (Track track : getTracks()){
             track.flattern();
+        }
+    }
+    
+    /**
+     * Flatterns all notes pan to be in the middle
+     */
+    public void flatternPan(){
+        for (List<Note> notes : Sort.getSortedNoteList(this)){
+            for (Note n : notes){
+                n.setPan(0.5);
+            }
         }
     }
 }

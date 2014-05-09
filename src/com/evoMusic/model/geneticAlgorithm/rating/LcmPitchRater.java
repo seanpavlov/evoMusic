@@ -2,11 +2,19 @@ package com.evoMusic.model.geneticAlgorithm.rating;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
+
 import jm.music.data.Note;
+
 import com.evoMusic.model.Song;
 import com.evoMusic.util.Sort;
 
 public class LcmPitchRater extends SubRater{
+    
+    private static int[] worstCaseLcm = {13, 156, 1716, 12012, 60060, 180180, 360360, 360360, 360360, 360360,
+                                            360360, 360360};
+    
     /**
      * Constructor for LcmPitchRater
      * 
@@ -26,12 +34,13 @@ public class LcmPitchRater extends SubRater{
         List<List<Note>> sortedNotes = Sort.getSortedNoteList(song);
         double nbrOfNotes = 0;
         double disonance = 1.0;
+        double worstCaseDisonance = 1.0;
         
         for(List<Note> notes : sortedNotes){
             List<Integer> frequencies= new ArrayList<Integer>();
             for(Note note : notes){
                 if(note.getPitch() != Note.REST){
-                    int frequency =  ( note.getPitch() % 12 ) + 1;
+                    int frequency =  note.getPitch() % 12 + 1;
                     frequencies.add(frequency);                   
                 }
             }
@@ -43,19 +52,29 @@ public class LcmPitchRater extends SubRater{
                 for(Integer d : frequencies){
                     ratios.add(d/gcd);
                 }
+                
+                int worstLCM;
+                int nbrOfRatios = ratios.size();
+                if(nbrOfRatios <= 12 && nbrOfRatios > 0){
+                    worstLCM = worstCaseLcm[nbrOfRatios - 1];
+                }else if(nbrOfRatios == 0){
+                    worstLCM = 0;
+                }else{
+                    worstLCM = 360360;
+                }
+                
                 int lcm = lcmMultiple(ratios);
+                worstCaseDisonance += Math.log(worstLCM)/ Math.log(2);
                 disonance += Math.log(lcm)/ Math.log(2);
             }
         }
         if(nbrOfNotes == 0)
             return 0;
-
+        
+        
         double averageDis = disonance / nbrOfNotes;
-        if (averageDis > 1.0){
-            return 1 / averageDis;
-        } else {
-            return 1 - averageDis;
-        }
+        double averageWorstDis = worstCaseDisonance/nbrOfNotes;
+        return 1 - averageDis/averageWorstDis;
     }
 
     /**

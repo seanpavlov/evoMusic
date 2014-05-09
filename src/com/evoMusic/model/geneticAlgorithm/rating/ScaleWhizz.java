@@ -115,7 +115,10 @@ public class ScaleWhizz extends SubRater {
                 if (to < phrase.getStartTime()) {
                     return;
                 }
-                Phrase cpPhrase = phrase.copy(Math.max(from, phrase.getStartTime()), to, false, false, false);
+                if (Math.max(from, phrase.getStartTime()) >= Math.min(to, phrase.getEndTime())) {
+                    return;
+                }
+                Phrase cpPhrase = phrase.copy(Math.max(from, phrase.getStartTime()), Math.min(to, phrase.getEndTime()), false, false, false);
                 for (Note note : cpPhrase.getNoteArray()) {
                     if (!note.isRest()) {
                         notePitches[note.getPitch() % 12]++;
