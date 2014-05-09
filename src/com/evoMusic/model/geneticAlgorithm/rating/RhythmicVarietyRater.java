@@ -12,6 +12,10 @@ public class RhythmicVarietyRater extends SubRater{
         this.setWeight(weight);
     }
     
+    /**
+     * This rater rates the frequencies of rhythm vales of the notes, the more unique rhythm values it finds
+     * the better rating it provides.
+     */
     @Override
     public double rate(Song song) {
         double rating;
