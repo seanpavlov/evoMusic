@@ -79,13 +79,14 @@ public class GenerateCommand extends AbstractCommand {
                         c.MUTATION_PROBABILITY_RATIO), crossover, new Rater(
                         subRaters), c.GA_POPULATION_SIZE, c.GA_NBR_OF_ELITISM_SONGS, c.GA_NBR_OF_CROSSOVER_SONGS, c.MARKOV_LOOKBACKS, c.MARKOV_SONGDURATION);
         System.out.println("Start iterating");
-        
+        for (int i = 0; i < 10; i++){
         runProgress(ga, iterations);
         Individual bestIndividual = ga.generateGenerations(iterations);
         finished.acquireUninterruptibly();
 
         Translator.INSTANCE.saveSongToMidi(bestIndividual.getSong(), "outputSong : " + bestIndividual.getRating());
         Translator.INSTANCE.play(bestIndividual.getSong());
+        }
         return true;
     }
 
