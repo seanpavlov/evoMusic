@@ -31,7 +31,7 @@ public class LcmPitchRater extends SubRater{
             List<Integer> frequencies= new ArrayList<Integer>();
             for(Note note : notes){
                 if(note.getPitch() != Note.REST){
-                    int frequency =  (int) note.getFrequency();
+                    int frequency =  note.getPitch() % 12 + 1;
                     frequencies.add(frequency);                   
                 }
             }
