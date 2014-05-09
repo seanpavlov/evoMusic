@@ -80,6 +80,42 @@ public class GeneticAlgorithm {
     }
 
     /**
+     * Initiates variables and generates first generation.
+     */
+    private void prepareToGenerate() {
+        
+        if(Parameters.getInstance().IN_DEBUG_MODE){
+            System.out.print("DEBUG:\t");
+            System.out.println("GA - Start generate");
+        }
+        nextPopulation = new ArrayList<Individual>();
+        elitismSongs = new ArrayList<Individual>();
+        bestIndividual = new Individual(null, 0);
+        currentIteration = 0;
+
+        List<Song> firstGeneration;
+        
+        switch (Parameters.initiator) {
+        case CROSSOVER:
+            firstGeneration = generateFirstCrossoverGeneration();
+            break;
+        case MARKOV:
+            firstGeneration = generateFirstMarkovGeneration();
+            break;
+        case RANDOM:
+            firstGeneration = generateFirstRandomGeneration();
+            break;
+        default:
+            firstGeneration = generateFirstCrossoverGeneration();
+            break;
+        }
+        
+        rater.initSubRaterWeights(inputSongs);
+        nextPopulation = ratePopulation(firstGeneration);
+        selectElitismSongs(nextPopulation);
+    }
+
+    /**
      * Generation a song through a given number of generation
      * 
      * @param nbrOfGenerations
@@ -87,21 +123,10 @@ public class GeneticAlgorithm {
      * @return the song as an Individual
      */
     public Individual generateGenerations(int nbrOfGenerations) {
-        if(Parameters.getInstance().IN_DEBUG_MODE){
-            System.out.print("DEBUG:\t");
-            System.out.println("GA - Start generate");
-        }
         this.nbrOfGenerations = nbrOfGenerations;
-        nextPopulation = new ArrayList<Individual>();
-        elitismSongs = new ArrayList<Individual>();
-        bestIndividual = new Individual(null, 0);
-        currentIteration = 0;
-
-        List<Song> firstGeneration = generateFirstCrossoverGeneration();
-        rater.initSubRaterWeights(inputSongs);
-        nextPopulation = ratePopulation(firstGeneration);
-        selectElitismSongs(nextPopulation);
-
+        
+        prepareToGenerate();
+        
         for (int generation = 0; generation < nbrOfGenerations; generation++) {
             generateCurrentGeneration();
         }
@@ -119,24 +144,11 @@ public class GeneticAlgorithm {
      * @return the best song as an Individual
      */
     public Individual generateUntilRating(double ratingThreshold) {
-        if(Parameters.getInstance().IN_DEBUG_MODE){
-            System.out.print("DEBUG:\t");
-            System.out.println("GA - Start generate");
-        }
+        // TODO fix so that there is possible for progress bar here also.
         this.ratingThreshold = ratingThreshold;
-        nextPopulation = new ArrayList<Individual>();
-        elitismSongs = new ArrayList<Individual>();
-        bestIndividual = new Individual(null, 0);
-        currentIteration = 0;
-
-        // TODO: Initialize weight based on input songs. Decide how we are going
-        // to do this.
-
-        // TODO: Change in this method so that markov chain is used.
-        List<Song> firstGeneration = generateFirstCrossoverGeneration();
-        rater.initSubRaterWeights(inputSongs);
-        List<Individual> ratedFirstGeneration = ratePopulation(firstGeneration);
-        selectElitismSongs(ratedFirstGeneration);
+        
+        prepareToGenerate();
+        
         while (getBestIndividual().getRating() < ratingThreshold) {
             generateCurrentGeneration();
         }
@@ -327,5 +339,11 @@ public class GeneticAlgorithm {
                 elitismSongs.add(population.get(individual));
             }
         }
+    }
+    
+    public enum Initiator {
+        MARKOV,
+        RANDOM,
+        CROSSOVER;
     }
 }
