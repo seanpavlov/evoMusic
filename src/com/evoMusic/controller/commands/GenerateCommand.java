@@ -48,7 +48,7 @@ public class GenerateCommand extends AbstractCommand {
         allMut.add(new RhythmValueMutator(c.MUTATOR_RHYTHM_VALUE_PROBABILITY, c.MUTATOR_RHYTHM_VALUE_MOVING_RANGE));
         allMut.add(new ReverseBarNotesMutator(c.MUTATOR_REVERSE_PROBABILITY));
         allMut.add(new SimplifyMutator(c.MUTATOR_SIMPLIFY_PROBABILITY));
-        //allMut.add(new SwapSegmentMutator(c.MUTATOR_SWAP_SEGMENT_PROBABILITY));
+        allMut.add(new SwapSegmentMutator(c.MUTATOR_SWAP_SEGMENT_PROBABILITY));
 
         allMut.add(new OctaveMutator(c.MUTATOR_OCTAVE_PROBABILITY,c.MUTATOR_OCTAVE_RANGE));
         allMut.add(new ScaleOfFifthMutator(c.MUTATOR_SCALE_OF_FIFTH_PROBABILITY,c.MUTATOR_SCALE_OF_FIFTH_RANGE));
