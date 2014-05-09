@@ -18,7 +18,7 @@ public class RandomInitiator {
 
     // 4th, 8th, 16th note etc.
     private static final int SMALLEST_NOTE_TYPE = 32;
-    private static final double REST_PROBABILITY = 0.2;
+    private static final double REST_PROBABILITY = 0.8;
     private static final int NOTE_DYNAMICS = 64;
 
     private Song song;

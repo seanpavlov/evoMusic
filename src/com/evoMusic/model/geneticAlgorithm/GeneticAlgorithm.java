@@ -108,6 +108,7 @@ public class GeneticAlgorithm {
         /*
          * Return the best song.
          */
+        getBestIndividual().getSong().flatternPan();
         return getBestIndividual();
     }
 
@@ -143,6 +144,7 @@ public class GeneticAlgorithm {
         /*
          * Return the best song.
          */
+        getBestIndividual().getSong().flatternPan();
         return getBestIndividual();
     }
 

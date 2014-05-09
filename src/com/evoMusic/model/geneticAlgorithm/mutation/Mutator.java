@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.evoMusic.model.Song;
 import com.evoMusic.util.Parameters;
+import com.evoMusic.util.Sort;
 
 public class Mutator {
     private List<ISubMutator> subMutators;
@@ -41,6 +42,7 @@ public class Mutator {
         if (Math.random() < mutationProbability) {
             for (ISubMutator subMutator : subMutators) {
                 subMutator.mutate(individual, probabilityMultiplier);
+                individual.flattern();
             }
         }
     }

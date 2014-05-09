@@ -274,7 +274,7 @@ public class Track {
         
         Part newPart = new Part();
         for (Phrase phrase : flatPhrases){
-            newPart.add(phrase.copy());
+            newPart.add(phrase);
         }
         this.setPart(newPart);
     }

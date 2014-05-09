@@ -45,6 +45,5 @@ public class RhythmValueMutator extends ISubMutator {
                 }
             }
         }
-        individual.flattern();
     }
 }

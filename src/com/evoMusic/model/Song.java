@@ -6,11 +6,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import jm.music.data.Note;
 import jm.music.data.Part;
 import jm.music.data.Score;
 
 import org.bson.types.ObjectId;
 
+import com.evoMusic.util.Sort;
 import com.evoMusic.util.TrackTag;
 
 /**
@@ -226,6 +228,17 @@ public class Song {
     public void flattern(){
         for (Track track : getTracks()){
             track.flattern();
+        }
+    }
+    
+    /**
+     * Flatterns all notes pan to be in the middle
+     */
+    public void flatternPan(){
+        for (List<Note> notes : Sort.getSortedNoteList(this)){
+            for (Note n : notes){
+                n.setPan(0.5);
+            }
         }
     }
 }

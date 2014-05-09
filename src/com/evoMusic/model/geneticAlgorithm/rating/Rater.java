@@ -32,7 +32,6 @@ public class Rater {
      * @return combined rating of the song
      */
     public double rate(Song song) {
-
         double totalDelta = 0;
         double currentRating;
         for (SubRater subRater : subraters) {

@@ -42,16 +42,13 @@ public class GenerateCommand extends AbstractCommand {
         }
         final int iterations = Integer.parseInt(args[0]);
         List<ISubMutator> allMut = new ArrayList<ISubMutator>();
-        allMut.add(new OctaveMutator(c.MUTATOR_OCTAVE_PROBABILITY, c.MUTATOR_OCTAVE_RANGE));
+//        allMut.add(new OctaveMutator(c.MUTATOR_OCTAVE_PROBABILITY, c.MUTATOR_OCTAVE_RANGE));
 //        allMut.add(new ReverseMutator(c.MUTATOR_REVERSE_PROBABILITY, c.MUTATOR_REVERSE_NBR_OF_NEIGHBORS, c.MUTATOR_REVERSE_RANGE, true));
-        allMut.add(new ScaleOfFifthMutator(c.MUTATOR_SCALE_OF_FIFTH_PROBABILITY, c.MUTATOR_SCALE_OF_FIFTH_RANGE));
-        //allMut.add(new SimplifyMutator(c.MUTATOR_SIMPLIFY_PROBABILITY, c.MUTATOR_SIMPLIFY_NBR_OF_NEIGHBORS, c.MUTATOR_SIMPLIFY_PROBABILITY));
+//        allMut.add(new SimplifyMutator(c.MUTATOR_SIMPLIFY_PROBABILITY, c.MUTATOR_SIMPLIFY_NBR_OF_NEIGHBORS, c.MUTATOR_SIMPLIFY_PROBABILITY));
         allMut.add(new RandomNotePitchMutator(c.MUTATOR_RANDOM_NOTE_PITCH_PROBABILITY,c.MUTATOR_RANDOM_NOTE_PITCH_STEP_RANGE));
         allMut.add(new RhythmValueMutator(c.MUTATOR_RHYTHM_VALUE_PROBABILITY, c.MUTATOR_RHYTHM_VALUE_MOVING_RANGE));
-        allMut.add(new ReverseBarNotesMutator(c.MUTATOR_REVERSE_PROBABILITY));
-        allMut.add(new SimplifyMutator(c.MUTATOR_SIMPLIFY_PROBABILITY));
-        allMut.add(new OctaveMutator(c.MUTATOR_OCTAVE_PROBABILITY,c.MUTATOR_OCTAVE_RANGE));
-        allMut.add(new ScaleOfFifthMutator(c.MUTATOR_SCALE_OF_FIFTH_PROBABILITY,c.MUTATOR_SCALE_OF_FIFTH_RANGE));
+//        allMut.add(new ReverseBarNotesMutator(c.MUTATOR_REVERSE_PROBABILITY));
+//        allMut.add(new ScaleOfFifthMutator(c.MUTATOR_SCALE_OF_FIFTH_PROBABILITY,c.MUTATOR_SCALE_OF_FIFTH_RANGE));
         
         DrCross crossover = new DrCross(c.CROSSOVER_NBR_OF_INTERSECTS);
         
