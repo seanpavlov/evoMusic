@@ -36,7 +36,8 @@ public class SwapSegmentMutator extends ISubMutator{
         for(int i = tracks.size()-1; i >= 0; i--){
             if(Math.random() < localProbability){ 
                Track track = tracks.get(i);
-               //Retrieve and calculate the tracks end time to fraction of 1/4
+               /*Retrieve and calculate the tracks end time 
+                 with a fraction of either 0, 1/4, 2/4 or 3/4*/
                double trackTime = track.getPart().getEndTime();
                double trackEndTime =  Math.floor(trackTime) + findClosestFraction(trackTime%1);
                //Calculate swap segments length             
@@ -49,7 +50,7 @@ public class SwapSegmentMutator extends ISubMutator{
                             : segmentValue(firstSwap + swapLength, trackEndTime - swapLength);
               
                
-               // build new track with swaped segments
+               // build a new track with swaped segments
                Track trackWithSwap = swapSegments(track, firstSwap, secondSwap, swapLength, trackEndTime);  
          
                //Flatten track to get as few phrases as possible
@@ -60,7 +61,6 @@ public class SwapSegmentMutator extends ISubMutator{
               
                //Add new track with swaped segments if old is removed successfully
                if(song.removeTrack(i) != null){
-                   System.out.println("Swaped");
                    song.addTrack(trackWithSwap);
                }
             }
@@ -128,11 +128,11 @@ public class SwapSegmentMutator extends ISubMutator{
     
     
     /**
-     * Calculates a random value between start and end time where end time and
-     * also the resulting segment is 
-     * rounded to closest 1/4 of a beat (.25, .5, .75 or whole beat)
-     * @param start Start of the intervall to generate random value from
-     * @param end End of the intervall to generate random value from
+     * Calculates a random value between start and end time, where end time and
+     * the resulting segments lengths fraction is rounded down to closest value of
+     * either 0, 1/4, 2/4 or 3/4
+     * @param start Start value of the intervall to generate random value from
+     * @param end End value of the intervall to generate random value from
      * @return double Random generated value between start and end intervall
      * */
     private double segmentValue(double start, double end){
@@ -152,9 +152,9 @@ public class SwapSegmentMutator extends ISubMutator{
     }
     
     /**
-     * Append tracks starting with the first in list
-     * @param tracks List of tracks to be appended on to the first in the list
-     * @Return Track the new track of appended tracks from the list 
+     * Append tracks in to the the first track in the list
+     * @param tracks List of tracks to be appended
+     * @Return Track the new track of appended tracks
      * */
     private Track appendTracks(List<Track> tracks){
         Track initialTrack = null;
@@ -168,7 +168,7 @@ public class SwapSegmentMutator extends ISubMutator{
     }
     
     /**
-     * Append a track on to another track
+     * Appends two tracks
      * @param track track to append on
      * @param other the track to append
      * */
@@ -217,7 +217,7 @@ public class SwapSegmentMutator extends ISubMutator{
     }
     
     /**
-     * Finds closes lower fraction of 1/4 (0.0, 0.25, 0.5, 0.75) 
+     * Finds closest lower fraction to either 0, 1/4, 2/4 or 3/4
      * Example: 0.66 is going to find and return closest fraction of 0.5
      * but 0.49 is going to find and return closest fraction of 0.25
      * @param fraction the fraction to find closest lower 1/4 to
@@ -231,7 +231,10 @@ public class SwapSegmentMutator extends ISubMutator{
         double returnFraction = 0.0;
         double margin = Math.abs(0.0 - fraction);
         for(double fractionValue : fractionalValues){
-            if(fractionValue < fraction){
+            if(fractionValue == fraction){
+                returnFraction = fraction;
+                break;
+            }else if(fractionValue < fraction){
                 double nextMargin = Math.abs(fractionValue - fraction);
                 if(margin > nextMargin){
                     margin = nextMargin;

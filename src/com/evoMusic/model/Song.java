@@ -203,8 +203,9 @@ public class Song {
     /**
      * Removes a track at a specific index
      * 
-     * @param i
-     * @return
+     * @param i Track index
+     * @return Track 
+     *           Track that whas removed, returns null if track could not be removed
      */
     public Track removeTrack(int i) {
         if(tracks.size() > i && i >= 0){
@@ -228,8 +229,8 @@ public class Song {
     /**
      * Removes a given track from the song
      * 
-     * @param track
-     * @return
+     * @param track Track to be removed
+     * @return boolean true if track was removed false otherwise
      */
     public boolean removeTrack(Track track) {
         if(tracks.remove(track)){
