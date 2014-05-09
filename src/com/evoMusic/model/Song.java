@@ -207,9 +207,20 @@ public class Song {
      * @return
      */
     public Track removeTrack(int i) {
-        Track trackToRemove = tracks.get(i);
-        if(removeTrack(trackToRemove)){
-            return trackToRemove;
+        if(tracks.size() > i && i >= 0){
+            Track trackToRemove = tracks.get(i);
+            if(tracks.remove(trackToRemove)){
+                int nbrBefore = score.length();
+                score.removePart(i);
+                int nbrAfter = score.length();
+                if(nbrBefore - 1 == nbrAfter){
+                    return trackToRemove;
+                }else{
+                    tracks.add(i, trackToRemove);
+                    return null;
+                }
+            }
+            return null;
         }
         return null;
     }
@@ -222,8 +233,15 @@ public class Song {
      */
     public boolean removeTrack(Track track) {
         if(tracks.remove(track)){
+            int nbrBefore = score.length();
             score.removePart(track.getPart());
-            return true;
+            int nbrAfter = score.length();
+            if(nbrBefore - 1 == nbrAfter){
+                return true;
+            }else{
+                tracks.add(track);
+                return false;
+            }
         }
         return false;
     }

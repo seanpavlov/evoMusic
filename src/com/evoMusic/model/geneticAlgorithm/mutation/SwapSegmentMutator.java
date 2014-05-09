@@ -25,7 +25,7 @@ public class SwapSegmentMutator extends ISubMutator{
     }
 
     /**
-     * Method swaps two segments of the tracks in the song by random length  
+     * The method swaps two segments of the tracks in the song by random length  
      * and random start times
      * @param Song song to be mutated
      * */
@@ -49,17 +49,18 @@ public class SwapSegmentMutator extends ISubMutator{
                             : segmentValue(firstSwap + swapLength, trackEndTime - swapLength);
               
                
-               //Swap segments in track
+               // build new track with swaped segments
                Track trackWithSwap = swapSegments(track, firstSwap, secondSwap, swapLength, trackEndTime);  
          
                //Flatten track to get as few phrases as possible
                trackWithSwap.flattern();
 
-               //Tag new track with swaped segments with same tag old track
+               //Tag new track with swaped segments with same tag as old track
                trackWithSwap.setTag(track.getTag());
               
                //Add new track with swaped segments if old is removed successfully
-               if(song.removeTrack(track)){
+               if(song.removeTrack(i) != null){
+                   System.out.println("Swaped");
                    song.addTrack(trackWithSwap);
                }
             }
@@ -69,8 +70,8 @@ public class SwapSegmentMutator extends ISubMutator{
     
     /**
      * Swaps two segments of the track by splitting
-     * the track in to pieces and building it back 
-     * toghether againg where the two segments have changed places
+     * the track in to segments and building it back 
+     * toghether againg where the two target segments have been swapped
      * @param track Track to swap segments in
      * @param first Start value of the first swap segment
      * @param second Start value of the second swap segment
@@ -106,7 +107,7 @@ public class SwapSegmentMutator extends ISubMutator{
         if(second + length < trackEndTime){
             tracks.add(findSegment(track, second+length, trackEndTime,second+length));
         }
-        
+       
         //Return appended tracks 
         return appendTracks(tracks);
     }
