@@ -1,56 +1,52 @@
 package com.evoMusic.model.geneticAlgorithm.rating;
 
 import com.evoMusic.model.Song;
-import com.evoMusic.model.SongSegment;
 
 public class SegmentScaleRater extends SubRater {
 
-    private final double minWindowSize = 4.0;
-    private final ScaleWhizz scaleRater = new ScaleWhizz(1);
+    private final double minWindowSize = 8.0;
+    private double maxWindowSize;
+    private final ScaleWhizz scaleRater;
     private Song song;
     private int rounds;
     
+    public SegmentScaleRater(double weight) {
+        this.scaleRater = new ScaleWhizz(weight);
+    }
     
-    public double rateSegments(SongSegment currentSegment, double windowSize) {
+    public double rateSegments(double currentStartTime, double windowSize) {
         rounds++;
-        // Are we at end of the song? 
-        if (currentSegment.getEndTime() == song.getScore().getEndTime()) {
-            // Can we decrease the window size?
+        // Are we at end of the song?
+        if (currentStartTime + windowSize >= song.getScore().getEndTime()) {
+            // Is this the minimum window size?
             if (windowSize <= minWindowSize) {
-                return scaleRater.rate(currentSegment);
+                return scaleRater.rateSegment(song, currentStartTime, 
+                        currentStartTime + windowSize);
             } else {
-                // Decrease window size and start over;
-                return scaleRater.rate(currentSegment) + rateSegments(
-                        new SongSegment(song, 0, windowSize/2), windowSize/2);
+                // Decrease window size and start over
+                return scaleRater.rateSegment(song, currentStartTime, 
+                        currentStartTime + windowSize)
+                            + rateSegments(0, Math.max(windowSize / 2, minWindowSize));
             }
         }
         
-        System.out.println("curr:" + windowSize);
-        
-        double nextStartTime = currentSegment.getStartTime()
-                + windowSize / 2;
-        double nextEndTime   = currentSegment.getEndTime() 
-                + windowSize / 2;
-        
-        if (nextEndTime > song.getScore().getEndTime()) { 
-            nextEndTime = song.getScore().getEndTime();
-        }
-        
-        final SongSegment nextSegment = 
-                new SongSegment(song, nextStartTime, nextEndTime);
-        
-        return scaleRater.rate(currentSegment) + 
-                rateSegments(nextSegment, windowSize);
+        double nextStartTime = currentStartTime + windowSize / 2;
+//        System.out.println("from "+currentStartTime 
+//                + "\t\tto " + (currentStartTime + windowSize)
+//                + "\t\trate: " + scaleRater.rateSegment(song, currentStartTime, 
+//                currentStartTime + windowSize));
+        return scaleRater.rateSegment(song, currentStartTime, 
+                currentStartTime + windowSize) + 
+                rateSegments(nextStartTime, windowSize);
     }
     
     @Override
     public double rate(Song song) {
         this.rounds = 0;
         this.song = song;
-        double res = rateSegments(new SongSegment(song), 
-                song.getScore().getEndTime());
-        System.out.println(rounds);
-        return res;
+        this.maxWindowSize = Math.max(song.getScore().getEndTime()/8, minWindowSize);
+        
+        double res = rateSegments(0, maxWindowSize);
+        return Math.pow(res / rounds, 10);
     }
-
 }

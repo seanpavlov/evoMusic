@@ -1,5 +1,6 @@
 package jUnit.rater;
 
+import static org.junit.Assert.*;
 import jUnit.Helpers;
 
 import org.junit.Test;
@@ -14,14 +15,18 @@ public class SegmentScaleRaterTest {
 
     @Test
     public void testRate() {
-        Song s = Helpers.createSongWithMelody(new int[] {
-                0, 2, 4, 5, 7, 5, 4, 2, 1, 3, 5, 6, 8, 6, 5, 3, 1});
+        Song s = Helpers.createSongWithMelody(new int[]{1,3,1,1,3,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,1,1});
         s.addTagToTrack(0, TrackTag.MELODY);
-        SubRater r = new SegmentScaleRater();
+        SubRater r = new SegmentScaleRater(1);
         SubRater r2 = new ScaleWhizz(1);
 
-        System.out.println("segScalew" + r.rate(s));
-        System.out.println("Classic scalewhizz" + r2.rate(s));
+        assertTrue("should rate better than scalewhizz", r.rate(s) > r2.rate(s));
+        System.out.println(r.rate(s));
+        s = Helpers.createSongWithMelody(new int[]{2,3,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+                1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1});
+        s.addTagToTrack(0, TrackTag.MELODY);
+        System.out.println(r.rate(s));
+        assertTrue("should rate lower than scalewhizz", r.rate(s) < r2.rate(s));
         
     }
 

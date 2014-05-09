@@ -36,6 +36,7 @@ import com.evoMusic.model.geneticAlgorithm.rating.Rater;
 import com.evoMusic.model.geneticAlgorithm.rating.RepeatedPitchDensityRater;
 import com.evoMusic.model.geneticAlgorithm.rating.RhythmicVarietyRater;
 import com.evoMusic.model.geneticAlgorithm.rating.ScaleWhizz;
+import com.evoMusic.model.geneticAlgorithm.rating.SegmentScaleRater;
 import com.evoMusic.model.geneticAlgorithm.rating.SubRater;
 import com.evoMusic.model.geneticAlgorithm.rating.ZipfsLawRater;
 import com.evoMusic.util.Parameters;
@@ -100,7 +101,8 @@ public class GenerateCommand extends AbstractCommand {
 
         subRaters
                 .add(new MelodyRepetionRater(c.RATER_MELODY_REPETITION_WEIGHT));
-        subRaters.add(new ScaleWhizz(c.RATER_SCALE_WEIGHT));
+//        subRaters.add(new ScaleWhizz(c.RATER_SCALE_WEIGHT));
+        subRaters.add(new SegmentScaleRater(c.RATER_SCALE_WEIGHT));
         subRaters.add(new BeatRepetitionRater(c.RATER_BEAT_REPETITION_WEIGHT));
         subRaters
                 .add(new ChordRepetitionRater(c.RATER_CHORD_REPETITION_WEIGHT));

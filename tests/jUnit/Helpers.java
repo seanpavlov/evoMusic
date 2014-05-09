@@ -32,7 +32,7 @@ public abstract class Helpers {
 
         Note[] notes = new Note[pitches.length];
         for (int i = 0; i < pitches.length; i++) {
-            notes[i] = new Note(pitches[i], JMC.QUARTER_NOTE);
+            notes[i] = new Note(5*12 + pitches[i], JMC.QUARTER_NOTE);
         }
         
         return new Song(new Score(new Part(new Phrase(notes))));

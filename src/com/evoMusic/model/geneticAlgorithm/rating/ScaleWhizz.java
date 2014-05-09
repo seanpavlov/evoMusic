@@ -41,10 +41,15 @@ public class ScaleWhizz extends SubRater {
 
     @Override
     public double rate(Song song) {
-        List<Track> targeted = song.getTaggedTracks(TrackTag.MELODY);
-
-        PitchCounter pc = new PitchCounter(targeted);
+        return rateSegment(song, 0, song.getScore().getEndTime());
+    }
+    
+    public double rateSegment(Song segment, double from, double to) {
+        List<Track> targeted = segment.getTracks();
+        
+        PitchCounter pc = new PitchCounter(targeted, from, to);
         int hits = maximumScaleHits(pc.notePitches);
+        
         return pc.numberOfNotes == 0 ? 0 : ratingLinear(1.0 * hits
                 / pc.numberOfNotes);
     }
@@ -85,7 +90,7 @@ public class ScaleWhizz extends SubRater {
      */
     private final class PitchCounter {
 
-        private final int[] notePitches = new int[12];;
+        private final int[] notePitches = new int[12];
         private int numberOfNotes = 0;
 
         /**
@@ -93,17 +98,25 @@ public class ScaleWhizz extends SubRater {
          * for obvious reasons. 
          * @param tracks tracks to be counted. 
          */
-        private PitchCounter(List<Track> tracks) {
+        public PitchCounter(List<Track> tracks, double from, double to) {
             for (Track track : tracks) {
                 if (track.getPart().getInstrument() != Instruments.DRUM) {
-                    countNotes(track);
+                    countNotes(track, from, to);
                 }
             }
         }
 
-        private void countNotes(Track track) {
+        private void countNotes(Track track, double from, double to) {
+            if (track.hasTag(TrackTag.BEAT)) {
+                return;
+            } 
+            
             for (Phrase phrase : track.getPart().getPhraseArray()) {
-                for (Note note : phrase.getNoteArray()) {
+                if (to < phrase.getStartTime()) {
+                    return;
+                }
+                Phrase cpPhrase = phrase.copy(Math.max(from, phrase.getStartTime()), to, false, false, false);
+                for (Note note : cpPhrase.getNoteArray()) {
                     if (!note.isRest()) {
                         notePitches[note.getPitch() % 12]++;
                         numberOfNotes++;
