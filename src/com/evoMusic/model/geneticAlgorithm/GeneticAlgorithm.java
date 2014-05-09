@@ -27,10 +27,11 @@ public class GeneticAlgorithm {
     private Rater rater;
     private MarkovSong markovSong;
     private Individual bestIndividual;
+    private Parameters c = Parameters.getInstance();
     double ratingThreshold, songDuration;
     int populationSize, nbrOfElitismSongs, nbrOfCrossoverSongs,
             nbrOfMarkovLookbacks, currentIteration, nbrOfGenerations;
-
+    private RandomInitiator randomInitiator = new RandomInitiator(c.RANDOM_INITIATOR_MAX_LENGTH);
     /**
      * Initiate the genetic algorithm with the required objects.
      * 
@@ -197,6 +198,26 @@ public class GeneticAlgorithm {
                 System.out.println("Markov - Generate individual: " + i);
             }
             population.add(markovSong.generateNew(songDuration));
+        }
+        if(Parameters.getInstance().IN_DEBUG_MODE){
+            System.out.print("DEBUG:\t");
+            System.out.println("GA - Generated first generation");
+        }
+        return population;
+    }
+    
+    private List<Song> generateFirstRandomGeneration() {
+        if(Parameters.getInstance().IN_DEBUG_MODE){
+            System.out.print("DEBUG:\t");
+            System.out.println("GA - Generate first generation");
+        }
+        List<Song> population = new ArrayList<Song>();
+        for (int i = 0; i < populationSize; i++) {
+            if(Parameters.getInstance().IN_DEBUG_MODE){
+                System.out.print("DEBUG:\t");
+                System.out.println("Markov - Generate individual: " + i);
+            }
+            population.add(randomInitiator.generateMelody());
         }
         if(Parameters.getInstance().IN_DEBUG_MODE){
             System.out.print("DEBUG:\t");
