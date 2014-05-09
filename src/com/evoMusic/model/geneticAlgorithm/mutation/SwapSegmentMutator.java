@@ -32,7 +32,7 @@ public class SwapSegmentMutator extends ISubMutator{
     @Override
     public void mutate(Song song, double probabilityMultiplier) {
         double localProbability = getProbability()*probabilityMultiplier;
-        List<Track> tracks = song.copy().getTracks();
+        List<Track> tracks = song.getTracks();
         for(int i = tracks.size()-1; i >= 0; i--){
             if(Math.random() < localProbability){ 
                Track track = tracks.get(i);
@@ -152,7 +152,7 @@ public class SwapSegmentMutator extends ISubMutator{
     }
     
     /**
-     * Append tracks in to the the first track in the list
+     * Append tracks to the the first track in the list
      * @param tracks List of tracks to be appended
      * @Return Track the new track of appended tracks
      * */
@@ -198,12 +198,12 @@ public class SwapSegmentMutator extends ISubMutator{
             throw new IllegalArgumentException(
                     "Can't get segment from an empty Track!");
         }
-        
-        
-        Part partCopy = track.getPart().copy(from, from + length, false, true, true);
+
+        Part partCopy = track.getPart().copy(from, from + length, false, false, false);
+        //Parts copy method seems to add Rest notes in beginning and end of phrases when doing copy, remove these
         for(Phrase phrase : partCopy.getPhraseArray()){ 
-                Note firstnote = phrase.getNote(0);
-                if(firstnote.getPitch() == Note.REST && from != 0){
+                Note firstNote = phrase.getNote(0);
+                if(firstNote!= null && firstNote.getPitch() == Note.REST){
                     phrase.removeNote(0);
                 }
            
@@ -247,8 +247,8 @@ public class SwapSegmentMutator extends ISubMutator{
     
     /**
      * Sets the start time of all the phrases in a track
-     * @param track The track to set its phrases start time 
-     * @param startTime The time to set as start time on all phrases in track
+     * @param track The containing the phrases
+     * @param startTime The time to set as start time
      * */
     private void setPhrasesStartTime(Track track, double startTime){
         for(Phrase phrase : track.getPart().getPhraseArray()){
