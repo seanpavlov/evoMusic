@@ -36,7 +36,7 @@ public class Parameters {
      * MUTATION PARAMETERS
      */
     public double MUTATION_PROBABILITY = 0.7;
-    
+
     public double MUTATION_LOCAL_PROBABILITY_MULTIPLIER_DECREASE_RATIO = 0.02;
     public double MUTATION_LOCAL_PROBABILITY_MINIMUM_MULTIPLIER = 0.1;
 
@@ -81,8 +81,6 @@ public class Parameters {
      * CROSSOVER PARAMETERS
      */
     public int CROSSOVER_NBR_OF_INTERSECTS = 2;
-    public int CROSSOVER_MIN_DURATION = 50;
-    public int CROSSOVER_MAX_DURATION = 200;
 
     /*
      * MARKOV PARAMETERS

@@ -37,12 +37,14 @@ public class BeatRepetitionRater extends SubRater{
         double count = 0;
         List<Track> targetTracks = song.getTaggedTracks(TrackTag.BEAT);
         targetTracks.addAll(song.getTaggedTracks(TrackTag.RHYTHM));
+        
+        if(targetTracks.size() == 0)
+            return 0.0;
+        
         for(Track track : targetTracks){
             rating += this.ratePart(track.getPart());
             ++count;
         }
-        if(count == 0)
-            return 0.0;
         return rating/count;
     }
     
@@ -60,9 +62,10 @@ public class BeatRepetitionRater extends SubRater{
         for(Phrase phrase : phrases){
             List<Double> values = new ArrayList<Double>();
             String valuesAsString = "";
-            /**Add rhythm values to list and build valuesAsString variable*/           
+            /**Add rhythm values to list and build valuesAsString variable*/        
+            int i = 0;
             for(Note n : phrase.getNoteArray()){              
-                if(n.getPitch() >= 0 || n.getPitch() <= 127){
+                if(!n.isRest()){
                     double rhythmValue = n.getRhythmValue();
                     valuesAsString = valuesAsString + rhythmValue;
                     values.add(rhythmValue);
@@ -72,8 +75,10 @@ public class BeatRepetitionRater extends SubRater{
             /**Save length before removal of patterns found*/
             double before = (double)valuesAsString.length();
             double minimum = phrase.getRhythmArray().length * 0.1;
+
             /**Find repeating patters of min length*/
             List<List<Double>> longest = this.findPatterns(values, (int)minimum);
+
             Map<Integer, List<String>> occurrence = new HashMap<Integer, List<String>>();
             /**Remove occurrence of patterns in valuesAsString variable*/
             for(List<Double> dList : longest){
@@ -176,7 +181,6 @@ public class BeatRepetitionRater extends SubRater{
          * */
         int distance;
         int checkFurter = 1;
-            
         for(int i = 1; i < inputLength; i++){
             List<Double> firstList = suffixLists.get(i);
             for(int n = checkFurter; n >= 1; n--){
@@ -205,12 +209,12 @@ public class BeatRepetitionRater extends SubRater{
                 }
                 
                 nextFound = this.longestCommon(firstList, secondList, distance);
-                bestResults.add(0, nextFound);
-                
-                checkFurter = (nextFound.size() == distance) ?
+                if (!bestResults.contains(nextFound)){
+                    bestResults.add(0, nextFound);
+                    checkFurter = (nextFound.size() == distance) ?
                         Math.max(checkFurter, n+1) : n;                
+                }
             }
-            
         }
         this.sortBySize(bestResults);
         return bestResults;
