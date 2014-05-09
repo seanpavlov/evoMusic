@@ -38,7 +38,7 @@ public class SimplifyMutatorTest {
     public void simplifyTest(){
         boolean testIsOkay = true;
         SimplifyMutator sm = new SimplifyMutator(1);
-        sm.mutate(mutatedSong);
+        sm.mutate(mutatedSong, 1);
         int nbrOfTracks = originSong.getScore().getSize();
         int originPitch = 0;
         int mutatedPitch = 0;

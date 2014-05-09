@@ -29,8 +29,9 @@ public class SimplifyMutator extends ISubMutator {
      * Mutate the note with noteIndex of song.
      */
     @Override
-    public void mutate(Song individual) {
+    public void mutate(Song individual, double probabilityMultiplier) {
         MidiUtil mu = new MidiUtil();
+        double localProbability = getProbability()*probabilityMultiplier;
 
         int nbrOfTracks = individual.getScore().getPartArray().length;
         for (int track = 0; track < nbrOfTracks; track++) {
@@ -38,7 +39,7 @@ public class SimplifyMutator extends ISubMutator {
             for(int phrase = 0; phrase < nbrOfPhrases; phrase++){
                 int nbrOfNotes = individual.getScore().getPart(track).getPhrase(phrase).getNoteArray().length;
                 for(int note = 1; note < nbrOfNotes; note++){
-                    if(Math.random() < getProbability()){
+                    if(Math.random() < localProbability){
                         Note currentNote = individual.getScore().getPart(track).getPhrase(phrase).getNote(note);
                         if(!mu.isBlank(currentNote.getPitch())){
                             individual.getScore().getPart(track).getPhrase(phrase).getNote(note-1).setPitch(currentNote.getPitch());

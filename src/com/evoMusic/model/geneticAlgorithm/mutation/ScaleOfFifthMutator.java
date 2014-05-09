@@ -31,9 +31,11 @@ public class ScaleOfFifthMutator extends ISubMutator {
      * Mutate the note with noteIndex of song.
      */
     @Override
-    public void mutate(Song individual) {
+    public void mutate(Song individual, double probabilityMultiplier) {
         MidiUtil mu = new MidiUtil();
         Random ra = new Random();
+        double localProbability = getProbability()*probabilityMultiplier;
+        
         int nbrOfSteps = (int) (Math.random() * stepRange) + 1;
         int nbrOfTracks = individual.getNbrOfTracks();
         for (int track = 0; track < nbrOfTracks; track++) {
@@ -41,7 +43,7 @@ public class ScaleOfFifthMutator extends ISubMutator {
                     .getScore().getPart(track));
             int nbrOfNotes = noteList.size();
             for (int currentNoteId = 0; currentNoteId < nbrOfNotes; currentNoteId++) {
-                if (Math.random() < getProbability()) {
+                if (Math.random() < localProbability) {
                     List<Note> paralellList = noteList.get(currentNoteId);
                     int nbrOfParalellNotes = paralellList.size();
                     int selectedPhrase = ra.nextInt(nbrOfParalellNotes);

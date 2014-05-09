@@ -10,7 +10,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.evoMusic.model.Song;
-import com.evoMusic.model.geneticAlgorithm.rating.MelodyRestDensityRater;
+import com.evoMusic.model.geneticAlgorithm.rating.MelodyRestDensityVarietyRater;
 import com.evoMusic.model.geneticAlgorithm.rating.SubRater;
 import com.evoMusic.util.TrackTag;
 
@@ -21,7 +21,7 @@ public class MelodyRestDensityRaterTest {
     
     @BeforeClass
     public static void setUp(){
-        rater = new MelodyRestDensityRater(1);
+        rater = new MelodyRestDensityVarietyRater(1);
         
         Phrase phrase = new Phrase(0,0);
         Phrase phrase2 = new Phrase(0.0);

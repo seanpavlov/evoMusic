@@ -7,7 +7,7 @@ import org.junit.Test;
 
 import com.evoMusic.model.Song;
 import com.evoMusic.model.Translator;
-import com.evoMusic.model.geneticAlgorithm.mutation.RandomNoteMutator;
+import com.evoMusic.model.geneticAlgorithm.mutation.RandomNotePitchMutator;
 import com.evoMusic.util.MidiUtil;
 
 
@@ -38,8 +38,8 @@ public class RandomNoteMutatorTest {
     public void mutationsWithinRange(){
         boolean testIsOkay = true;
         int stepRange = 12;
-        RandomNoteMutator rnm = new RandomNoteMutator(1, stepRange);
-        rnm.mutate(mutatedSong);
+        RandomNotePitchMutator rnm = new RandomNotePitchMutator(1, stepRange);
+        rnm.mutate(mutatedSong, 1);
         int nbrOfTracks = originSong.getScore().getSize();
         int originPitch = 0;
         int mutatedPitch = 0;
