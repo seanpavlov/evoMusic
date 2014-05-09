@@ -9,6 +9,7 @@ import jUnit.database.MongoDatabaseTest;
 import jUnit.mutator.OctaveMutatorTest;
 import jUnit.mutator.RandomNoteMutatorTest;
 import jUnit.mutator.SimplifyMutatorTest;
+import jUnit.mutator.SwapSegmentMutatorTest;
 import jUnit.rater.BeatRaterTest;
 import jUnit.rater.ChordRepetitionRaterTest;
 import jUnit.rater.CrazyNoteOctaveRaterTest;
@@ -68,6 +69,7 @@ import org.junit.runners.Suite.SuiteClasses;
     RandomNoteMutatorTest.class,
     OctaveMutatorTest.class,
     SimplifyMutatorTest.class,
+    SwapSegmentMutatorTest.class,
     
     /*
      * Markov

@@ -1,5 +1,7 @@
 package com.evoMusic.util;
 
+import com.evoMusic.model.geneticAlgorithm.GeneticAlgorithm.Initiator;
+
 /**
  * 
  * GENERAL RULES OF USE --------------------- Naming is done in the same name a
@@ -31,13 +33,14 @@ public class Parameters {
     public int GA_POPULATION_SIZE = 30;
     public int GA_NBR_OF_ELITISM_SONGS = 1;
     public int GA_NBR_OF_CROSSOVER_SONGS = 3;
+    public static final Initiator initiator = Initiator.CROSSOVER;
 
     /*
      * MUTATION PARAMETERS
      */
     public double MUTATION_PROBABILITY = 0.7;
 
-    public double MUTATION_LOCAL_PROBABILITY_MULTIPLIER_DECREASE_RATIO = 0.02;
+    public double MUTATION_LOCAL_PROBABILITY_MULTIPLIER_DECREASE_RATIO = 0.002;
     public double MUTATION_LOCAL_PROBABILITY_MINIMUM_MULTIPLIER = 0.1;
 
     public double MUTATOR_RANDOM_NOTE_PITCH_PROBABILITY = 0.1;
@@ -53,8 +56,8 @@ public class Parameters {
 
     public double MUTATOR_SCALE_OF_FIFTH_PROBABILITY = 0;
     public int MUTATOR_SCALE_OF_FIFTH_RANGE = 3;
-
     public double MUTATOR_SIMPLIFY_PROBABILITY = 0.08;
+    public double MUTATOR_SWAP_SEGMENT_PROBABILITY = 0.05;
 
     /*
      * RATING PARAMETERS
