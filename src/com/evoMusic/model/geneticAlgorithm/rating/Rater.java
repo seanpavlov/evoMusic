@@ -1,6 +1,7 @@
 package com.evoMusic.model.geneticAlgorithm.rating;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import com.evoMusic.model.Song;
@@ -42,7 +43,7 @@ public class Rater {
                         + "' returned an" + " invalid rating of: "
                         + currentRating);
             } else {
-                totalDelta += Math.abs(subRater.getWeight() - currentRating);                
+                totalDelta += Math.abs(subRater.getWeight() - currentRating);
             }
         }
         return 1.0 - (totalDelta / subraters.size());
@@ -77,13 +78,20 @@ public class Rater {
      */
     public void initSubRaterWeights(List<Song> songs) {
         double rating;
-        for (SubRater subRater : subraters) {
+        SubRater currentRater;
+        Iterator<SubRater> iter = subraters.iterator();
+        while (iter.hasNext()) {
+            currentRater = iter.next();
             rating = 0;
             for (Song s : songs) {
-                rating += subRater.rate(s);
+                rating += currentRater.rate(s);
             }
             rating = rating / songs.size();
-            subRater.setWeight(rating);
+            if (rating == 0){
+                iter.remove();
+            } else {
+                currentRater.setWeight(rating);
+            }
         }
     }
 }

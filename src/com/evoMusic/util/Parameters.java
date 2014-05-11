@@ -38,7 +38,7 @@ public class Parameters {
     /*
      * MUTATION PARAMETERS
      */
-    public double MUTATION_PROBABILITY = 0.7;
+    public double MUTATION_PROBABILITY = 1;
 
     public double MUTATION_LOCAL_PROBABILITY_MULTIPLIER_DECREASE_RATIO = 0.002;
     public double MUTATION_LOCAL_PROBABILITY_MINIMUM_MULTIPLIER = 0.1;
@@ -83,7 +83,7 @@ public class Parameters {
     /*
      * CROSSOVER PARAMETERS
      */
-    public int CROSSOVER_NBR_OF_INTERSECTS = 3;
+    public int CROSSOVER_NBR_OF_INTERSECTS = 2;
 
     /*
      * RANDOM INITIATOR PARAMETER

@@ -94,6 +94,7 @@ public class GeneticAlgorithm {
         currentIteration = 0;
 
         List<Song> firstGeneration;
+        rater.initSubRaterWeights(inputSongs);
         
         switch (Parameters.initiator) {
         case CROSSOVER:
@@ -110,7 +111,6 @@ public class GeneticAlgorithm {
             break;
         }
         
-        rater.initSubRaterWeights(inputSongs);
         nextPopulation = ratePopulation(firstGeneration);
         selectElitismSongs(nextPopulation);
     }
