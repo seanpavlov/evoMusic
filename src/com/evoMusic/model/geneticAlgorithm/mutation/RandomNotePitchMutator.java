@@ -24,15 +24,9 @@ public class RandomNotePitchMutator extends ISubMutator {
         double sum = 0;
         double temp = 0;
         for (int i = 0; i < halfStepRange; i++) {
-            if (i % 2 == 0) {
-                temp = (halfStepRange - i);
-                probabilityList[i] = temp;
-                sum += temp;
-            } else {
-                temp = (halfStepRange - (i - 1));
-                probabilityList[i] = temp;
-                sum += temp;
-            }
+            temp = (halfStepRange - (i - (i % 2)));
+            probabilityList[i] = temp;
+            sum += temp;
         }
 
         for (int j = 0; j < halfStepRange; j++) {
@@ -67,7 +61,7 @@ public class RandomNotePitchMutator extends ISubMutator {
         int maxNotesDown;
 
         if (currentPitch + listSize > 127) {
-            maxNotesUp = (currentPitch + listSize) - 127;
+            maxNotesUp = 127 - currentPitch;
             for (int i = 0; i < maxNotesUp; i++) {
                 maxProb += probabilityList[i];
             }
@@ -77,7 +71,7 @@ public class RandomNotePitchMutator extends ISubMutator {
         }
         if (currentPitch - listSize < 0) {
             maxNotesDown = currentPitch;
-            for (int i = 0; i < maxNotesUp; i++) {
+            for (int i = 0; i < maxNotesDown; i++) {
                 maxProb += probabilityList[i];
             }
         } else {
@@ -90,16 +84,17 @@ public class RandomNotePitchMutator extends ISubMutator {
 
         for (int i = 0; i < maxNotesUp; i++) {
             currentRandom += probabilityList[i];
-            if (currentRandom > randomValue) {
+            if (randomValue < currentRandom) {
                 return i + 1;
             }
         }
         for (int i = 0; i < maxNotesDown; i++) {
             currentRandom += probabilityList[i];
-            if (currentRandom > randomValue) {
+            if (randomValue < currentRandom) {
                 return -(i + 1);
             }
         }
+        System.out.println("something went wrong in pitch mutator");
         return 0;
     }
 }

@@ -11,8 +11,30 @@ import com.evoMusic.model.Translator;
 import com.evoMusic.model.geneticAlgorithm.DrCross;
 import com.evoMusic.model.geneticAlgorithm.GeneticAlgorithm;
 import com.evoMusic.model.geneticAlgorithm.Individual;
-import com.evoMusic.model.geneticAlgorithm.mutation.*;
-import com.evoMusic.model.geneticAlgorithm.rating.*;
+import com.evoMusic.model.geneticAlgorithm.mutation.ISubMutator;
+import com.evoMusic.model.geneticAlgorithm.mutation.Mutator;
+import com.evoMusic.model.geneticAlgorithm.mutation.RandomNotePitchMutator;
+import com.evoMusic.model.geneticAlgorithm.mutation.ReverseBarNotesMutator;
+import com.evoMusic.model.geneticAlgorithm.mutation.RhythmValueMutator;
+import com.evoMusic.model.geneticAlgorithm.mutation.SwapSegmentMutator;
+import com.evoMusic.model.geneticAlgorithm.rating.BeatRepetitionRater;
+import com.evoMusic.model.geneticAlgorithm.rating.ChordRepetitionRater;
+import com.evoMusic.model.geneticAlgorithm.rating.CrazyNoteOctaveRater;
+import com.evoMusic.model.geneticAlgorithm.rating.MelodyDirectionRater;
+import com.evoMusic.model.geneticAlgorithm.rating.MelodyDirectionStabilityRater;
+import com.evoMusic.model.geneticAlgorithm.rating.MelodyNoteDensityVarietyRater;
+import com.evoMusic.model.geneticAlgorithm.rating.MelodyNoteSyncopationRater;
+import com.evoMusic.model.geneticAlgorithm.rating.MelodyPitchRangeRater;
+import com.evoMusic.model.geneticAlgorithm.rating.MelodyRepetionRater;
+import com.evoMusic.model.geneticAlgorithm.rating.MelodyRestDensityVarietyRater;
+import com.evoMusic.model.geneticAlgorithm.rating.NoSilenceRater;
+import com.evoMusic.model.geneticAlgorithm.rating.PitchVarietyRater;
+import com.evoMusic.model.geneticAlgorithm.rating.Rater;
+import com.evoMusic.model.geneticAlgorithm.rating.RepeatedPitchDensityRater;
+import com.evoMusic.model.geneticAlgorithm.rating.RhythmicVarietyRater;
+import com.evoMusic.model.geneticAlgorithm.rating.SegmentScaleRater;
+import com.evoMusic.model.geneticAlgorithm.rating.SubRater;
+import com.evoMusic.model.geneticAlgorithm.rating.ZipfsLawRater;
 import com.evoMusic.util.Parameters;
 import com.google.common.collect.Sets;
 
@@ -47,11 +69,12 @@ public class GenerateCommand extends AbstractCommand {
         allMut.add(new RhythmValueMutator(c.MUTATOR_RHYTHM_VALUE_PROBABILITY, c.MUTATOR_RHYTHM_VALUE_MOVING_RANGE));
         allMut.add(new ReverseBarNotesMutator(c.MUTATOR_REVERSE_PROBABILITY));
         allMut.add(new SwapSegmentMutator(c.MUTATOR_SWAP_SEGMENT_PROBABILITY));
-
-        DrCross crossover = new DrCross(c.CROSSOVER_NBR_OF_INTERSECTS);
         
+        DrCross crossover = new DrCross(c.CROSSOVER_NBR_OF_INTERSECTS);
+
         List<SubRater> subRaters = new LinkedList<SubRater>();        
-        subRaters.add(new ScaleWhizz(c.RATER_SCALE_WEIGHT));
+        subRaters.add(new SegmentScaleRater(c.RATER_SCALE_WEIGHT));
+//        subRaters.add(new ScaleWhizz(c.RATER_SCALE_WEIGHT));
         subRaters.add(new BeatRepetitionRater(c.RATER_BEAT_REPETITION_WEIGHT));
         subRaters.add(new MelodyRepetionRater(c.RATER_MELODY_REPETITION_WEIGHT));
         subRaters.add(new ChordRepetitionRater(c.RATER_CHORD_REPETITION_WEIGHT));

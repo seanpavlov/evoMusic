@@ -21,10 +21,10 @@ import com.evoMusic.util.TrackTag;
  */
 public class Song {
 
-    private final Set<String> userTags = new HashSet<String>();
+    private Set<String> userTags = new HashSet<String>();
 
     private List<Track> tracks = new LinkedList<>();
-    private final Score score;
+    private Score score;
     
     private ObjectId dbRef = new ObjectId();
 
@@ -39,7 +39,16 @@ public class Song {
         for (Part p : score.getPartArray()) {
             tracks.add(new Track(p));
         }
-        
+    }
+    
+    /**
+     * Creates a <i>shallow</i> copy of a song. use copy() for deep copy
+     * @param song the source for references
+     */
+    public Song(Song song) {
+        userTags = song.getUserTags();
+        tracks   = song.getTracks();
+        score    = song.getScore();
     }
     
     public Song copy() {
@@ -85,6 +94,21 @@ public class Song {
      */
     public Track getTrack(int index) {
         return tracks.get(index);
+    }
+
+    public Song copy(double from, double to) {
+        Score cpScore = score.copy(from, to);
+        Song cpSong = this.copy();
+        cpSong.setScore(cpScore);
+        return cpSong;
+    }
+    
+    /**
+     * Set the score for this song
+     * @param score new score
+     */
+    public void setScore(Score score) {
+        this.score = score;
     }
     
     /**
