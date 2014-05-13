@@ -63,7 +63,6 @@ public class BeatRepetitionRater extends SubRater{
             List<Double> values = new ArrayList<Double>();
             String valuesAsString = "";
             /**Add rhythm values to list and build valuesAsString variable*/        
-            int i = 0;
             for(Note n : phrase.getNoteArray()){              
                 if(!n.isRest()){
                     double rhythmValue = n.getRhythmValue();
@@ -265,8 +264,7 @@ public class BeatRepetitionRater extends SubRater{
                else if(values.size() > otherValues.size())
                    return 1;
                else
-                   return 0;
-                         
+                   return 0;                       
            }
        });
    }
