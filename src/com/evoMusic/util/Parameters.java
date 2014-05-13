@@ -30,10 +30,10 @@ public class Parameters {
      * next generation.
      * Number of crossover songs is the number of songs that will 
      */
-    public int GA_POPULATION_SIZE = 30;
-    public int GA_NBR_OF_ELITISM_SONGS = 1;
-    public int GA_NBR_OF_CROSSOVER_SONGS = 3;
-    public static final Initiator initiator = Initiator.CROSSOVER;
+    public int GA_POPULATION_SIZE = 10;
+    public int GA_NBR_OF_ELITISM_SONGS = 2;
+    public int GA_NBR_OF_CROSSOVER_SONGS = 4;
+    public static final Initiator initiator = Initiator.RANDOM;
 
     /*
      * MUTATION PARAMETERS

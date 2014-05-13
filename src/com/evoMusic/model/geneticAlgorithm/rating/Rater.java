@@ -37,6 +37,7 @@ public class Rater {
         double currentRating;
         for (SubRater subRater : subraters) {
             currentRating = subRater.rate(song);
+//            System.out.println(subRater + " : " + currentRating);
             if (currentRating > 1.0 || currentRating < 0.0) {
                 throw new NumberFormatException("rater: '"
                         + subRater.getClass().getSimpleName()
