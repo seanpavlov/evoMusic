@@ -16,10 +16,8 @@ import com.evoMusic.model.Translator;
 import com.evoMusic.model.geneticAlgorithm.blending.IntervalSong;
 import com.evoMusic.model.geneticAlgorithm.blending.IntervalTrack;
 import com.evoMusic.model.geneticAlgorithm.blending.MarkovSong;
-import com.evoMusic.model.geneticAlgorithm.blending.multiMarkov.MarkovSongStateMachine;
 import com.evoMusic.model.geneticAlgorithm.blending.multiMarkov.State;
 import com.evoMusic.model.geneticAlgorithm.blending.multiMarkov.StateSong;
-import com.evoMusic.model.geneticAlgorithm.blending.multiMarkov.StateTrack;
 import com.evoMusic.util.TrackTag;
 
 public class MarkovChainTest {
@@ -28,7 +26,6 @@ public class MarkovChainTest {
     private Song marioTheme;
     private List<Song> flutes;
     private Song moonlight;
-    private MarkovSong markov;
     private Song nyanCat;
     private Song zelda;
     private Song wilyStage;
@@ -71,10 +68,10 @@ public class MarkovChainTest {
     @Test
     public void test() {
         List<Song> songList = new ArrayList<Song>();
-        songList.add(zelda);
-        MarkovSongStateMachine markov = new MarkovSongStateMachine(2, songList);
-        
-        Translator.INSTANCE.play(markov.generateNew(50));
+//        songList.add(zelda);
+        StateSong ss = new StateSong(zelda);
+        Song newSong = ss.toSong();
+        Translator.INSTANCE.play(newSong);
     }
 
 }
