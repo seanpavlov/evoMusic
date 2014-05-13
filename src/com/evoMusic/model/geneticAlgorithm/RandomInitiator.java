@@ -1,18 +1,15 @@
 package com.evoMusic.model.geneticAlgorithm;
 
-import jUnit.SongTest;
-
 import java.util.Random;
-
-import com.evoMusic.model.Song;
-import com.evoMusic.model.Track;
-import com.evoMusic.util.TrackTag;
 
 import jm.music.data.Note;
 import jm.music.data.Part;
 import jm.music.data.Phrase;
-
 import jm.music.data.Score;
+
+import com.evoMusic.model.Song;
+import com.evoMusic.model.Track;
+import com.evoMusic.util.TrackTag;
 
 public class RandomInitiator {
 

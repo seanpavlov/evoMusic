@@ -1,12 +1,13 @@
 package jUnit;
 
+import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 import com.evoMusic.model.Song;
 import com.evoMusic.model.Translator;
@@ -35,7 +36,7 @@ import com.evoMusic.model.geneticAlgorithm.rating.RhythmicVarietyRater;
 import com.evoMusic.model.geneticAlgorithm.rating.ScaleWhizz;
 import com.evoMusic.model.geneticAlgorithm.rating.SubRater;
 import com.evoMusic.model.geneticAlgorithm.rating.ZipfsLawRater;
-import com.evoMusic.util.Parameters;
+import com.evoMusic.parameters.P;
 import com.evoMusic.util.TrackTag;
 
 public class GeneticAlgorithmTest {
@@ -62,10 +63,9 @@ public class GeneticAlgorithmTest {
         inputSongs.add(testSong1);
         inputSongs.add(testSong2);
         
-        Parameters c = Parameters.getInstance();
         List<ISubMutator> allMut = new ArrayList<ISubMutator>();
         allMut.add(new RandomNotePitchMutator(0.5, 6));
-        DrCross crossover = new DrCross(c.CROSSOVER_NBR_OF_INTERSECTS);
+        DrCross crossover = new DrCross(P.CROSSOVER_NBR_OF_INTERSECTS);
         
         List<SubRater> subRaters = new LinkedList<SubRater>();        
         subRaters.add(new MelodyRepetionRater(1));

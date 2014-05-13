@@ -7,13 +7,14 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+
 import static org.junit.Assert.*;
 
 import com.evoMusic.model.Song;
 import com.evoMusic.model.geneticAlgorithm.mutation.ISubMutator;
 import com.evoMusic.model.geneticAlgorithm.mutation.Mutator;
 import com.evoMusic.model.geneticAlgorithm.mutation.RandomNotePitchMutator;
-import com.evoMusic.util.Parameters;
+import com.evoMusic.parameters.P;
 
 public class MutatorTest {
 
@@ -35,8 +36,8 @@ public class MutatorTest {
     @Test
     public void minimumProbabilityMultiplierTest() {
         Mutator m = new Mutator(subMutators, 1);
-        Parameters.getInstance().MUTATION_LOCAL_PROBABILITY_MINIMUM_MULTIPLIER = 0.1;
-        Parameters.getInstance().MUTATION_LOCAL_PROBABILITY_MULTIPLIER_DECREASE_RATIO = 0.1;
+        P.MUTATION_LOCAL_PROBABILITY_MINIMUM_MULTIPLIER = 0.1;
+        P.MUTATION_LOCAL_PROBABILITY_MULTIPLIER_DECREASE_RATIO = 0.1;
         for (int i = 0; i < 10; i++) {
             m.updateProbabilityMultiplier();
         }
@@ -45,8 +46,8 @@ public class MutatorTest {
                         + "\nNew Probability: "
                         + m.getProbabilityMultiplier()
                         + "\nMinimum probability: "
-                        + Parameters.getInstance().MUTATION_LOCAL_PROBABILITY_MINIMUM_MULTIPLIER,
-                m.getProbabilityMultiplier() == Parameters.getInstance().MUTATION_LOCAL_PROBABILITY_MINIMUM_MULTIPLIER);
+                        + P.MUTATION_LOCAL_PROBABILITY_MINIMUM_MULTIPLIER,
+                m.getProbabilityMultiplier() == P.MUTATION_LOCAL_PROBABILITY_MINIMUM_MULTIPLIER);
     }
 
 }

@@ -5,6 +5,7 @@ import jm.music.data.Part;
 import jm.music.data.Phrase;
 
 import com.evoMusic.model.Song;
+import com.evoMusic.util.Helpers;
 
 public class RandomNotePitchMutator extends ISubMutator {
     private double[] probabilityList;
@@ -94,7 +95,7 @@ public class RandomNotePitchMutator extends ISubMutator {
                 return -(i + 1);
             }
         }
-        System.out.println("something went wrong in pitch mutator");
+        Helpers.LOGGER.warning("something went wrong in pitch mutator");
         return 0;
     }
 }

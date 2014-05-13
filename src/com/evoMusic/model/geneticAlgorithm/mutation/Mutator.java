@@ -3,7 +3,7 @@ package com.evoMusic.model.geneticAlgorithm.mutation;
 import java.util.List;
 
 import com.evoMusic.model.Song;
-import com.evoMusic.util.Parameters;
+import com.evoMusic.parameters.P;
 import com.evoMusic.util.Sort;
 
 public class Mutator {
@@ -53,9 +53,9 @@ public class Mutator {
      * 
      */
     public void updateProbabilityMultiplier() {
-        probabilityMultiplier -= Parameters.getInstance().MUTATION_LOCAL_PROBABILITY_MULTIPLIER_DECREASE_RATIO;
-        if (probabilityMultiplier < Parameters.getInstance().MUTATION_LOCAL_PROBABILITY_MINIMUM_MULTIPLIER) {
-            probabilityMultiplier = Parameters.getInstance().MUTATION_LOCAL_PROBABILITY_MINIMUM_MULTIPLIER;
+        probabilityMultiplier -= P.MUTATION_LOCAL_PROBABILITY_MULTIPLIER_DECREASE_RATIO;
+        if (probabilityMultiplier < P.MUTATION_LOCAL_PROBABILITY_MINIMUM_MULTIPLIER) {
+            probabilityMultiplier = P.MUTATION_LOCAL_PROBABILITY_MINIMUM_MULTIPLIER;
         }
     }
 
