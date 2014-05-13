@@ -83,8 +83,6 @@ public class ChordRepetitionRaterTest {
        part3.addPhraseList(phrases3);
        Score score3 = new Score(part3);
        testSong = new Song(score3);
-       testSong.addTagToTrack(0, TrackTag.CHORDS);
-       
     }
     
     @Test
@@ -117,8 +115,5 @@ public class ChordRepetitionRaterTest {
     public void shouldGetPerfectRating(){
         double rating = rater.rate(perfectSong);
         assertTrue("Should get rating 1.0", rating == 1.0);
-    }
-    
-    
-    
+    } 
 }

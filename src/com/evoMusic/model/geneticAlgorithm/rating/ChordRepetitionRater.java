@@ -3,8 +3,9 @@ package com.evoMusic.model.geneticAlgorithm.rating;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import jm.music.data.Note;
@@ -25,6 +26,7 @@ public class ChordRepetitionRater extends SubRater{
  
     @Override
     public double rate(Song song) {
+        long start = System.currentTimeMillis();
         double rating = 0;
         double count = 0;
         /**Rate every part tracked with CHORDS and return median rating value*/
@@ -32,6 +34,9 @@ public class ChordRepetitionRater extends SubRater{
             rating += this.ratePart(track.getPart());
             ++count;
         }  
+        long after = System.currentTimeMillis();
+        System.out.println("Time: " + (after - start));
+        
         if(count == 0)
             return 0;
         return (rating/count);
@@ -39,10 +44,12 @@ public class ChordRepetitionRater extends SubRater{
     
     public double ratePart(Part part){
         
+       
+        
         /**Sort every note in all the phrases in groups by their start time.
          * Saved in a ListMultimap with double (start time) as key and list
          * of Integer (pitch values) as value*/
-        ListMultimap<Double, Integer> notesPitches = ArrayListMultimap.create();
+        Map<Double, Chord> chords = new HashMap<Double, Chord>();
         for(Phrase phrase : part.getPhraseArray()){
             Note[] notes = phrase.getNoteArray();
             if(notes.length == 0)
@@ -53,24 +60,28 @@ public class ChordRepetitionRater extends SubRater{
                 if(notePitch == Note.REST)
                     continue;
                 currentPhraseLength += note.getRhythmValue();
-                notesPitches.put(currentPhraseLength, notePitch);
+                
+                Chord chord = chords.get(currentPhraseLength);
+                if(chord != null){
+                    chord.addNote(notePitch);
+                    chords.put(currentPhraseLength, chord);
+                }else{
+                    chord = new Chord();
+                    chord.addNote(notePitch);
+                    chords.put(currentPhraseLength, chord);
+                }
             }
-        }     
+        }    
         
         /**Build chord patterns as a string to be able to find and remove patterns later
-         * And for every key in the ListMultimap get pitch list and
-         * create and save a Chord object to find patterns for*/
+         * And add every chord into a chord list*/
         String valuesAsString = "";
         List<Chord> chordArray = new ArrayList<Chord>();
-        Set<Double> keys = notesPitches.keySet();
-        for(Double d : keys){
-            List<Integer> pitches = notesPitches.get(d);
-            for(Integer i : pitches){
-                valuesAsString = valuesAsString + i + " ";
-            }
-            valuesAsString = valuesAsString + " ";
-            chordArray.add(new Chord(pitches));
-        }    
+        for(Map.Entry<Double ,Chord> entry : chords.entrySet()) {
+            Chord chord = entry.getValue();
+            valuesAsString += chord.chordString + " ";
+            chordArray.add(chord);
+          }
         
         /**Save length of chord values as string before removal of patterns*/
         double before = (double)valuesAsString.replaceAll("\\s+","").length();
@@ -79,7 +90,6 @@ public class ChordRepetitionRater extends SubRater{
         
         /**Find every Chord pattern longer than minimum*/
         List<List<Chord>> foundChordPatterns = findChordPatterns(chordArray, minimum);
-        
         /**For every found chord pattern save it as string in map where key is 
          * number of occurrences in chord values as string * length of pattern
          * to be able to remove as much of the patterns from chord values as possible*/
@@ -87,8 +97,7 @@ public class ChordRepetitionRater extends SubRater{
         for(List<Chord> cList : foundChordPatterns){
             String nextChordPattern = "";
             for(Chord c : cList){
-                nextChordPattern = nextChordPattern + c.toString();
-                nextChordPattern = nextChordPattern + " ";
+                nextChordPattern = nextChordPattern + c.toString() + " ";
             }
             /**Save next pattern as string with key as number of occurrences * length of pattern */
             Integer occurrence = (this.numberOfOccurrences(nextChordPattern, valuesAsString) * nextChordPattern.length());
@@ -98,17 +107,19 @@ public class ChordRepetitionRater extends SubRater{
              * amount of % from chord as string value first*/
             ArrayList<Integer> intKeys = new ArrayList<Integer>(occurrences.keySet());
             Collections.sort(intKeys, Collections.reverseOrder());
-            for(Integer k : intKeys){
-                List<String> p = occurrences.get(k);
-                for(String sC : p){
-                    if(this.numberOfOccurrences(sC, valuesAsString) >= 2)
-                        valuesAsString = valuesAsString.replace(sC, "");
+            for(Integer key : intKeys){
+                List<String> patterns = occurrences.get(key);
+                for(String pattern : patterns){
+                    if(this.numberOfOccurrences(pattern, valuesAsString) >= 2)
+                        valuesAsString = valuesAsString.replace(pattern, "");
                 }
             }
-            
-            
-                
-        }        
+
+        } 
+        
+
+        
+
         /**Save length of string after removal of every pattern found*/
         double after = (double)valuesAsString.replaceAll("\\s+","").length();
         
@@ -117,7 +128,6 @@ public class ChordRepetitionRater extends SubRater{
 
     
     public List<List<Chord>> findChordPatterns(List<Chord> chords, int min){
-        
         /**Best result and suffix lists*/
         List<List<Chord>> bestResults = new ArrayList<List<Chord>>();
         List<List<Chord>> suffixList = new ArrayList<List<Chord>>();
@@ -187,51 +197,29 @@ public class ChordRepetitionRater extends SubRater{
         return bestResults;      
     }
     
-    /**Private inner class to represent a list of pitch values as a Chord*/
-    private class Chord{
+    /**Private inner class to represent a Chord with list of 
+     * pitch values and string containing these pitch values*/
+    private class Chord implements Comparable<Chord>{
         List<Integer> notes;
+        String chordString;
         
-        public Chord(List<Integer> notes){
-            this.notes = notes;
+        public Chord(){
+            notes = new ArrayList<Integer>();
+            chordString = "";
         }
         
-        /**Method compares this chord object with another
-         * by first comparing pitch values, returns 1 if any 
-         * pitch value in this chord is larger, otherwise -1
-         * if every value is the same it returns 1 if this chord object 
-         * has more pitch values otherwise -1 if other chord has more, and 
-         * eventually it return 0 if both chord objects is considered equal*/
-        public int lessThan(Chord chord){
-            int minSize =  Math.min(this.notes.size(), chord.notes.size());
-            for(int i = 0; i < minSize; i++){
-                Integer first = chord.notes.get(i);
-                Integer second = this.notes.get(i);
-                if(first < second)
-                    return 1;
-                else if(first > second)
-                    return -1;
-            }
-            if(chord.notes.size() < this.notes.size())
-                return 1;
-            else if(chord.notes.size() > this.notes.size())
-                return -1;
-            return 0;
+        public void addNote(Integer notePitch){
+            notes.add(notePitch);
+            chordString += notePitch + " ";
         }
         
-        /**equals method checks every pitch value to 
-         * determine if they are the same*/
         @Override 
-        public boolean equals(Object o){
-            if(!(o instanceof Chord))
+        public boolean equals(Object other){
+            if(!(other instanceof Chord)){
                 return false;
-            Chord c = (Chord)o;
-            if(!(c.notes.size() == notes.size()))
-                return false;
-            for(int i = 0; i < notes.size(); i++){
-                if(!(c.notes.get(i).equals(notes.get(i))))
-                    return false;
             }
-            return true;
+            Chord otherChord = (Chord)other;
+            return this.notes.equals(otherChord.notes);
         }
         
         @Override
@@ -241,6 +229,27 @@ public class ChordRepetitionRater extends SubRater{
                 toString = toString + pitch + " ";
             }
             return toString;
+        }
+
+        @Override
+        public int compareTo(Chord other) {
+            int length = this.notes.size();
+            if(length == other.notes.size()){
+                for(int i = 0; i < length; i++){
+                    Integer pitch = this.notes.get(i);
+                    Integer otherPitch = other.notes.get(i);
+                    if(pitch > otherPitch){
+                        return 1;
+                    }else if(pitch < otherPitch){
+                        return -1;
+                    }
+                }
+                return 0;
+            }else if(length > other.notes.size()){
+                return 1;
+            }else{
+                return -1;
+            }
         }
     }
     
@@ -253,25 +262,27 @@ public class ChordRepetitionRater extends SubRater{
     public void sortByValues(List<List<Chord>> list){
         Collections.sort(list,new Comparator<List<Chord>>() {
             public int compare(List<Chord> values, List<Chord> otherValues) {
-                int minSize =  Math.min(values.size(), otherValues.size());
+                int valueLength = values.size();
+                int otherValueLenght = otherValues.size();               
+                int minSize =  Math.min(valueLength, otherValueLenght);
                 for(int i = 0; i < minSize; i++){
-                    Chord first = values.get(i);
-                    Chord second = otherValues.get(i);
-                    int r = first.lessThan(second);
-                    if(r != 0)
-                        return r;
+                    Chord value = values.get(i);
+                    Chord otherValue = otherValues.get(i);
+                    int compare = value.compareTo(otherValue);
+                    if(compare != 0){
+                        return compare;
+                    }
                 }
-                if(values.size() < otherValues.size())
+                if(valueLength < otherValueLenght){
                     return -1;
-                else if(values.size() > otherValues.size())
+                }else if(valueLength > otherValueLenght){
                     return 1;
-                else
-                    return 0;
+                }
+                return 0;
             }
         });
     }
-    
-    
+      
     /** Finds longest common sequence for two lists containing Double values
      * @param first First list of Chord objects to compare with
      * @param second Second list of Chord objects to compare with
@@ -292,7 +303,6 @@ public class ChordRepetitionRater extends SubRater{
         }
         return longestCommon;
     }
-    
     
     /**
      * Sort list of sublists containing Chord objects
