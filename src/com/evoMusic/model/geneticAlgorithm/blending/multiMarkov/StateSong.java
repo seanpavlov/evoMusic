@@ -29,13 +29,14 @@ public class StateSong {
     private List<TempState<Double>> rhythmValueStates;
     private List<TempState<Double>> durationStates;
     private List<TempState<Double>> timeDeltaStates;
+    private List<TempState<Integer>> dynamicStates;
 
     /**
-     * Creates a new interval track from a given track, maintaining its
+     * Creates a new state song from a given song, maintaining its
      * properties.
      * 
-     * @param track
-     *            The track from which this instance will be based on.
+     * @param song
+     *            The song from which this instance will be based on.
      */
     public StateSong(Song song) {
         this.tempo = song.getTempo();
@@ -48,6 +49,7 @@ public class StateSong {
         this.rhythmValueStates = new ArrayList<TempState<Double>>();
         this.durationStates = new ArrayList<TempState<Double>>();
         this.timeDeltaStates = new ArrayList<TempState<Double>>();
+        this.dynamicStates = new ArrayList<TempState<Integer>>();
 
         // sort by start time and group notes at the same start time.
         Part currentPart;
@@ -109,6 +111,9 @@ public class StateSong {
             timeDeltaStates.add(new TempState<Double>(sortNote.startTime
                     - previousStartTime, currentTrack));
 
+            dynamicStates.add(new TempState<Integer>(
+                    sortNote.note.getDynamic(), currentTrack));
+
             previousStartTime = sortNote.startTime;
             previousPitches[currentTrack] = formatPitch(sortNote.note
                     .getPitch());
@@ -131,7 +136,8 @@ public class StateSong {
             List<TempState<Integer>> intervalStates,
             List<TempState<Double>> rhythmValueStates,
             List<TempState<Double>> durationStates,
-            List<TempState<Double>> timeDeltaStates) {
+            List<TempState<Double>> timeDeltaStates,
+            List<TempState<Integer>> dynamicStates) {
 
         this.tempo = tempo;
         this.firstNotes = firstNotes;
@@ -140,6 +146,7 @@ public class StateSong {
         this.rhythmValueStates = rhythmValueStates;
         this.durationStates = durationStates;
         this.timeDeltaStates = timeDeltaStates;
+        this.dynamicStates = dynamicStates;
     }
 
     /**
@@ -176,13 +183,17 @@ public class StateSong {
                         stateIndex).getValue());
             }
             newNote.setDuration(durationStates.get(stateIndex).getValue());
+            newNote.setDynamic(dynamicStates.get(stateIndex).getValue());
             currentPart.add(new Phrase(newNote, currentTime));
         }
         Score score = new Score(this.tempo);
         Song song = new Song(score);
+        TrackProperties currentTP;
         for (int trackIndex = 0; trackIndex < numberOfTracks; trackIndex++) {
-            song.addTrack(new Track(parts.get(trackIndex), trackProperties
-                    .get(trackIndex).tag));
+            currentTP = trackProperties.get(trackIndex);
+            parts.get(trackIndex).setChannel(currentTP.channel);
+            parts.get(trackIndex).setInstrument(currentTP.instrument);
+            song.addTrack(new Track(parts.get(trackIndex), currentTP.tag));
         }
         return song;
     }
@@ -195,6 +206,10 @@ public class StateSong {
     public int[] getFirstNotes() {
         return firstNotes;
     }
+    
+    public int numberOfTracks() {
+        return numberOfTracks;
+    }
 
     /**
      * Gets the track properties of this song.
@@ -205,15 +220,14 @@ public class StateSong {
         return trackProperties;
     }
 
-//    /**
-//     * Gets the list of states of this track.
-//     * 
-//     * @return The list of states of this track.
-//     */
-//    public List<State> getStates() {
-//        return new ArrayList<State>(this.stateList);
-//    }
-
+    // /**
+    // * Gets the list of states of this track.
+    // *
+    // * @return The list of states of this track.
+    // */
+    // public List<State> getStates() {
+    // return new ArrayList<State>(this.stateList);
+    // }
 
     private class SortNote implements Comparable<SortNote> {
 
