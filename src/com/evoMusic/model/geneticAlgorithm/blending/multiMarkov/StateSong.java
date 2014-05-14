@@ -210,6 +210,10 @@ public class StateSong {
     public int numberOfTracks() {
         return numberOfTracks;
     }
+    
+    public double getTempo() {
+        return this.tempo;
+    }
 
     /**
      * Gets the track properties of this song.
