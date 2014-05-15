@@ -224,15 +224,26 @@ public class StateSong {
         return trackProperties;
     }
 
-    // /**
-    // * Gets the list of states of this track.
-    // *
-    // * @return The list of states of this track.
-    // */
-    // public List<State> getStates() {
-    // return new ArrayList<State>(this.stateList);
-    // }
-
+    public List<TempState<Integer>> getIntervals() {
+        return this.intervalStates;
+    }
+    
+    public List<TempState<Double>> getRhythmValues() {
+        return this.rhythmValueStates;
+    }
+    
+    public List<TempState<Double>> getDurations() {
+        return this.durationStates;
+    }
+    
+    public List<TempState<Integer>> getDynamics() {
+        return this.dynamicStates;
+    }
+    
+    public List<TempState<Double>> getTimeDeltas() {
+        return this.timeDeltaStates;
+    }
+    
     private class SortNote implements Comparable<SortNote> {
 
         public static final double TIME_PRECISION = 0.000001;
@@ -262,15 +273,16 @@ public class StateSong {
 
     public class TrackProperties {
 
-        protected int firstNote;
         protected int instrument;
         protected int channel;
         protected TrackTag tag;
+        protected boolean isEmpty;
 
         public TrackProperties(Track track) {
             this.instrument = track.getPart().getInstrument();
             this.channel = track.getPart().getChannel();
             this.tag = track.getTag();
+            this.isEmpty = track.getPart().size() == 0;
         }
     }
 }
