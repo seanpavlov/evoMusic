@@ -37,6 +37,7 @@ public class MarkovStateMachine {
     private int numberOfTracks;
     private int[] firstNotes;
     private List<TrackProperties> trackProperties;
+    private double tempo;
 
     /**
      * Creates a markov chain containing a probability matrix for each property
@@ -64,30 +65,39 @@ public class MarkovStateMachine {
         }
         numberOfTracks = intervalledSongs.get(0).numberOfTracks();
 //        markovTracks = new ArrayList<MarkovTrack>(numberOfTracks);
+        initTrackProperties();
         initProbabilityMatrices();
     }
     
     public void initTrackProperties() {
-        IntervalSong newSong = new IntervalSong(getRandomTempo());
+        // init tempo.
+        this.tempo = getRandomTempo();
 
         // For each track.
         int numberOfSongs = intervalledSongs.size();
         StateSong randomSong = null;
+        this.firstNotes = new int[numberOfTracks];
+        this.trackProperties = new ArrayList<TrackProperties>();
+        int firstNote;
         boolean chosenTrackIsEmpty;
         for (int trackIndex = 0; trackIndex < numberOfTracks; trackIndex++) {
-            // make sure an empty track doesn't give their instruments etc.
+            // make sure an empty track doesn't give their track properties etc.
             chosenTrackIsEmpty = true;
             while (chosenTrackIsEmpty) {
                 randomSong = intervalledSongs.get(
                         (int) (rand.nextDouble() * numberOfSongs));
-                chosenTrackIsEmpty = randomTrack.getIntervals().length == 0;
+                chosenTrackIsEmpty = randomSong.getTrackProperties().get(trackIndex).isEmpty;
             }
             
-            newSong.addTrack(markovTracks.get(trackIndex).generateNew(
-                    songDuration, randomTrack.getInstrument(),
-                    randomTrack.getChannel(), randomTrack.getFirstNote(), randomTrack.getTag()));
+            trackProperties.add(randomSong.getTrackProperties().get(trackIndex));
+            firstNote = randomSong.getFirstNotes()[trackIndex];
+            
+            // if note is rest, set it to some default value.
+            if (firstNote == Note.REST || firstNote == StateSong.MODULATED_REST) {
+                firstNote = 60;
+            }
+            this.firstNotes[trackIndex] = firstNote;
         }
-        // TODO code here. Init track properties list and first notes.
     }
 
     /**
@@ -132,8 +142,9 @@ public class MarkovStateMachine {
         int[] newFirstNotes = Arrays.copyOf(firstNotes, numberOfTracks);
         
         double currentLength = 0.0;
-        boolean[] isResting = new boolean[numberOfTracks];
-        Arrays.fill(isResting, false);
+        Boolean[] isResting = new Boolean[numberOfTracks];
+        // Initiates with null since we don't know whether they are resting yet
+        Arrays.fill(isResting, null);
         Vector<TempState<Integer>> currentSequence;
         TempState<Integer> nextInterval;
         int currentTrack;
@@ -161,32 +172,49 @@ public class MarkovStateMachine {
                 currentTrack = nextInterval.trackIndex();
                 // Make sure the first interval isn't a restback (high
                 // positive number)
-                if (currentLength == 0.0 && nextInterval.getValue() < -127) {
-                    isResting[currentTrack] = true;
-                    newFirstNotes[currentTrack] = Note.REST;
+                if (isResting[currentTrack] == null) {
+                    if (nextInterval.getValue() > Note.MAX_PITCH) {
+                        isResting[currentTrack] = false;
+                        newFirstNotes[currentTrack] = StateSong.MODULATED_REST;                        
+                    } else if (nextInterval.getValue() < -Note.MAX_PITCH) {
+                        isResting[currentTrack] = true;
+                    }
                 } else {
-                    // Make sure no dubbel rest/restback is added.
+                    // Make sure no double rest/restback is added.
                     while (true) {
-                        if (Math.abs(nextInterval.getValue()) < 127) {
+                        if (Math.abs(nextInterval.getValue()) < Note.MAX_PITCH) {
                             break;
                         }
-                        if (isResting[currentTrack] && nextInterval.getValue() > 127) {
+                        if (isResting[currentTrack] && nextInterval.getValue() > Note.MAX_PITCH) {
                             isResting[currentTrack] = false;
                             break;
                         }
-                        if ((!isResting[currentTrack]) && nextInterval.getValue() < -127) {
+                        if ((!isResting[currentTrack]) && nextInterval.getValue() < -Note.MAX_PITCH) {
                             isResting[currentTrack] = true;
                             break;
                         }
                         nextInterval = intervalMatrix.getNext(currentSequence);
                     }
                 }
-
+                // Adjusting the sequence for the other properties.
+                currentSequence.add(nextInterval);
+                int numberOfElementsNotToAdd = currentSequence.size() - this.numberOfLookbacks;
+                if (numberOfElementsNotToAdd > 0) {
+                    Vector<TempState<Integer>> tempVec = new Vector<TempState<Integer>>();
+                    for (int i = numberOfElementsNotToAdd; i < currentSequence.size(); i++) {
+                        tempVec.add(currentSequence.get(i));
+                    }
+                    currentSequence = tempVec;
+                }
+                System.out.println(currentSequence.size());
+//                System.out.println(nextInterval.getValue() + " and track is " + nextInterval.trackIndex());
                 nextRhythmValue = rhythmValueMatrix.getNext(currentSequence);
                 nextDuration = durationMatrix.getNext(currentSequence);
                 nextDynamic = dynamicMatrix.getNext(currentSequence);
                 nextTimeDelta = timeDeltaMatrix.getNext(currentSequence);
-                
+                if(nextTimeDelta == null) {
+                    System.out.println("got null");
+                }                    
                 currentLength += nextTimeDelta.getValue();
                 
                 currentIntervals.add(nextInterval);
@@ -203,6 +231,7 @@ public class MarkovStateMachine {
         }
 
         // TODO Make sure song is exact right length!!!
+        // Remember that one may keep adding even at end of song if they result in a chord.
         
         // Adding the last rythmValues and durations.
 //        double durationLeft = songDuration - trackLength;
@@ -239,16 +268,6 @@ public class MarkovStateMachine {
             tempo += song.getTempo();
         }
         return tempo / intervalledSongs.size();
-    }
-
-    /**
-     * Initiates the probability matrices in this markov track. Call this method
-     * sparingly, since it is relatively recource heavy.
-     */
-    public void initProbabilities() {
-        intervalMatrix.initProbabilies();
-        rhythmValueMatrix.initProbabilies();
-        durationMatrix.initProbabilies();
     }
 
     /**
@@ -381,13 +400,14 @@ public class MarkovStateMachine {
                 sequence = new Vector<TempState<Integer>>();
                 for (int i = numberOfLookbacks; i > 0; i--) {
                     sequence.add(currentIntervals.get(currentIntervalsLength - i));
+//                }
+                    rhythmValueMatrix.addCount(sequence,
+                            currentRythmValues.get(currentRythmValues.size() - i));
+                    durationMatrix.addCount(sequence,
+                            currentDurations.get(currentDurations.size() - i));
+                    dynamicMatrix.addCount(sequence, currentDynamics.get(currentDynamics.size() - i));
+                    timeDeltaMatrix.addCount(sequence, currentTimeDeltas.get(currentTimeDeltas.size() - i));
                 }
-                rhythmValueMatrix.addCount(sequence,
-                        currentRythmValues.get(currentRythmValues.size() - 1));
-                durationMatrix.addCount(sequence,
-                        currentDurations.get(currentDurations.size() - 1));
-                dynamicMatrix.addCount(sequence, currentDynamics.get(currentDynamics.size() - 1));
-                timeDeltaMatrix.addCount(sequence, currentTimeDeltas.get(currentTimeDeltas.size() - 1));
         }
         intervalMatrix.initProbabilies();
         rhythmValueMatrix.initProbabilies();

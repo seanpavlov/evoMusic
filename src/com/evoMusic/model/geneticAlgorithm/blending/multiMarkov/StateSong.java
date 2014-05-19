@@ -147,6 +147,7 @@ public class StateSong {
         this.durationStates = durationStates;
         this.timeDeltaStates = timeDeltaStates;
         this.dynamicStates = dynamicStates;
+        this.trackProperties = trackProperties;
     }
 
     /**
