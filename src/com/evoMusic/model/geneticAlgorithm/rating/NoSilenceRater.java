@@ -50,7 +50,7 @@ public class NoSilenceRater extends SubRater {
                     startTime =
                             thisPhrase.getStartTime() + 
                             thisPhrase.getNoteStartTime(thisPhrase.getNoteList().indexOf(n));
-                    
+                    System.out.println(startTime);
                     allRest = false;
                     if (n.getDuration() > tmpDuration){
                         tmpDuration = n.getDuration();
