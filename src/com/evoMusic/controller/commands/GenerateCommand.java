@@ -82,13 +82,12 @@ public class GenerateCommand extends AbstractCommand {
         subRaters.add(new MelodyDirectionRater(P.RATER_PITCH_DIRECTION_WEIGHT));
         subRaters.add(new MelodyNoteDensityVarietyRater(P.RATER_MELODY_NOTE_DENSITY_WEIGHT));
         subRaters.add(new RhythmicVarietyRater(P.RATER_RHYTHMIC_VARIETY_WEIGHT));
-        subRaters.add(new NoSilenceRater(P.RATER_NO_SILENCE_WEIGHT));
+//        subRaters.add(new NoSilenceRater(P.RATER_NO_SILENCE_WEIGHT));
         subRaters.add(new MelodyPitchRangeRater(P.RATER_MELODY_PITCH_RANGE_WEIGHT));
         subRaters.add(new RepeatedPitchDensityRater(P.RATER_REPEATED_PITCH_DENSITY_WEIGTH));
         subRaters.add(new MelodyRestDensityVarietyRater(P.RATER_MELODY_REST_DENSITY_WEIGHT));
         subRaters.add(new ZipfsLawRater(P.RATER_ZIPFS_LAW_WEIGHT));
         subRaters.add(new MelodyNoteSyncopationRater(P.RATER_MELODY_NOTE_SUSTAIN_WEIGHT));
-//        subRaters.add(new RandomRater(1));
         
         final GeneticAlgorithm ga = new GeneticAlgorithm(
                         selectedSongs,
