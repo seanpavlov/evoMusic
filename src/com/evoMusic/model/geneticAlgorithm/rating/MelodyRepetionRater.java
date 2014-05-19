@@ -65,9 +65,11 @@ public class MelodyRepetionRater extends SubRater {
         
         for(Phrase phrase : phrases){
             for(Note n : phrase.getNoteArray()){
-                allNotes.add(n);
-                values.add(n.getPitch() % 12);
-                valuesAsString += n.getPitch() % 12;
+                if (!n.isRest()){
+                    allNotes.add(n);
+                    values.add(n.getPitch() % 12);
+                    valuesAsString += n.getPitch() % 12;
+                }
             }
         }
         

@@ -26,7 +26,6 @@ public class ChordRepetitionRater extends SubRater{
  
     @Override
     public double rate(Song song) {
-        long start = System.currentTimeMillis();
         double rating = 0;
         double count = 0;
         /**Rate every part tracked with CHORDS and return median rating value*/
@@ -34,8 +33,6 @@ public class ChordRepetitionRater extends SubRater{
             rating += this.ratePart(track.getPart());
             ++count;
         }  
-        long after = System.currentTimeMillis();
-        System.out.println("Time: " + (after - start));
         
         if(count == 0)
             return 0;
@@ -43,9 +40,6 @@ public class ChordRepetitionRater extends SubRater{
     }
     
     public double ratePart(Part part){
-        
-       
-        
         /**Sort every note in all the phrases in groups by their start time.
          * Saved in a ListMultimap with double (start time) as key and list
          * of Integer (pitch values) as value*/
