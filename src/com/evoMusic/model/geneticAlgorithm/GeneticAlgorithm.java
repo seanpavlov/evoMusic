@@ -2,13 +2,15 @@ package com.evoMusic.model.geneticAlgorithm;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import com.evoMusic.model.Song;
 import com.evoMusic.model.geneticAlgorithm.blending.MarkovSong;
 import com.evoMusic.model.geneticAlgorithm.mutation.Mutator;
 import com.evoMusic.model.geneticAlgorithm.rating.Rater;
 import com.evoMusic.model.geneticAlgorithm.selection.RouletteWheelSelection;
-import com.evoMusic.util.Parameters;
+import com.evoMusic.parameters.P;
+import com.evoMusic.util.Helpers;
 
 /**
  * The algorithm that provides the iteration of a genetic algorithm. Initiate
@@ -27,11 +29,11 @@ public class GeneticAlgorithm {
     private Rater rater;
     private MarkovSong markovSong;
     private Individual bestIndividual;
-    private Parameters c = Parameters.getInstance();
+    private Logger log = Helpers.LOGGER;
     double ratingThreshold, songDuration;
     int populationSize, nbrOfElitismSongs, nbrOfCrossoverSongs,
             nbrOfMarkovLookbacks, currentIteration, nbrOfGenerations;
-    private RandomInitiator randomInitiator = new RandomInitiator(c.RANDOM_INITIATOR_MAX_LENGTH);
+    private RandomInitiator randomInitiator = new RandomInitiator(P.RANDOM_INITIATOR_MAX_LENGTH);
     /**
      * Initiate the genetic algorithm with the required objects.
      * 
@@ -58,10 +60,7 @@ public class GeneticAlgorithm {
             DrCross crossover, Rater rater, int populationSize,
             int nbrOfElitismSongs, int nbrOfCrossoverSongs, int nbrOfMarkovLookbacks,
             double songDuration) {
-        if(Parameters.getInstance().IN_DEBUG_MODE){
-            System.out.print("DEBUG:\t");
-            System.out.println("GA - Start constructor");
-        }
+        log.warning("GA - Start constructor");
         this.inputSongs = inputSongs;
         this.crossover = crossover;
         this.mutator = mutator;
@@ -73,10 +72,7 @@ public class GeneticAlgorithm {
         nextPopulation = new ArrayList<Individual>();
         bestIndividual = new Individual(null, 0);
         currentIteration = 0;
-        if(Parameters.getInstance().IN_DEBUG_MODE){
-            System.out.print("DEBUG:\t");
-            System.out.println("GA - End constructor");
-        }
+        log.warning("GA - End constructor");
     }
 
     /**
@@ -84,10 +80,7 @@ public class GeneticAlgorithm {
      */
     private void prepareToGenerate() {
         
-        if(Parameters.getInstance().IN_DEBUG_MODE){
-            System.out.print("DEBUG:\t");
-            System.out.println("GA - Start generate");
-        }
+        log.warning("GA - Start generate");
         nextPopulation = new ArrayList<Individual>();
         elitismSongs = new ArrayList<Individual>();
         bestIndividual = new Individual(null, 0);
@@ -96,7 +89,7 @@ public class GeneticAlgorithm {
         List<Song> firstGeneration;
         rater.initSubRaterWeights(inputSongs);
         
-        switch (Parameters.initiator) {
+        switch (P.initiator) {
         case CROSSOVER:
             firstGeneration = generateFirstCrossoverGeneration();
             break;
@@ -180,71 +173,41 @@ public class GeneticAlgorithm {
     }
 
     private List<Song> generateFirstCrossoverGeneration(){
-        if(Parameters.getInstance().IN_DEBUG_MODE){
-            System.out.print("DEBUG:\t");
-            System.out.println("GA - Generate first generation");
-        }
+        log.warning("GA - Generate first generation");
         List<Song> population = new ArrayList<Song>();
         for (int i = 0; i < populationSize; i++) {
-            if(Parameters.getInstance().IN_DEBUG_MODE){
-                System.out.print("DEBUG:\t");
-                System.out.println("Markov - Generate individual: " + i);
-            }
+            log.warning("Markov - Generate individual: " + i);
             crossover.setParents(inputSongs);
             population.add(crossover.crossIndividuals().get(0));
         }
-        if(Parameters.getInstance().IN_DEBUG_MODE){
-            System.out.print("DEBUG:\t");
-            System.out.println("GA - Generated first generation");
-        }
+        log.warning("GA - Generated first generation");
         return population;
     }
     
     private List<Song> generateFirstMarkovGeneration() {
-        if(Parameters.getInstance().IN_DEBUG_MODE){
-            System.out.print("DEBUG:\t");
-            System.out.println("GA - Generate first generation");
-        }
+        log.warning("GA - Generate first generation");
         List<Song> population = new ArrayList<Song>();
         for (int i = 0; i < populationSize; i++) {
-            if(Parameters.getInstance().IN_DEBUG_MODE){
-                System.out.print("DEBUG:\t");
-                System.out.println("Markov - Generate individual: " + i);
-            }
+            log.warning("Markov - Generate individual: " + i);
             population.add(markovSong.generateNew(songDuration));
         }
-        if(Parameters.getInstance().IN_DEBUG_MODE){
-            System.out.print("DEBUG:\t");
-            System.out.println("GA - Generated first generation");
-        }
+        log.warning("GA - Generated first generation");
         return population;
     }
     
     private List<Song> generateFirstRandomGeneration() {
-        if(Parameters.getInstance().IN_DEBUG_MODE){
-            System.out.print("DEBUG:\t");
-            System.out.println("GA - Generate first generation");
-        }
+        log.warning("GA - Generate first generation");
         List<Song> population = new ArrayList<Song>();
         for (int i = 0; i < populationSize; i++) {
-            if(Parameters.getInstance().IN_DEBUG_MODE){
-                System.out.print("DEBUG:\t");
-                System.out.println("Markov - Generate individual: " + i);
-            }
+            log.warning("Markov - Generate individual: " + i);
             population.add(randomInitiator.generateMelody());
         }
-        if(Parameters.getInstance().IN_DEBUG_MODE){
-            System.out.print("DEBUG:\t");
-            System.out.println("GA - Generated first generation");
-        }
+        log.warning("GA - Generated first generation");
         return population;
     }
 
     private void generateCurrentGeneration() {
-        if(Parameters.getInstance().IN_DEBUG_MODE){
-            System.out.print("DEBUG:\t");
-            System.out.println("GA - Start generate generation: " + getCurrentIteration());
-        }
+        log.warning("GA - Start generate generation: " + getCurrentIteration());
         currentIteration++;
         List<Individual> currentPopulation = nextPopulation;
         for (int i = 0; i < nbrOfElitismSongs; i++) {
@@ -257,16 +220,10 @@ public class GeneticAlgorithm {
          * selected individuals. Mutate each individual in list. Rate each
          * individual.
          */
-        if(Parameters.getInstance().IN_DEBUG_MODE){
-            System.out.print("DEBUG:\t");
-            System.out.println("GA - Selection for generation: " + getCurrentIteration());
-        }
+        log.warning("GA - Selection for generation: " + getCurrentIteration());
         List<Song> unratedPopulation = new ArrayList<Song>();
         List<Song> tempList = new ArrayList<Song>();
-        if(Parameters.getInstance().IN_DEBUG_MODE){
-            System.out.print("DEBUG:\t");
-            System.out.println("Selection - Select for generation: " + getCurrentIteration());
-        }
+        log.warning("Selection - Select for generation: " + getCurrentIteration());
         rwSelect = new RouletteWheelSelection(nextPopulation);
         for (int i = 0; i < populationSize; i++) {
             if (tempList.size() == 0) {
@@ -274,29 +231,17 @@ public class GeneticAlgorithm {
                     tempList.add(nextPopulation.get(rwSelect.select())
                             .getSong());
                 }
-                if(Parameters.getInstance().IN_DEBUG_MODE){
-                    System.out.print("DEBUG:\t");
-                    System.out.println("Crossover - Generation: " + getCurrentIteration() + " Individual: " + i);
-                }
+                log.warning("Crossover - Generation: " + getCurrentIteration() + " Individual: " + i);
                 crossover.setParents(tempList);
                 tempList = crossover.crossIndividuals();
             }
-            if(Parameters.getInstance().IN_DEBUG_MODE){
-                System.out.print("DEBUG:\t");
-                System.out.println("Mutation - Generation: " + getCurrentIteration() + " Individual: " + i);
-            }
+            log.warning("Mutation - Generation: " + getCurrentIteration() + " Individual: " + i);
             unratedPopulation.add(tempList.remove(0));
             mutator.mutate(unratedPopulation.get(i));
         }
-        if(Parameters.getInstance().IN_DEBUG_MODE){
-            System.out.print("DEBUG:\t");
-            System.out.println("Rate - Generation: " + getCurrentIteration());
-        }
+        log.warning("Rate - Generation: " + getCurrentIteration());
         nextPopulation = ratePopulation(unratedPopulation);
-        if(Parameters.getInstance().IN_DEBUG_MODE){
-            System.out.print("DEBUG:\t");
-            System.out.println("Elitism - Generation: " + getCurrentIteration());
-        }
+        log.warning("Elitism - Generation: " + getCurrentIteration());
         selectElitismSongs(nextPopulation);
         mutator.updateProbabilityMultiplier();
     }

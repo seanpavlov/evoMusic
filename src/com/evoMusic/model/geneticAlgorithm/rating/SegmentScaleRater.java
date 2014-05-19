@@ -1,6 +1,7 @@
 package com.evoMusic.model.geneticAlgorithm.rating;
 
 import com.evoMusic.model.Song;
+import com.evoMusic.util.Helpers;
 
 /**
  * Uses ScaleWhizz to rate just a segment of a song. For songs 
@@ -67,8 +68,8 @@ public class SegmentScaleRater extends SubRater {
             sumK += maxWindowSize/windowSize;
         }
         if (res / sumK > 1.1 || res / sumK < -0.1) {
-            System.err.println("WARNING: SegemntScaleRater"
-                    + " got a invalid rating, "
+            Helpers.LOGGER.warning("SegemntScaleRater"
+                    + " got a invalid rating ( " + res + "/" + sumK +" = " + res/sumK + " ), "
                     + "correcting it...");
         }
         return Math.max(Math.min(res / sumK, 1), 0);

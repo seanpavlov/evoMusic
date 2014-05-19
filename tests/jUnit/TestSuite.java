@@ -1,5 +1,7 @@
 package jUnit;
 
+import java.util.logging.Level;
+
 import jUnit.blending.IntervalSongTest;
 import jUnit.blending.IntervalTrackTest;
 import jUnit.blending.MarkovSongTest;
@@ -29,9 +31,13 @@ import jUnit.rater.ScaleWhizzTest;
 import jUnit.rater.ZipfsLawRaterTest;
 import jUnit.translator.TranslatorTest;
 
+import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
+
+import com.evoMusic.parameters.P;
+import com.evoMusic.util.Helpers;
 
 
 @RunWith(Suite.class)
@@ -92,5 +98,9 @@ public class TestSuite {
     // (\_(\
     // (^*^ )
     // (")(")
+    @BeforeClass
+    public static void setUp() {
+        Helpers.LOGGER.setLevel(P.IN_DEBUG_MODE ? Level.ALL : Level.SEVERE);
+    }
 
 }

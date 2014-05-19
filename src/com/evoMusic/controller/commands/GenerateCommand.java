@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.Semaphore;
 
 import com.evoMusic.model.Song;
 import com.evoMusic.model.Translator;
@@ -35,14 +34,13 @@ import com.evoMusic.model.geneticAlgorithm.rating.RhythmicVarietyRater;
 import com.evoMusic.model.geneticAlgorithm.rating.SegmentScaleRater;
 import com.evoMusic.model.geneticAlgorithm.rating.SubRater;
 import com.evoMusic.model.geneticAlgorithm.rating.ZipfsLawRater;
-import com.evoMusic.util.Parameters;
+import com.evoMusic.parameters.P;
 import com.google.common.collect.Sets;
 
 public class GenerateCommand extends AbstractCommand {
 
     private List<Song> selectedSongs;
-    private Semaphore finished = new Semaphore(0);
-    private Parameters c = Parameters.getInstance();
+//    private Semaphore finished = new Semaphore(0);
 
     /**
      * Creates the generate command
@@ -62,65 +60,81 @@ public class GenerateCommand extends AbstractCommand {
         }
         final int iterations = Integer.parseInt(args[0]);
         List<ISubMutator> allMut = new ArrayList<ISubMutator>();
-//        allMut.add(new OctaveMutator(c.MUTATOR_OCTAVE_PROBABILITY, c.MUTATOR_OCTAVE_RANGE));
-//        allMut.add(new ReverseMutator(c.MUTATOR_REVERSE_PROBABILITY, c.MUTATOR_REVERSE_NBR_OF_NEIGHBORS, c.MUTATOR_REVERSE_RANGE, true));
-//        allMut.add(new SimplifyMutator(c.MUTATOR_SIMPLIFY_PROBABILITY, c.MUTATOR_SIMPLIFY_NBR_OF_NEIGHBORS, c.MUTATOR_SIMPLIFY_PROBABILITY));
-        allMut.add(new RandomNotePitchMutator(c.MUTATOR_RANDOM_NOTE_PITCH_PROBABILITY,c.MUTATOR_RANDOM_NOTE_PITCH_STEP_RANGE));
-        allMut.add(new RhythmValueMutator(c.MUTATOR_RHYTHM_VALUE_PROBABILITY, c.MUTATOR_RHYTHM_VALUE_MOVING_RANGE));
-        allMut.add(new ReverseBarNotesMutator(c.MUTATOR_REVERSE_PROBABILITY));
-        allMut.add(new SwapSegmentMutator(c.MUTATOR_SWAP_SEGMENT_PROBABILITY));
+//        allMut.add(new OctaveMutator(P.MUTATOR_OCTAVE_PROBABILITY, P.MUTATOR_OCTAVE_RANGE));
+//        allMut.add(new ReverseMutator(P.MUTATOR_REVERSE_PROBABILITY, P.MUTATOR_REVERSE_NBR_OF_NEIGHBORS, P.MUTATOR_REVERSE_RANGE, true));
+//        allMut.add(new SimplifyMutator(P.MUTATOR_SIMPLIFY_PROBABILITY, P.MUTATOR_SIMPLIFY_NBR_OF_NEIGHBORS, P.MUTATOR_SIMPLIFY_PROBABILITY));
+        allMut.add(new RandomNotePitchMutator(P.MUTATOR_RANDOM_NOTE_PITCH_PROBABILITY,P.MUTATOR_RANDOM_NOTE_PITCH_STEP_RANGE));
+        allMut.add(new RhythmValueMutator(P.MUTATOR_RHYTHM_VALUE_PROBABILITY, P.MUTATOR_RHYTHM_VALUE_MOVING_RANGE));
+        allMut.add(new ReverseBarNotesMutator(P.MUTATOR_REVERSE_PROBABILITY));
+        allMut.add(new SwapSegmentMutator(P.MUTATOR_SWAP_SEGMENT_PROBABILITY));
         
-        DrCross crossover = new DrCross(c.CROSSOVER_NBR_OF_INTERSECTS);
+        DrCross crossover = new DrCross(P.CROSSOVER_NBR_OF_INTERSECTS);
 
         List<SubRater> subRaters = new LinkedList<SubRater>();        
-        subRaters.add(new SegmentScaleRater(c.RATER_SCALE_WEIGHT));
-//        subRaters.add(new ScaleWhizz(c.RATER_SCALE_WEIGHT));
-        subRaters.add(new BeatRepetitionRater(c.RATER_BEAT_REPETITION_WEIGHT));
-        subRaters.add(new MelodyRepetionRater(c.RATER_MELODY_REPETITION_WEIGHT));
-        subRaters.add(new ChordRepetitionRater(c.RATER_CHORD_REPETITION_WEIGHT));
-        subRaters.add(new CrazyNoteOctaveRater(c.RATER_CRAZY_OCTAVE_WEIGHT));
-        subRaters.add(new MelodyDirectionStabilityRater(c.RATER_MELODY_DIRECTION_WEIGHT));
-        subRaters.add(new PitchVarietyRater(c.RATER_PITCH_VARIETY_WEIGHT));
-        subRaters.add(new MelodyDirectionRater(c.RATER_PITCH_DIRECTION_WEIGHT));
-        subRaters.add(new MelodyNoteDensityVarietyRater(c.RATER_MELODY_NOTE_DENSITY_WEIGHT));
-        subRaters.add(new RhythmicVarietyRater(c.RATER_RHYTHMIC_VARIETY_WEIGHT));
-        subRaters.add(new NoSilenceRater(c.RATER_NO_SILENCE_WEIGHT));
-        subRaters.add(new MelodyPitchRangeRater(c.RATER_MELODY_PITCH_RANGE_WEIGHT));
-        subRaters.add(new RepeatedPitchDensityRater(c.RATER_REPEATED_PITCH_DENSITY_WEIGTH));
-        subRaters.add(new MelodyRestDensityVarietyRater(c.RATER_MELODY_REST_DENSITY_WEIGHT));
-        subRaters.add(new ZipfsLawRater(c.RATER_ZIPFS_LAW_WEIGHT));
-        subRaters.add(new MelodyNoteSyncopationRater(c.RATER_MELODY_NOTE_SUSTAIN_WEIGHT));
+        subRaters.add(new SegmentScaleRater(P.RATER_SCALE_WEIGHT));
+//        subRaters.add(new ScaleWhizz(P.RATER_SCALE_WEIGHT));
+        subRaters.add(new BeatRepetitionRater(P.RATER_BEAT_REPETITION_WEIGHT));
+        subRaters.add(new MelodyRepetionRater(P.RATER_MELODY_REPETITION_WEIGHT));
+        subRaters.add(new ChordRepetitionRater(P.RATER_CHORD_REPETITION_WEIGHT));
+        subRaters.add(new CrazyNoteOctaveRater(P.RATER_CRAZY_OCTAVE_WEIGHT));
+        subRaters.add(new MelodyDirectionStabilityRater(P.RATER_MELODY_DIRECTION_WEIGHT));
+        subRaters.add(new PitchVarietyRater(P.RATER_PITCH_VARIETY_WEIGHT));
+        subRaters.add(new MelodyDirectionRater(P.RATER_PITCH_DIRECTION_WEIGHT));
+        subRaters.add(new MelodyNoteDensityVarietyRater(P.RATER_MELODY_NOTE_DENSITY_WEIGHT));
+        subRaters.add(new RhythmicVarietyRater(P.RATER_RHYTHMIC_VARIETY_WEIGHT));
+        subRaters.add(new NoSilenceRater(P.RATER_NO_SILENCE_WEIGHT));
+        subRaters.add(new MelodyPitchRangeRater(P.RATER_MELODY_PITCH_RANGE_WEIGHT));
+        subRaters.add(new RepeatedPitchDensityRater(P.RATER_REPEATED_PITCH_DENSITY_WEIGTH));
+        subRaters.add(new MelodyRestDensityVarietyRater(P.RATER_MELODY_REST_DENSITY_WEIGHT));
+        subRaters.add(new ZipfsLawRater(P.RATER_ZIPFS_LAW_WEIGHT));
+        subRaters.add(new MelodyNoteSyncopationRater(P.RATER_MELODY_NOTE_SUSTAIN_WEIGHT));
 //        subRaters.add(new RandomRater(1));
         
         final GeneticAlgorithm ga = new GeneticAlgorithm(
                         selectedSongs,
-                        new Mutator(allMut, c.MUTATION_PROBABILITY), 
+                        new Mutator(allMut, P.MUTATION_PROBABILITY), 
                         crossover, 
                         new Rater(subRaters), 
-                        c.GA_POPULATION_SIZE,
-                        c.GA_NBR_OF_ELITISM_SONGS, 
-                        c.GA_NBR_OF_CROSSOVER_SONGS,
-                        c.MARKOV_LOOKBACKS, 
-                        c.MARKOV_SONGDURATION);
+                        P.GA_POPULATION_SIZE,
+                        P.GA_NBR_OF_ELITISM_SONGS, 
+                        P.GA_NBR_OF_CROSSOVER_SONGS,
+                        P.MARKOV_LOOKBACKS, 
+                        P.MARKOV_SONGDURATION);
         System.out.println("Start iterating");
 
         runProgress(ga, iterations);
+
         Individual bestIndividual = ga.generateGenerations(iterations);
 
-        if(!Parameters.getInstance().IN_DEBUG_MODE){
-            finished.acquireUninterruptibly();
-        }
-
-        Translator.INSTANCE.saveSongToMidi(bestIndividual.getSong(), "outputSong : " + bestIndividual.getRating());
+        Translator.INSTANCE.saveSongToMidi(bestIndividual.getSong(), 
+                createFileName(ga.getCurrentIteration(), bestIndividual.getRating()));
         Translator.INSTANCE.play(bestIndividual.getSong());
         return true;
+    }
+    
+    private String createFileName(int generation, double rating) {
+        StringBuilder fileName = new StringBuilder();
+        for (int i = 0; i < selectedSongs.size(); i++) {
+            fileName.append(selectedSongs.get(i).getTitle());
+            if(i < selectedSongs.size() - 1) {
+                fileName.append("+");
+            }
+        }
+        
+        return fileName
+                .append("-g")
+                .append(generation)
+                .append("-r")
+                .append(rating)
+                .toString();
     }
 
     private void runProgress(final GeneticAlgorithm ga, final int iterations) {
         new Thread(new Runnable() {
             final int width = 50;
             final int height = 20;
-            final boolean eclipseHack = true;
+            String inEclipseStr = System.getProperty("runInEclipse");
+            boolean eclipseHack = "true".equalsIgnoreCase(inEclipseStr);
 
             @Override
             public void run() {
@@ -153,7 +167,6 @@ public class GenerateCommand extends AbstractCommand {
                         + ga.getBestIndividual().getRating());
                 if (ga.getCurrentIteration() / iterations == 1) {
                     System.out.println();
-                    finished.release();
                     return;
                 } else {
                     run();
