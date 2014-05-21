@@ -13,8 +13,8 @@ import com.evoMusic.util.TrackTag;
 public class MelodyDirectionStabilityRater extends SubRater{
     /**Rater that likes more pitch direction changes in melody tracks*/
     
-    public MelodyDirectionStabilityRater(double weight){
-        super.setWeight(weight);
+    public MelodyDirectionStabilityRater(double targetRating){
+        super.setTargetRating(targetRating);
     }
 
     @Override

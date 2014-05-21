@@ -14,8 +14,8 @@ import com.evoMusic.util.TrackTag;
  * is up*/
 public class MelodyDirectionRater extends SubRater{
     
-    public MelodyDirectionRater(double weight){
-        super.setWeight(weight);
+    public MelodyDirectionRater(double targetRating){
+        super.setTargetRating(targetRating);
     }
     
 

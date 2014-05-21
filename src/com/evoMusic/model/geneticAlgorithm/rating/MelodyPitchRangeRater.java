@@ -11,8 +11,8 @@ import com.evoMusic.util.TrackTag;
  * are equal or close*/
 public class MelodyPitchRangeRater extends SubRater{
     
-    public MelodyPitchRangeRater(double weight){
-        super.setWeight(weight);
+    public MelodyPitchRangeRater(double targetRating){
+        super.setTargetRating(targetRating);
     }
 
     @Override

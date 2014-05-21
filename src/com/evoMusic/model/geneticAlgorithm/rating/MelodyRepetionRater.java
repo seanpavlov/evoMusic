@@ -18,10 +18,10 @@ public class MelodyRepetionRater extends SubRater {
     /**
      * Constructor, creates a user rater
      * 
-     * @param d
+     * @param targetRating
      */
-    public MelodyRepetionRater(double d){
-        super.setWeight(d);
+    public MelodyRepetionRater(double targetRating){
+        super.setTargetRating(targetRating);
     }
     
     @Override

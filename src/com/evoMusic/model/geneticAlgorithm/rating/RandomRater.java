@@ -4,8 +4,8 @@ import com.evoMusic.model.Song;
 
 public class RandomRater extends SubRater{
 
-    public RandomRater(double weight){
-        super.setWeight(weight);
+    public RandomRater(double targetRating){
+        super.setTargetRating(targetRating);
     }
     
     @Override

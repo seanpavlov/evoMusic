@@ -8,8 +8,8 @@ import com.evoMusic.model.Track;
 
 public class RhythmicVarietyRater extends SubRater{
 
-    public RhythmicVarietyRater(double weight){
-        this.setWeight(weight);
+    public RhythmicVarietyRater(double targetRating){
+        this.setTargetRating(targetRating);
     }
     
     /**

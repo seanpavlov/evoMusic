@@ -23,8 +23,8 @@ public class MelodyNoteDensityVarietyRater extends SubRater{
     private double nbrOfBeats;
     private double nbrOfNotes;
 
-    public MelodyNoteDensityVarietyRater(double weight){
-        super.setWeight(weight);
+    public MelodyNoteDensityVarietyRater(double targetRating){
+        super.setTargetRating(targetRating);
     }
     
     @Override

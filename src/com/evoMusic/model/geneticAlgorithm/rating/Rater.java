@@ -44,7 +44,7 @@ public class Rater {
                         + "' returned an" + " invalid rating of: "
                         + currentRating);
             } else {
-                totalDelta += Math.abs(subRater.getWeight() - currentRating);
+                totalDelta += Math.abs(subRater.getTargetRating() - currentRating);
             }
         }
         return 1.0 - (totalDelta / subraters.size());
@@ -91,7 +91,7 @@ public class Rater {
             if (rating == 0){
                 iter.remove();
             } else {
-                currentRater.setWeight(rating);
+                currentRater.setTargetRating(rating);
             }
         }
     }

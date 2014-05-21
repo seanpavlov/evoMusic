@@ -13,10 +13,10 @@ public class UserRater extends SubRater {
     /**
      * Constructor, creates a user rater
      * 
-     * @param weight
+     * @param targetRating
      */
-    public UserRater(double weight, Scanner sc){
-        super.setWeight(weight);
+    public UserRater(double targetRating, Scanner sc){
+        super.setTargetRating(targetRating);
         this.sc = sc;
     }
     

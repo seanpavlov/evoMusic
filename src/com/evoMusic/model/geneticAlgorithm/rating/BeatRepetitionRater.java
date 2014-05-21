@@ -19,8 +19,8 @@ import com.evoMusic.util.TrackTag;
 
 public class BeatRepetitionRater extends SubRater{  
  
-    public BeatRepetitionRater(double weight){
-        super.setWeight(weight);
+    public BeatRepetitionRater(double targetRating){
+        super.setTargetRating(targetRating);
     }
     
     /**

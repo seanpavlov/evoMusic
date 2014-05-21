@@ -18,10 +18,10 @@ public class LcmPitchRater extends SubRater{
     /**
      * Constructor for LcmPitchRater
      * 
-     * @param weight
+     * @param targetRating
      */
-    public LcmPitchRater(double weight){
-        super.setWeight(weight);
+    public LcmPitchRater(double targetRating){
+        super.setTargetRating(targetRating);
     }
     
     /**

@@ -11,8 +11,8 @@ import com.evoMusic.util.TrackTag;
  * in a row a lot of times in melody tracks*/
 public class RepeatedPitchDensityRater extends SubRater{
     
-    public RepeatedPitchDensityRater(double weight){
-        super.setWeight(weight);
+    public RepeatedPitchDensityRater(double targetRating){
+        super.setTargetRating(targetRating);
     }
 
     @Override

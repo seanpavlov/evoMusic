@@ -41,8 +41,8 @@ public class NoSilenceRater extends SubRater {
         
     }
     
-    public NoSilenceRater(double weight){
-        this.setWeight(weight);
+    public NoSilenceRater(double targetRating){
+        this.setTargetRating(targetRating);
     }
     
     /**
