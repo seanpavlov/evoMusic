@@ -24,90 +24,14 @@ public class NoSilenceRaterTest {
      * phrases so that they fit the testing 
      */
     @Before
-    public void setUpSong(){
-       // create phrase songs
-       rater = new NoSilenceRater(1);
-       
-       Score goodScore = new Score();
-       Score badScore = new Score();
-       
-       
-       Part badPart = new Part();
-       Part goodPart = new Part();
-       
-       for (int i = 0 ; i < 10; i++){
-           Phrase good = new Phrase();
-           good.setStartTime(i);
-           good.setDuration(1);
-           
-           Phrase bad = new Phrase();
-           bad.setStartTime(i);
-           bad.setDuration(i);
-           if (i == 9){
-               bad.setStartTime(i*10);
-           }
-
-           badPart.add(bad);
-           goodPart.add(good);
-       }
-       
-       goodScore.add(goodPart);
-       badScore.add(badPart);
-       
-       badPhraseSong = new Song(badScore);
-       goodPhraseSong = new Song(goodScore);
-       
-       //create rest songs
-       Phrase good1 = new Phrase();
-       good1.setStartTime(0);
-       Phrase good2 = new Phrase();
-       good2.setStartTime(0);
-       Phrase bad1 = new Phrase();
-       bad1.setStartTime(0);
-       Phrase bad2 = new Phrase();
-       bad2.setStartTime(0);
-       for (int i = 0; i < 100; i++){
-           if (i <= 60 && i >= 40){
-               Note badN = new Note(Note.REST, 1);
-               bad1.addNote(badN);
-               bad2.addNote(badN);
-            
-               Note goodN = new Note(64, 1);
-               good1.addNote(goodN);
-               good2.addNote(goodN);
-           
-           } else {
-               Note n = new Note(64, 1);
-               bad1.addNote(n);
-               bad2.addNote(n);
-               good1.addNote(n);
-               good2.addNote(n);
-            }
-       }
-       
-       Part goodP = new Part();
-       goodP.add(good1);
-       goodP.add(good2);
-       
-       Score goodS = new Score(goodP);
-       goodRestSong = new Song(goodS);
-       goodRestSong.addTagToTrack(0, TrackTag.MELODY);
-
-       Part badP = new Part();
-       badP.add(bad1);
-       badP.add(bad2);
-       Score badS = new Score(badP);
-       badRestSong = new Song(badS);
-       badRestSong.addTagToTrack(0, TrackTag.MELODY);       
+    public void setUpSong() {
+       rater = new NoSilenceRater(1);  
     }    
     
     @Test
     public void test() {
         double goodRating;
         double badRating;
-        
-        Score goodScore = new Score();
-        Score badScore = new Score();
         
         Phrase goodPhrase = new Phrase();
         Phrase badPhrase = new Phrase();
@@ -128,43 +52,35 @@ public class NoSilenceRaterTest {
         Note newNote = new Note(60, 4);
         newNote.setDuration(4.0);
         Note restNote = new Note(Note.REST, 4.0);
+        
         Phrase phrase1 = new Phrase(4.0);
+        
         phrase1.add(newNote.copy());
         phrase1.add(restNote.copy());
+        phrase1.add(newNote.copy());
+        phrase1.add(newNote.copy());
+        phrase1.add(restNote.copy());
+        phrase1.add(restNote.copy());
+        phrase1.add(newNote.copy());
         
         
+        Phrase phrase2 = new Phrase(0.0);
+        phrase2.add(restNote.copy());
         
+        phrase2.add(newNote.copy());
+        phrase2.add(restNote.copy());
+        phrase2.add(newNote.copy());
+        phrase2.add(newNote.copy());
+        phrase2.add(restNote.copy());
+        // has added 24 in time by now on phrase2.
+        
+        double rating1 = rater.rate(new Song(new Score(new Part(phrase1))));
+        Part part2 = new Part(phrase2);
+        Phrase phrase21 = new Phrase(28.0);
+        phrase21.add(newNote.copy());
+        part2.add(phrase21);
+        
+        double rating2 = rater.rate(new Song(new Score(part2)));
+        assertEquals(rating1, rating2, 0.00001);
     }
-    
-    /**
-     * Test that the same song always gets the same rating
-     * */
-//    @Test
-//    public void testSameRating(){
-//        double rating1 = rater.rate(goodPhraseSong);
-//        double rating2 = rater.rate(goodPhraseSong);
-//        assertTrue("Rating value should be same for same song twice", rating1 == rating2);
-//    
-//        double rating3 = rater.rate(goodRestSong);
-//        double rating4 = rater.rate(goodRestSong);
-//        assertTrue("Rating value should be same for same song twice", rating3 == rating4);
-//    }
-    
-    /**
-     * Test that good song is better than bad song
-     * */
-//    @Test
-//    public void testBetterRating(){
-//        double rating1 = rater.rate(goodPhraseSong);
-//        double rating2 = rater.rate(badPhraseSong);
-//        System.out.println("good: " + rating1 + ", length: " + goodPhraseSong.getScore().getEndTime());
-//        System.out.println("bad: " + rating2);
-//        assertTrue("", rating1 > rating2);
-//
-//        double rating3 = rater.rate(goodRestSong);
-//        double rating4 = rater.rate(badRestSong);
-//        System.out.println("good: " + rating3);
-//        System.out.println("bad: " + rating4);
-//        assertTrue("", rating3 > rating4);
-//    }
 }
