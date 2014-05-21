@@ -1,13 +1,46 @@
 package com.evoMusic.model.geneticAlgorithm.rating;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import jm.music.data.Note;
+import jm.music.data.Part;
 import jm.music.data.Phrase;
+
 import com.evoMusic.model.Song;
 import com.evoMusic.util.Sort;
 
 public class NoSilenceRater extends SubRater {
+    
+    private class NoteEvent implements Comparable<NoteEvent> {
+        
+        private static final double PRECISION = 0.00001;
+        
+        /** If false, means note off. */
+        private boolean noteOn;
+        private double startTime;
+        
+        public NoteEvent(boolean noteOn, double startTime) {
+            this.noteOn = noteOn;
+            this.startTime = startTime;
+        }
+
+        @Override
+        public int compareTo(NoteEvent arg0) {
+            double diff = this.startTime - arg0.startTime;
+            if (Math.abs(diff) < PRECISION) {
+                return 0;
+            }
+            if (diff < 0) {
+                return -1;
+            } else {
+                return 1;
+            }
+        }
+        
+    }
+    
     public NoSilenceRater(double weight){
         this.setWeight(weight);
     }
@@ -18,15 +51,56 @@ public class NoSilenceRater extends SubRater {
      */
     @Override
     public double rate(Song song){
-        double songDuration = song.getScore().getEndTime();
-        double silenceRest = restSilence(song);
-        double silencePhrase = phraseSilence(song);
-        
-        if (silencePhrase + silenceRest > songDuration){
+        if (song.getScore().getEndTime() == 0.0) {
             return 0;
-        } else {
-            return 1 - (silencePhrase + silenceRest) / songDuration;
         }
+        List<NoteEvent> noteEvents = new ArrayList<NoteEvent>();
+        
+        double currentStartTime;
+        for (Part part : song.getScore().getPartArray()) {
+            for (Phrase phrase : part.getPhraseArray()) {
+                currentStartTime = phrase.getStartTime();
+                for (Note note : phrase.getNoteArray()) {
+                    if (!note.isRest()) {
+                        noteEvents.add(new NoteEvent(true, currentStartTime));
+                        noteEvents.add(new NoteEvent(false, currentStartTime+note.getDuration()));
+                    }
+                    currentStartTime += note.getRhythmValue();
+                }
+            }
+        }
+        
+        Collections.sort(noteEvents);
+        double totalSilence = 0;
+        double lastStartTime = 0;
+        int notesPlaying = 0;
+
+        for (NoteEvent noteEvent : noteEvents) {
+            if (notesPlaying < 1) {
+                totalSilence += noteEvent.startTime - lastStartTime;
+            }
+            if (noteEvent.noteOn) {
+                notesPlaying++;
+            } else {
+                notesPlaying--;
+            }
+            lastStartTime = noteEvent.startTime;
+        }
+        // adding silence for last notes.
+        totalSilence += song.getScore().getEndTime() - lastStartTime;
+        System.out.println("Silence: " + totalSilence + ", Length: " + song.getScore().getEndTime());
+        return 1 - (totalSilence/song.getScore().getEndTime());
+        
+//        double songDuration = song.getScore().getEndTime();
+        
+//        double silenceRest = restSilence(song);
+//        double silencePhrase = phraseSilence(song);
+        
+//        if (silencePhrase + silenceRest > songDuration){
+//            return 0;
+//        } else {
+//            return 1 - (silencePhrase + silenceRest) / songDuration;
+//        }
     }
     
     /**
