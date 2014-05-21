@@ -5,6 +5,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.evoMusic.model.Song;
+import com.evoMusic.parameters.P;
+import com.evoMusic.util.Helpers;
 
 public class Rater {
     List<SubRater> subraters = new ArrayList<SubRater>();
@@ -34,20 +36,23 @@ public class Rater {
      */
     public double rate(Song song) {
         double totalDelta = 0;
+        double totalInfluence = 0;
         double currentRating;
         for (SubRater subRater : subraters) {
             currentRating = subRater.rate(song);
-//            System.out.println(subRater + " : " + currentRating);
+            // System.out.println(subRater + " : " + currentRating);
             if (currentRating > 1.0 || currentRating < 0.0) {
                 throw new NumberFormatException("rater: '"
-                        + subRater.getClass().getSimpleName()
-                        + "' returned an" + " invalid rating of: "
-                        + currentRating);
+                        + subRater.getClass().getSimpleName() + "' returned an"
+                        + " invalid rating of: " + currentRating);
             } else {
-                totalDelta += Math.abs(subRater.getTargetRating() - currentRating);
+                totalDelta += Math.abs(subRater.getTargetRating()
+                        - currentRating)
+                        * subRater.getInfluence();
+                totalInfluence += subRater.getInfluence();
             }
         }
-        return 1.0 - (totalDelta / subraters.size());
+        return 1.0 - (totalDelta / totalInfluence);
     }
 
     /**
@@ -78,21 +83,50 @@ public class Rater {
      *            songs to initiate the rating
      */
     public void initSubRaterWeights(List<Song> songs) {
-        double rating;
+        double maxRating;
+        double minRating;
+
+        double totalRating;
+        double currentRating;
         SubRater currentRater;
         Iterator<SubRater> iter = subraters.iterator();
         while (iter.hasNext()) {
             currentRater = iter.next();
-            rating = 0;
+            totalRating = 0;
+            maxRating = 0.0;
+            minRating = 1.0;
             for (Song s : songs) {
-                rating += currentRater.rate(s);
+                currentRating = currentRater.rate(s);
+                if (currentRating < 0.0 || currentRating > 1.0) {
+                    throw new NumberFormatException(
+                            "Subrating must be between 0 and 1");
+                }
+                totalRating += currentRating;
+                if (P.APPLY_INFLUENCE) {
+                    if (currentRating < minRating) {
+                        minRating = currentRating;
+                    }
+                    if (currentRating > maxRating) {
+                        maxRating = currentRating;
+                    }
+                }
             }
-            rating = rating / songs.size();
-            if (rating == 0){
+            totalRating = totalRating / songs.size();
+
+            // TODO Might want to disable this...
+            if (totalRating == 0) {
                 iter.remove();
             } else {
-                currentRater.setTargetRating(rating);
+                currentRater.setTargetRating(totalRating);
+                if (P.APPLY_INFLUENCE) {
+                    currentRater.setInfluence(1 - (Math.min(maxRating
+                            - totalRating, totalRating - minRating) * 2));
+                    Helpers.LOGGER.info("max: " + maxRating + ", min: "
+                            + minRating + "\n" + "influence: "
+                            + currentRater.getInfluence());
+                }
             }
+
         }
     }
 }
