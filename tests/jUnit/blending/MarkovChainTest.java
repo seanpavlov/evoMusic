@@ -69,11 +69,13 @@ public class MarkovChainTest {
     @Test
     public void test() {
         List<Song> songList = new ArrayList<Song>();
-        songList.add(marioTheme);
+        songList.add(zelda);
+//        songList.add(flutes.get(2));
 //        StateSong ss = new StateSong(marioSong);
 //        Song newSong = ss.toSong();
         MarkovStateMachine markov = new MarkovStateMachine(3, songList);
         Song newSong = markov.generateNew(50);
+        Translator.INSTANCE.saveSongToMidi(newSong, "From new markov");
         Translator.INSTANCE.play(newSong);
     }
 

@@ -206,7 +206,6 @@ public class MarkovStateMachine {
                     }
                     currentSequence = tempVec;
                 }
-                System.out.println(currentSequence.size());
 //                System.out.println(nextInterval.getValue() + " and track is " + nextInterval.trackIndex());
                 nextRhythmValue = rhythmValueMatrix.getNext(currentSequence);
                 nextDuration = durationMatrix.getNext(currentSequence);
