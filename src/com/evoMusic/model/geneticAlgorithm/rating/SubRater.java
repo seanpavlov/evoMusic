@@ -3,31 +3,56 @@ package com.evoMusic.model.geneticAlgorithm.rating;
 import com.evoMusic.model.Song;
 
 public abstract class SubRater {
-    private double weight;
-    
+    private double targetRating;
+    private double influence = 1.0;
+
     /**
      * Rates a song or a part of it depending on the raters task.
      * 
-     * @param song to be rated
+     * @param song
+     *            to be rated
      * @return rate value between 0 and 1
      */
     abstract public double rate(Song song);
-    
+
     /**
      * @return the current weight of this rater
      */
-    public double getWeight(){
-        return weight;
+    public double getTargetRating() {
+        return targetRating;
     }
-    
+
+    /**
+     * @return the influence of this sub-rater.
+     */
+    public double getInfluence() {
+        return influence;
+    }
+
     /**
      * Set the weight of this rater, value must be between 0 and 1
      */
-    public void setWeight(double weight){
-        if (weight >= 0 && weight <= 1){
-            this.weight = weight;
+    public void setTargetRating(double targetRating) {
+        if (targetRating < 0.0 || targetRating > 1.0) {
+            throw new IllegalArgumentException(
+                    "Target rating must be a value between 0 and 1");
         } else {
-            System.err.println("Weight must be between 0 and 1");
+            this.targetRating = targetRating;
+        }
+    }
+
+    /**
+     * Sets the influence of this sub-rater. This determines how much this rater
+     * will affect the final rating.
+     * 
+     * @param influence
+     */
+    public void setInfluence(double influence) {
+        if (influence < 0.0 || influence > 1.0) {
+            throw new IllegalArgumentException(
+                    "Influence must be a value between 0 and 1");
+        } else {
+            this.influence = influence;
         }
     }
 }

@@ -20,8 +20,8 @@ public class PitchVarietyRater extends SubRater{
     private Set<Integer> pitches;
     private Integer nbrOfNotes;
     
-    public PitchVarietyRater(double weight){
-        super.setWeight(weight);
+    public PitchVarietyRater(double targetRating){
+        super.setTargetRating(targetRating);
     }
 
     @Override

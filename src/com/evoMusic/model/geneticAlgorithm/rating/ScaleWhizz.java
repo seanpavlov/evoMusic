@@ -23,11 +23,11 @@ public class ScaleWhizz extends SubRater {
      * it is the most common pattern. Applies for instance to aeolian and ionian
      * scales (standard major and minor).
      * 
-     * @param weight
+     * @param targetRating
      *            weight of this rater.
      */
-    public ScaleWhizz(double weight) {
-        setWeight(weight);
+    public ScaleWhizz(double targetRating) {
+        setTargetRating(targetRating);
         scalePattern = ScalePattern.DIATONIC;
     }
 

@@ -14,8 +14,8 @@ import com.evoMusic.util.TrackTag;
  * who sustain across the beats*/
 public class MelodyNoteSyncopationRater extends SubRater{
 
-    public MelodyNoteSyncopationRater(double weight){
-        super.setWeight(weight);
+    public MelodyNoteSyncopationRater(double targetRating){
+        super.setTargetRating(targetRating);
     }
     
     @Override

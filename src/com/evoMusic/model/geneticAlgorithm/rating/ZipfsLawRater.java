@@ -10,10 +10,10 @@ public class ZipfsLawRater extends SubRater {
 
     /**
      * Constructor for ZipfsLawRater
-     * @param weight
+     * @param targetRating
      */
-    public ZipfsLawRater(double weight){
-        super.setWeight(weight);
+    public ZipfsLawRater(double targetRating){
+        super.setTargetRating(targetRating);
     }
     
     

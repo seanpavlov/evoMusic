@@ -12,8 +12,8 @@ import com.evoMusic.util.TrackTag;
 public class CrazyNoteOctaveRater extends SubRater{
     private final int OCTAVE_CONSTANT = 24;
     
-    public CrazyNoteOctaveRater(double weight){
-        super.setWeight(weight);
+    public CrazyNoteOctaveRater(double targetRating){
+        super.setTargetRating(targetRating);
     }
 
     public double rate(Song song){

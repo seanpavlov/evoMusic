@@ -20,8 +20,8 @@ import com.google.common.collect.ListMultimap;
 
 public class ChordRepetitionRater extends SubRater{
     
-    public ChordRepetitionRater(double weight){
-        super.setWeight(weight);
+    public ChordRepetitionRater(double targetRating){
+        super.setTargetRating(targetRating);
     }
  
     @Override

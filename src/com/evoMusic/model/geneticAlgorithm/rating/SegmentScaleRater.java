@@ -16,8 +16,8 @@ public class SegmentScaleRater extends SubRater {
     private double k;
     private double stepsForThisWindow;
     
-    public SegmentScaleRater(double weight) {
-        this.scaleRater = new ScaleWhizz(weight);
+    public SegmentScaleRater(double targetRating) {
+        this.scaleRater = new ScaleWhizz(targetRating);
     }
     /**
      * Rates segments of a given windowSize. Recurses until minimum window size

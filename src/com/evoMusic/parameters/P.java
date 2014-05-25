@@ -64,6 +64,8 @@ public abstract class P {
     /*
      * RATING PARAMETERS
      */
+    public static final boolean APPLY_INFLUENCE = true;
+    
     public static double RATER_MELODY_REPETITION_WEIGHT = 0.25;
     public static double RATER_BEAT_REPETITION_WEIGHT = 0.25;
     public static double RATER_CHORD_REPETITION_WEIGHT = 0.25;

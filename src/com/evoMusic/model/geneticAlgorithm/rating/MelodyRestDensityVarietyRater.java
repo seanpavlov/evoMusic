@@ -23,8 +23,8 @@ public class MelodyRestDensityVarietyRater extends SubRater{
     private double nbrOfBeats;
     private double nbrOfRestNotes;
     
-    public MelodyRestDensityVarietyRater(double weight){
-        super.setWeight(weight);
+    public MelodyRestDensityVarietyRater(double targetRating){
+        super.setTargetRating(targetRating);
     }
     
 
