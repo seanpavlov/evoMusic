@@ -90,7 +90,6 @@ public class NoSilenceRater extends SubRater {
         }
         // adding silence for last notes.
         totalSilence += song.getScore().getEndTime() - lastStartTime;
-        System.out.println("Silence: " + totalSilence + ", Length: " + song.getScore().getEndTime());
         return 1 - (totalSilence/song.getScore().getEndTime());
         
 //        double songDuration = song.getScore().getEndTime();

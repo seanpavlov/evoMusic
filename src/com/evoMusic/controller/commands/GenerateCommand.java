@@ -82,7 +82,7 @@ public class GenerateCommand extends AbstractCommand {
         subRaters.add(new MelodyDirectionRater(P.RATER_MELODY_DIRECTION_TR));
         subRaters.add(new MelodyNoteDensityVarietyRater(P.RATER_MELODY_NOTE_DENSITY_TR));
         subRaters.add(new RhythmicVarietyRater(P.RATER_RHYTHMIC_VARIETY_TR));
-//        subRaters.add(new NoSilenceRater(P.RATER_NO_SILENCE_TR));
+        subRaters.add(new NoSilenceRater(P.RATER_NO_SILENCE_TR));
         subRaters.add(new MelodyPitchRangeRater(P.RATER_MELODY_PITCH_RANGE_TR));
         subRaters.add(new RepeatedPitchDensityRater(P.RATER_REPEATED_PITCH_DENSITY_TR));
         subRaters.add(new MelodyRestDensityVarietyRater(P.RATER_MELODY_REST_DENSITY_TR));

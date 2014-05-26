@@ -31,9 +31,9 @@ public abstract class P {
      * next generation. Number of crossover songs is the number of songs that
      * will
      */
-    public static int GA_POPULATION_SIZE = 30;
+    public static int GA_POPULATION_SIZE = 100;
     public static int GA_NBR_OF_ELITISM_SONGS = 1;
-    public static int GA_NBR_OF_CROSSOVER_SONGS = 3;
+    public static int GA_NBR_OF_CROSSOVER_SONGS = 2;
     public static final Initiator initiator = Initiator.CROSSOVER;
     public static final boolean DISCARD_LAST_ELITISM_SONG = true;
 
@@ -45,21 +45,23 @@ public abstract class P {
     public static double MUTATION_LOCAL_PROBABILITY_MULTIPLIER_DECREASE_RATIO = 0.002;
     public static double MUTATION_LOCAL_PROBABILITY_MINIMUM_MULTIPLIER = 0.1;
 
-    public static double MUTATOR_RANDOM_NOTE_PITCH_PROBABILITY = 0.1;
+    public static double MUTATOR_RANDOM_NOTE_PITCH_PROBABILITY = 0.02;
     public static int MUTATOR_RANDOM_NOTE_PITCH_STEP_RANGE = 6;
 
-    public static double MUTATOR_RHYTHM_VALUE_PROBABILITY = 0.05;
+    public static double MUTATOR_RHYTHM_VALUE_PROBABILITY = 0.02;
     public static double MUTATOR_RHYTHM_VALUE_MOVING_RANGE = 1;
 
     public static double MUTATOR_OCTAVE_PROBABILITY = 0;
     public static int MUTATOR_OCTAVE_RANGE = 1;
 
-    public static double MUTATOR_REVERSE_PROBABILITY = 0;
+    public static double MUTATOR_REVERSE_PROBABILITY = 0.01;
 
     public static double MUTATOR_SCALE_OF_FIFTH_PROBABILITY = 0;
     public static int MUTATOR_SCALE_OF_FIFTH_RANGE = 3;
-    public static double MUTATOR_SIMPLIFY_PROBABILITY = 0.08;
-    public static double MUTATOR_SWAP_SEGMENT_PROBABILITY = 0.05;
+    
+    public static double MUTATOR_SIMPLIFY_PROBABILITY = 0.02;
+    
+    public static double MUTATOR_SWAP_SEGMENT_PROBABILITY = 0.02;
 
     /*
      * RATING PARAMETERS
@@ -128,7 +130,7 @@ public abstract class P {
     /*
      * RANDOM INITIATOR PARAMETER
      */
-    public static double RANDOM_INITIATOR_MAX_LENGTH = 20;
+    public static double RANDOM_INITIATOR_MAX_LENGTH = 100;
 
     /*
      * MARKOV PARAMETERS
