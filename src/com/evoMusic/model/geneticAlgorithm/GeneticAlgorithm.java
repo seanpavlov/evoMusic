@@ -126,7 +126,7 @@ public class GeneticAlgorithm {
         /*
          * Return the best song.
          */
-        getBestIndividual().getSong().flatternPan();
+        //getBestIndividual().getSong().flatternPan();
         return getBestIndividual();
     }
 
@@ -159,7 +159,10 @@ public class GeneticAlgorithm {
      * @return the best individual
      */
     public Individual getBestIndividual() {
-        return bestIndividual;
+        Individual currentBest = nextPopulation.get(0);
+        for(int i=1; i < nextPopulation.size()-P.GA_NBR_OF_ELITISM_SONGS i++){
+            
+        }
     }
 
     /**
@@ -185,6 +188,7 @@ public class GeneticAlgorithm {
     }
     
     private List<Song> generateFirstMarkovGeneration() {
+        markovSong = new MarkovSong(2, inputSongs);
         log.warning("GA - Generate first generation");
         List<Song> population = new ArrayList<Song>();
         for (int i = 0; i < populationSize; i++) {
