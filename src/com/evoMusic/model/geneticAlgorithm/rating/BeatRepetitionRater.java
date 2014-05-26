@@ -15,12 +15,14 @@ import jm.music.data.Phrase;
 
 import com.evoMusic.model.Song;
 import com.evoMusic.model.Track;
+import com.evoMusic.parameters.P;
 import com.evoMusic.util.TrackTag;
 
-public class BeatRepetitionRater extends SubRater{  
+public class BeatRepetitionRater extends SubRater {  
  
-    public BeatRepetitionRater(double targetRating){
+    public BeatRepetitionRater(double targetRating) {
         super.setTargetRating(targetRating);
+        super.setInfluenceMultiplier(P.RATER_BEAT_REPETITION_INFLUENCE_MUL);
     }
     
     /**

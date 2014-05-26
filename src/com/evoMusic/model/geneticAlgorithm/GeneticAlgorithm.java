@@ -1,6 +1,7 @@
 package com.evoMusic.model.geneticAlgorithm;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -126,8 +127,15 @@ public class GeneticAlgorithm {
         /*
          * Return the best song.
          */
-        getBestIndividual().getSong().flatternPan();
-        return getBestIndividual();
+        Individual bestIndv;
+        if (P.DISCARD_LAST_ELITISM_SONG) {
+            Collections.sort(nextPopulation);
+            bestIndv = nextPopulation.get(nextPopulation.size() - 1);
+        } else {
+            bestIndv = getBestIndividual();
+        }
+        bestIndv.getSong().flatternPan();
+        return bestIndv;
     }
 
     /**

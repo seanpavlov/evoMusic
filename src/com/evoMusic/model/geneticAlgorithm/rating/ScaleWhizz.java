@@ -5,8 +5,10 @@ import java.util.List;
 import jm.constants.Instruments;
 import jm.music.data.Note;
 import jm.music.data.Phrase;
+
 import com.evoMusic.model.Song;
 import com.evoMusic.model.Track;
+import com.evoMusic.parameters.P;
 import com.evoMusic.util.ScalePattern;
 import com.evoMusic.util.TrackTag;
 
@@ -28,6 +30,7 @@ public class ScaleWhizz extends SubRater {
      */
     public ScaleWhizz(double targetRating) {
         setTargetRating(targetRating);
+        super.setInfluenceMultiplier(P.RATER_SCALE_INFLUENCE_MUL);
         scalePattern = ScalePattern.DIATONIC;
     }
 

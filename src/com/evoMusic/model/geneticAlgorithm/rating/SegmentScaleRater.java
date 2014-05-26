@@ -1,6 +1,7 @@
 package com.evoMusic.model.geneticAlgorithm.rating;
 
 import com.evoMusic.model.Song;
+import com.evoMusic.parameters.P;
 import com.evoMusic.util.Helpers;
 
 /**
@@ -17,6 +18,8 @@ public class SegmentScaleRater extends SubRater {
     private double stepsForThisWindow;
     
     public SegmentScaleRater(double targetRating) {
+        super.setTargetRating(targetRating);
+        super.setInfluenceMultiplier(P.RATER_SCALE_INFLUENCE_MUL);
         this.scaleRater = new ScaleWhizz(targetRating);
     }
     /**

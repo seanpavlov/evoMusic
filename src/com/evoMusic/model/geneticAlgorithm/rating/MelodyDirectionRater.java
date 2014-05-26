@@ -8,6 +8,7 @@ import jm.music.data.Phrase;
 
 import com.evoMusic.model.Song;
 import com.evoMusic.model.Track;
+import com.evoMusic.parameters.P;
 import com.evoMusic.util.TrackTag;
 
 /**This rater favors melodies where the overall pitch direction
@@ -16,6 +17,7 @@ public class MelodyDirectionRater extends SubRater{
     
     public MelodyDirectionRater(double targetRating){
         super.setTargetRating(targetRating);
+        super.setInfluenceMultiplier(P.RATER_MELODY_DIRECTION_INFLUENCE_MUL);
     }
     
 

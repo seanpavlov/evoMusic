@@ -2,9 +2,12 @@ package com.evoMusic.model.geneticAlgorithm.rating;
 
 import java.util.SortedSet;
 import java.util.TreeSet;
+
 import jm.music.data.Phrase;
+
 import com.evoMusic.model.Song;
 import com.evoMusic.model.Track;
+import com.evoMusic.parameters.P;
 import com.evoMusic.util.TrackTag;
 
 /**This rater favors songs whose highest and lowest melody pitch values
@@ -13,6 +16,7 @@ public class MelodyPitchRangeRater extends SubRater{
     
     public MelodyPitchRangeRater(double targetRating){
         super.setTargetRating(targetRating);
+        super.setInfluenceMultiplier(P.RATER_MELODY_PITCH_RANGE_INFLUENCE_MUL);
     }
 
     @Override

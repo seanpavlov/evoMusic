@@ -71,23 +71,23 @@ public class GenerateCommand extends AbstractCommand {
         DrCross crossover = new DrCross(P.CROSSOVER_NBR_OF_INTERSECTS);
 
         List<SubRater> subRaters = new LinkedList<SubRater>();        
-        subRaters.add(new SegmentScaleRater(P.RATER_SCALE_WEIGHT));
-//        subRaters.add(new ScaleWhizz(P.RATER_SCALE_WEIGHT));
-        subRaters.add(new BeatRepetitionRater(P.RATER_BEAT_REPETITION_WEIGHT));
-        subRaters.add(new MelodyRepetionRater(P.RATER_MELODY_REPETITION_WEIGHT));
-        subRaters.add(new ChordRepetitionRater(P.RATER_CHORD_REPETITION_WEIGHT));
-        subRaters.add(new CrazyNoteOctaveRater(P.RATER_CRAZY_OCTAVE_WEIGHT));
-        subRaters.add(new MelodyDirectionStabilityRater(P.RATER_MELODY_DIRECTION_WEIGHT));
-        subRaters.add(new PitchVarietyRater(P.RATER_PITCH_VARIETY_WEIGHT));
-        subRaters.add(new MelodyDirectionRater(P.RATER_PITCH_DIRECTION_WEIGHT));
-        subRaters.add(new MelodyNoteDensityVarietyRater(P.RATER_MELODY_NOTE_DENSITY_WEIGHT));
-        subRaters.add(new RhythmicVarietyRater(P.RATER_RHYTHMIC_VARIETY_WEIGHT));
-//        subRaters.add(new NoSilenceRater(P.RATER_NO_SILENCE_WEIGHT));
-        subRaters.add(new MelodyPitchRangeRater(P.RATER_MELODY_PITCH_RANGE_WEIGHT));
-        subRaters.add(new RepeatedPitchDensityRater(P.RATER_REPEATED_PITCH_DENSITY_WEIGTH));
-        subRaters.add(new MelodyRestDensityVarietyRater(P.RATER_MELODY_REST_DENSITY_WEIGHT));
-        subRaters.add(new ZipfsLawRater(P.RATER_ZIPFS_LAW_WEIGHT));
-        subRaters.add(new MelodyNoteSyncopationRater(P.RATER_MELODY_NOTE_SUSTAIN_WEIGHT));
+        subRaters.add(new SegmentScaleRater(P.RATER_SCALE_TR));
+//        subRaters.add(new ScaleWhizz(P.RATER_SCALE_TR));
+        subRaters.add(new BeatRepetitionRater(P.RATER_BEAT_REPETITION_TR));
+        subRaters.add(new MelodyRepetionRater(P.RATER_MELODY_REPETITION_TR));
+        subRaters.add(new ChordRepetitionRater(P.RATER_CHORD_REPETITION_TR));
+        subRaters.add(new CrazyNoteOctaveRater(P.RATER_CRAZY_OCTAVE_TR));
+        subRaters.add(new MelodyDirectionStabilityRater(P.RATER_MELODY_DIRECTION_STABILITY_TR));
+        subRaters.add(new PitchVarietyRater(P.RATER_PITCH_VARIETY_TR));
+        subRaters.add(new MelodyDirectionRater(P.RATER_MELODY_DIRECTION_TR));
+        subRaters.add(new MelodyNoteDensityVarietyRater(P.RATER_MELODY_NOTE_DENSITY_TR));
+        subRaters.add(new RhythmicVarietyRater(P.RATER_RHYTHMIC_VARIETY_TR));
+//        subRaters.add(new NoSilenceRater(P.RATER_NO_SILENCE_TR));
+        subRaters.add(new MelodyPitchRangeRater(P.RATER_MELODY_PITCH_RANGE_TR));
+        subRaters.add(new RepeatedPitchDensityRater(P.RATER_REPEATED_PITCH_DENSITY_TR));
+        subRaters.add(new MelodyRestDensityVarietyRater(P.RATER_MELODY_REST_DENSITY_TR));
+        subRaters.add(new ZipfsLawRater(P.RATER_ZIPFS_LAW_TR));
+        subRaters.add(new MelodyNoteSyncopationRater(P.RATER_MELODY_NOTE_SYNCOPATION_TR));
         
         final GeneticAlgorithm ga = new GeneticAlgorithm(
                         selectedSongs,

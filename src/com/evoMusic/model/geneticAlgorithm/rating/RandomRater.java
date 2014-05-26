@@ -6,6 +6,7 @@ public class RandomRater extends SubRater{
 
     public RandomRater(double targetRating){
         super.setTargetRating(targetRating);
+        super.setInfluenceMultiplier(1.0);
     }
     
     @Override

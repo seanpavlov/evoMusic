@@ -48,8 +48,8 @@ public class Rater {
             } else {
                 totalDelta += Math.abs(subRater.getTargetRating()
                         - currentRating)
-                        * subRater.getInfluence();
-                totalInfluence += subRater.getInfluence();
+                        * subRater.getInfluence()*subRater.getInfluenceMultiplier();
+                totalInfluence += subRater.getInfluence()*subRater.getInfluenceMultiplier();
             }
         }
         return 1.0 - (totalDelta / totalInfluence);
@@ -92,6 +92,14 @@ public class Rater {
         Iterator<SubRater> iter = subraters.iterator();
         while (iter.hasNext()) {
             currentRater = iter.next();
+            
+            if (!P.APPLY_INFLUENCE_MULTIPLIER) {
+                currentRater.setInfluenceMultiplier(1.0);
+            }
+            if (!P.APPLY_DYNAMIC_INFLUENCE) {
+                currentRater.setInfluence(1.0);
+            }
+            
             totalRating = 0;
             maxRating = 0.0;
             minRating = 1.0;
@@ -102,7 +110,7 @@ public class Rater {
                             "Subrating must be between 0 and 1");
                 }
                 totalRating += currentRating;
-                if (P.APPLY_INFLUENCE) {
+                if (P.APPLY_DYNAMIC_INFLUENCE) {
                     if (currentRating < minRating) {
                         minRating = currentRating;
                     }
@@ -115,10 +123,12 @@ public class Rater {
 
             // TODO Might want to disable this...
             if (totalRating == 0) {
-                iter.remove();
+//                iter.remove();
             } else {
-                currentRater.setTargetRating(totalRating);
-                if (P.APPLY_INFLUENCE) {
+                if (!P.APPLY_CUSTOM_TARGET_RATING) {
+                    currentRater.setTargetRating(totalRating);                    
+                }
+                if (P.APPLY_DYNAMIC_INFLUENCE) {
                     currentRater.setInfluence(1 - (Math.min(maxRating
                             - totalRating, totalRating - minRating) * 2));
                     Helpers.LOGGER.info("max: " + maxRating + ", min: "

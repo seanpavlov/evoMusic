@@ -2,18 +2,22 @@ package com.evoMusic.model.geneticAlgorithm.rating;
 
 
 import java.util.List;
+
 import jm.music.data.Note;
 import jm.music.data.Part;
+
 import com.evoMusic.model.Song;
 import com.evoMusic.model.Track;
+import com.evoMusic.parameters.P;
 import com.evoMusic.util.Sort;
 import com.evoMusic.util.TrackTag;
 
 public class CrazyNoteOctaveRater extends SubRater{
     private final int OCTAVE_CONSTANT = 24;
     
-    public CrazyNoteOctaveRater(double targetRating){
+    public CrazyNoteOctaveRater(double targetRating) {
         super.setTargetRating(targetRating);
+        super.setInfluenceMultiplier(P.RATER_CRAZY_OCTAVE_INFLUENCE_MUL);
     }
 
     public double rate(Song song){

@@ -14,14 +14,16 @@ import jm.music.data.Phrase;
 
 import com.evoMusic.model.Song;
 import com.evoMusic.model.Track;
+import com.evoMusic.parameters.P;
 import com.evoMusic.util.TrackTag;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 
 public class ChordRepetitionRater extends SubRater{
     
-    public ChordRepetitionRater(double targetRating){
+    public ChordRepetitionRater(double targetRating) {
         super.setTargetRating(targetRating);
+        super.setInfluenceMultiplier(P.RATER_CHORD_REPETITION_INFLUENCE_MUL);
     }
  
     @Override

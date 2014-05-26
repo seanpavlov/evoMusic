@@ -2,14 +2,18 @@ package com.evoMusic.model.geneticAlgorithm.rating;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import jm.music.data.Phrase;
+
 import com.evoMusic.model.Song;
 import com.evoMusic.model.Track;
+import com.evoMusic.parameters.P;
 
 public class RhythmicVarietyRater extends SubRater{
 
     public RhythmicVarietyRater(double targetRating){
         this.setTargetRating(targetRating);
+        super.setInfluenceMultiplier(P.RATER_RHYTHMIC_VARIETY_INFLUENCE_MUL);
     }
     
     /**

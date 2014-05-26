@@ -9,6 +9,7 @@ import jm.music.data.Phrase;
 
 import com.evoMusic.model.Song;
 import com.evoMusic.model.Track;
+import com.evoMusic.parameters.P;
 import com.evoMusic.util.TrackTag;
 
 /**Rater that favors song where the average note density in 
@@ -25,6 +26,7 @@ public class MelodyNoteDensityVarietyRater extends SubRater{
 
     public MelodyNoteDensityVarietyRater(double targetRating){
         super.setTargetRating(targetRating);
+        super.setInfluenceMultiplier(P.RATER_MELODY_NOTE_DENSITY_INFLUENCE_MUL);
     }
     
     @Override

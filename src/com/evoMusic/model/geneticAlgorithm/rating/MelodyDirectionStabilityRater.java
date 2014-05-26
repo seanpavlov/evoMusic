@@ -8,6 +8,7 @@ import jm.music.data.Phrase;
 
 import com.evoMusic.model.Song;
 import com.evoMusic.model.Track;
+import com.evoMusic.parameters.P;
 import com.evoMusic.util.TrackTag;
 
 public class MelodyDirectionStabilityRater extends SubRater{
@@ -15,6 +16,7 @@ public class MelodyDirectionStabilityRater extends SubRater{
     
     public MelodyDirectionStabilityRater(double targetRating){
         super.setTargetRating(targetRating);
+        super.setInfluenceMultiplier(P.RATER_MELODY_DIRECTION_STABILITY_INFLUENCE_MUL);
     }
 
     @Override

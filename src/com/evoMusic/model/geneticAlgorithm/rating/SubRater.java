@@ -5,6 +5,7 @@ import com.evoMusic.model.Song;
 public abstract class SubRater {
     private double targetRating;
     private double influence = 1.0;
+    private double influenceMultiplier = 1.0;
 
     /**
      * Rates a song or a part of it depending on the raters task.
@@ -27,6 +28,13 @@ public abstract class SubRater {
      */
     public double getInfluence() {
         return influence;
+    }
+
+    /**
+     * @return the influence multiplier of this sub-rater.
+     */
+    public double getInfluenceMultiplier() {
+        return influenceMultiplier;
     }
 
     /**
@@ -53,6 +61,21 @@ public abstract class SubRater {
                     "Influence must be a value between 0 and 1");
         } else {
             this.influence = influence;
+        }
+    }
+
+    /**
+     * Sets the influence multiplier of this sub-rater. This affects the
+     * influence which decides how much this rater will affect the final rating.
+     * 
+     * @param influenceMultiplier
+     */
+    public void setInfluenceMultiplier(double influenceMultiplier) {
+        if (influenceMultiplier < 0.0 || influenceMultiplier > 1.0) {
+            throw new IllegalArgumentException(
+                    "Influence multiplier must be a value between 0 and 1");
+        } else {
+            this.influenceMultiplier = influenceMultiplier;
         }
     }
 }

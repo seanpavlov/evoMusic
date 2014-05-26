@@ -3,8 +3,10 @@ package com.evoMusic.model.geneticAlgorithm.rating;
 import jm.music.data.Note;
 import jm.music.data.Part;
 import jm.music.data.Phrase;
+
 import com.evoMusic.model.Song;
 import com.evoMusic.model.Track;
+import com.evoMusic.parameters.P;
 import com.evoMusic.util.TrackTag;
 
 /**Rater that favors song whose got two of the same pitch values 
@@ -13,6 +15,7 @@ public class RepeatedPitchDensityRater extends SubRater{
     
     public RepeatedPitchDensityRater(double targetRating){
         super.setTargetRating(targetRating);
+        super.setInfluenceMultiplier(P.RATER_REPEATED_PITCH_DENSITY_INFLUENCE_MUL);
     }
 
     @Override

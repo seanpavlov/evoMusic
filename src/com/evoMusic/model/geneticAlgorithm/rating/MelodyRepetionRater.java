@@ -11,6 +11,7 @@ import jm.music.data.Phrase;
 
 import com.evoMusic.model.Song;
 import com.evoMusic.model.Track;
+import com.evoMusic.parameters.P;
 import com.evoMusic.util.TrackTag;
 
 public class MelodyRepetionRater extends SubRater {
@@ -22,6 +23,7 @@ public class MelodyRepetionRater extends SubRater {
      */
     public MelodyRepetionRater(double targetRating){
         super.setTargetRating(targetRating);
+        super.setInfluenceMultiplier(P.RATER_MELODY_REPETITION_INFLUENCE_MUL);
     }
     
     @Override

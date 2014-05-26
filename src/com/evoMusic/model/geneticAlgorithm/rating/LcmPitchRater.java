@@ -8,6 +8,7 @@ import java.util.TreeSet;
 import jm.music.data.Note;
 
 import com.evoMusic.model.Song;
+import com.evoMusic.parameters.P;
 import com.evoMusic.util.Sort;
 
 public class LcmPitchRater extends SubRater{
@@ -22,6 +23,7 @@ public class LcmPitchRater extends SubRater{
      */
     public LcmPitchRater(double targetRating){
         super.setTargetRating(targetRating);
+        super.setInfluenceMultiplier(P.RATER_LCM_PITCH_INFLUENCE_MUL);
     }
     
     /**

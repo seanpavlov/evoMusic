@@ -3,7 +3,9 @@ package com.evoMusic.model.geneticAlgorithm.rating;
 import java.util.*;
 
 import jm.music.data.Note;
+
 import com.evoMusic.model.Song;
+import com.evoMusic.parameters.P;
 import com.evoMusic.util.Sort;
 
 public class ZipfsLawRater extends SubRater {
@@ -14,6 +16,7 @@ public class ZipfsLawRater extends SubRater {
      */
     public ZipfsLawRater(double targetRating){
         super.setTargetRating(targetRating);
+        super.setInfluenceMultiplier(P.RATER_ZIPFS_LAW_INFLUENCE_MUL);
     }
     
     

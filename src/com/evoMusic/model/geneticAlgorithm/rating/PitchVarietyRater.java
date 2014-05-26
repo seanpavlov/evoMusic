@@ -9,6 +9,7 @@ import jm.music.data.Phrase;
 
 import com.evoMusic.model.Song;
 import com.evoMusic.model.Track;
+import com.evoMusic.parameters.P;
 
 /**This rater is in favor of songs 
  * where there is many different note pitch values
@@ -22,6 +23,7 @@ public class PitchVarietyRater extends SubRater{
     
     public PitchVarietyRater(double targetRating){
         super.setTargetRating(targetRating);
+        super.setInfluenceMultiplier(P.RATER_PITCH_VARIETY_INFLUENCE_MUL);
     }
 
     @Override

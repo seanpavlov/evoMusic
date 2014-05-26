@@ -9,6 +9,7 @@ import jm.music.data.Part;
 import jm.music.data.Phrase;
 
 import com.evoMusic.model.Song;
+import com.evoMusic.parameters.P;
 import com.evoMusic.util.Sort;
 
 public class NoSilenceRater extends SubRater {
@@ -43,6 +44,7 @@ public class NoSilenceRater extends SubRater {
     
     public NoSilenceRater(double targetRating){
         this.setTargetRating(targetRating);
+        super.setInfluenceMultiplier(P.RATER_NO_SILENCE_INFLUENCE_MUL);
     }
     
     /**
